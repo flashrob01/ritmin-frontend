@@ -1,24 +1,23 @@
-import { Component, HostListener } from '@angular/core';
-import { NeoLineService } from 'src/app/services/neoline.service';
+import { Component, OnInit } from '@angular/core';
+import { WalletConnectService } from 'src/app/services/walletconnect.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
-  address: string
+  constructor(private readonly walletConnectService: WalletConnectService) {}
 
-  @HostListener('window:NEOLine.NEO.EVENT.READY', [])
-  onNEOLineReady() {
-    this.neolineService.init().then(i => {
-      i.getAccount().then(acc => {
-        this.address = acc.address;
-      })
-    })
+  ngOnInit() {
+    this.walletConnectService.init().pipe(
+      switchMap(() => this.walletConnectService.getSession())
+      ).subscribe((session: any) => {
+        console.log("session", session);
+        /* this.walletConnectService.connect() */;
+    }, err => console.error(err));
   }
-
-  constructor(private neolineService: NeoLineService) {}
 
 }
