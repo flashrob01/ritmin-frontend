@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import WalletConnectClient from "@walletconnect/client";
 import { from, Observable } from "rxjs";
 import { environment } from "src/environments/environment";
-import { WcSdk } from "../classes/wc";
+import { RpcCallResult, WcSdk } from "../classes/wc";
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { map } from 'rxjs/operators';
 
@@ -13,6 +13,7 @@ export class WalletConnectService {
   private static readonly LOG_LEVEL = "debug";
 
   private client: WalletConnectClient;
+  private session: any;
 
   public init(): Observable<WalletConnectClient> {
     return from(WcSdk.initClient(
@@ -22,7 +23,7 @@ export class WalletConnectService {
   }
 
   public getSession(): Observable<any> {
-    return from(WcSdk.getSession(this.client));
+    return from(WcSdk.getSession(this.client)).pipe(map(s => this.session = s));
   }
 
   public connect(): void {
@@ -30,8 +31,8 @@ export class WalletConnectService {
       chainId: environment.chainId,
       methods: ["invokefunction"],
       appMetadata: {
-        name: "Ritmin",
-        description: "Ritmin app",
+        name: "NekoHit",
+        description: "NekoHit - A better Pateron on Neo N3",
         url: "https://myapplicationdescription.app/",
         icons: ["https://myapplicationdescription.app/myappicon.png"],
       }
@@ -41,6 +42,17 @@ export class WalletConnectService {
         QRCodeModal.open(uri, null);
       }
     });
+  }
+
+  public sendRpcRequest(name: string, params?: any): Observable<RpcCallResult> {
+    return from(WcSdk.sendRequest(this.client, this.session, environment.chainId, {
+      method: name,
+      params
+    }));
+  }
+
+  public invokeFunction(scriptHash: string, method: string, params: any[]): Observable<RpcCallResult> {
+    return from(WcSdk.invokeFunction(this.client, this.session, environment.chainId, scriptHash, method, params));
   }
 
 }
