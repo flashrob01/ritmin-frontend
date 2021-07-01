@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WalletConnectService } from 'src/app/services/walletconnect.service';
-import { switchMap } from 'rxjs/operators';
-import { WcaService } from 'src/app/services/wca.service';
+import { QueryRequest, WcaService } from 'src/app/services/wca.service';
 
 @Component({
   selector: 'app-home',
@@ -10,16 +8,22 @@ import { WcaService } from 'src/app/services/wca.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private readonly walletConnectService: WalletConnectService, private readonly wcaService: WcaService) {}
+  constructor(private readonly wcaService: WcaService) {}
 
-  ngOnInit() {
-    this.walletConnectService.init().pipe(
-      switchMap(() => this.walletConnectService.getSession())
-      ).subscribe();
-    }
+  ngOnInit() {}
 
-    onQueryAllClick() {
-      this.wcaService.advanceQuery().subscribe(r => console.log(r));
+  onQueryAllClick() {
+    const q: QueryRequest = {
+      creator: null,
+      buyer: null,
+      unpaid: true,
+      canPurchase: true,
+      onGoing: true,
+      finished: false,
+      page: 1,
+      size: 10,
     }
+    this.wcaService.advanceQuery(q).subscribe(r => console.log(r));
+  }
 
 }

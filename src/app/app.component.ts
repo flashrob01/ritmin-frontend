@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
+import { WalletConnectService } from './services/walletconnect.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,9 @@ import { PrimeNGConfig } from 'primeng/api';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private primengConfig: PrimeNGConfig) {}
+  constructor(private primengConfig: PrimeNGConfig, private readonly walletConnectService: WalletConnectService) {
+    this.walletConnectService.init();
+  }
 
   ngOnInit() {
     this.primengConfig.ripple = true;

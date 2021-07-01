@@ -1,6 +1,6 @@
 import Client, {CLIENT_EVENTS} from "@walletconnect/client";
 import {AppMetadata, PairingTypes, SessionTypes} from "@walletconnect/types";
-import {ERROR, getAppMetadata, getError} from "@walletconnect/utils";
+import {ERROR, getError} from "@walletconnect/utils";
 import {RequestArguments} from "@json-rpc-tools/types";
 
 export interface WcCallbacks {
@@ -101,7 +101,7 @@ export class WcSdk {
 
     static async connect(wcClient: Client, options?: WcConnectOptions) {
         return await wcClient.connect({
-            metadata: getAppMetadata() || options.appMetadata,
+            metadata: options.appMetadata,
             pairing: options.topic ? {topic: options.topic} : undefined,
             permissions: {
                 blockchain: {

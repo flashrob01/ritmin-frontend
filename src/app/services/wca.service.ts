@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { WalletConnectService } from "./walletconnect.service";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
 
 export interface CreateWcaRequest {
@@ -36,6 +36,7 @@ export class WcaService {
   public queryWca(identifier: string): Observable<string> {
     return this.walletConnectService.invokeFunction(environment.wcaContractHash, "queryWca", [identifier]).pipe(
       map(result => result.result));
+
   }
 
   public queryPurchase(identifier: string): string {
@@ -55,7 +56,7 @@ export class WcaService {
   public refund(identifier: string, buyer: string): void {
   }
 
-  public advanceQuery(req?: QueryRequest): Observable<string> {
+  public advanceQuery(req: QueryRequest): Observable<string> {
     return this.walletConnectService.invokeFunction(environment.wcaContractHash, "advanceQuery", [req]).pipe(
       map(result => result.result));
   }

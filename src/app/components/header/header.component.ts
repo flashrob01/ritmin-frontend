@@ -11,7 +11,7 @@ export class HeaderComponent implements OnInit {
 
   items: MenuItem[];
 
-  constructor(private walletConnectService: WalletConnectService) { }
+  constructor(public walletConnectService: WalletConnectService) {}
 
   ngOnInit(): void {
     this.items = [];

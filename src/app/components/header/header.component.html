@@ -1,11 +1,16 @@
 <p-menubar [model]="items">
   <ng-template pTemplate="start">
     <div pRipple class="p-d-flex p-ai-center p-jc-center p-mr-4" (click)="router.navigate([''])">
-     <img src="assets/logo.png" height="46" class="logo">
+     <img src="assets/logo.png" height="46" class="logo" alt="nekohit-logo"/>
       <span class="p-ml-3 p-text-bold">NekoHit</span>
     </div>
   </ng-template>
   <ng-template pTemplate="end">
-    <button pButton label="Connect Wallet" icon="fa fa-link" (click)="onConnectBtnClick()"></button>
+    <ng-container *ngIf="walletConnectService.address | async as a ; else connect">
+      <small>Connected with: {{ a }}</small>
+    </ng-container>
+    <ng-template #connect>
+      <button pButton label="Connect Wallet" icon="fa fa-link" (click)="onConnectBtnClick()"></button>
+    </ng-template>
   </ng-template>
 </p-menubar>
