@@ -1,1 +1,29 @@
-<button pButton label="Query All" (click)="onQueryAllClick()"></button>
+<p-table [value]="wcas" styleClass="p-datatable-sm" [autoLayout]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>creator</th>
+      <th>stakePer100Token</th>
+      <th>maxTokenSoldCount</th>
+      <th>lastUpdateTimestamp</th>
+      <th>nextMilestone</th>
+      <th>remainTokenCount</th>
+      <th>buyerCount</th>
+      <th>action</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-wca>
+    <tr>
+      <td>{{wca.creator}}</td>
+      <td>{{wca.stakePer100Token}}</td>
+      <td>{{wca.maxTokenSoldCount}}</td>
+      <td>{{wca.lastUpdateTimestamp | date}}</td>
+      <td>{{wca.nextMilestone}}</td>
+      <td>{{wca.remainTokenCount}}</td>
+      <td>{{wca.buyerCount}}</td>
+      <td>
+        <button pButton type="button" label="Buy" ></button>
+        <button pButton type="button" label="Details" ></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

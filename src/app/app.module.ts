@@ -19,6 +19,7 @@ import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
 import { TabViewModule } from 'primeng/tabview';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { TabViewModule } from 'primeng/tabview';
     MessageModule,
     MessagesModule,
     RippleModule,
-    TabViewModule
+    TabViewModule,
+    TableModule
   ],
   providers: [
     MessageService

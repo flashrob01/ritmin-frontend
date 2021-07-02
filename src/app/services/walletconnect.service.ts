@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import WalletConnectClient from "@walletconnect/client";
 import { BehaviorSubject, from, Observable } from "rxjs";
 import { environment } from "src/environments/environment";
-import { RpcCallResult, WcSdk } from "../classes/wc";
+import { RpcCallResult, WcSdk } from "./walletconnect";
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { SessionTypes } from "@walletconnect/types";
 import { map } from "rxjs/operators";
@@ -10,7 +10,7 @@ import { map } from "rxjs/operators";
 @Injectable({providedIn: 'root'})
 export class WalletConnectService {
 
-  private static readonly COZ_RELAY_SERVER = "wss://connect.coz.io:443"; // wss://relay.walletconnect.org
+  private static readonly RELAY_SERVER = environment.relayServer;
 
   private static readonly LOG_LEVEL = environment.walletConnectLogLevel;
 
@@ -35,7 +35,7 @@ export class WalletConnectService {
   public init(): void {
     WcSdk.initClient(
       WalletConnectService.LOG_LEVEL,
-      WalletConnectService.COZ_RELAY_SERVER,
+      WalletConnectService.RELAY_SERVER,
     ).then((client: WalletConnectClient) => {
       console.log("client", client);
       this.client$.next(client);
@@ -93,12 +93,13 @@ export class WalletConnectService {
     });
   }
 
-  public sendRpcRequest(name: string, params?: any): Observable<RpcCallResult> {
+
+  /* public sendRpcRequest(name: string, params?: any): Observable<RpcCallResult> {
     return from(WcSdk.sendRequest(this.client$.getValue(), this.session$.getValue(), environment.chainId, {
       method: name,
       params
     }));
-  }
+  } */
 
   public invokeFunction(scriptHash: string, method: string, params: any[]): Observable<RpcCallResult> {
     return from(WcSdk.invokeFunction(this.client$.getValue(), this.session$.getValue(), environment.chainId, scriptHash, method, params));

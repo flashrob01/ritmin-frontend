@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { QueryRequest, WcaService } from 'src/app/services/wca.service';
+import { mergeAll, mergeMap, tap, toArray } from 'rxjs/operators';
+import { WCA } from 'src/app/models/wca';
+import { AdvanceQueryReqBody, WcaService } from 'src/app/services/wca.service';
 
 @Component({
   selector: 'app-home',
@@ -8,12 +10,11 @@ import { QueryRequest, WcaService } from 'src/app/services/wca.service';
 })
 export class HomeComponent implements OnInit {
 
+  wcas: WCA[] = [];
   constructor(private readonly wcaService: WcaService) {}
 
-  ngOnInit() {}
-
-  onQueryAllClick() {
-    const q: QueryRequest = {
+  ngOnInit() {
+    const defaultQuery: AdvanceQueryReqBody = {
       creator: null,
       buyer: null,
       unpaid: true,
@@ -22,8 +23,13 @@ export class HomeComponent implements OnInit {
       finished: false,
       page: 1,
       size: 10,
-    }
-    this.wcaService.advanceQuery(q).subscribe(r => console.log(r));
+    };
+    this.wcaService.filterWCA(defaultQuery).pipe(
+      mergeAll(),
+      mergeMap(res => this.wcaService.queryWCA(res)),
+      toArray()
+      ).subscribe(res => {
+        this.wcas = res
+      });
   }
-
 }
