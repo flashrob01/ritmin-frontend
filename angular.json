@@ -15,6 +15,7 @@
       "prefix": "app",
       "architect": {
         "build": {
+          "defaultConfiguration": "production",
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "customWebpackConfig": {
@@ -66,10 +67,19 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           }
         },
         "serve": {
+          "defaultConfiguration": "development",
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "ritmin-frontend:build"
@@ -77,7 +87,10 @@
           "configurations": {
             "production": {
               "browserTarget": "ritmin-frontend:build:production"
-            }
+            },
+            "development": {
+              "browserTarget": "ritmin-frontend:build:development"
+             }
           }
         },
         "extract-i18n": {

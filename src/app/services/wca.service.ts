@@ -3,7 +3,7 @@ import { environment } from "src/environments/environment";
 import { WalletConnectService } from "./walletconnect.service";
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { rpc, sc } from "@cityofzion/neon-js";
+import { rpc, sc, wallet } from "@cityofzion/neon-js";
 import { WCA } from "../models/wca";
 import { Milestone } from "../models/milestone";
 
@@ -21,10 +21,6 @@ export interface CreateWcaRequestBody {
 export interface AdvanceQueryReqBody {
   creator: string,
   buyer: string,
-  unpaid: boolean,
-  canPurchase: boolean,
-  onGoing: boolean,
-  finished: boolean,
   page: number,
   size: number
 }
@@ -41,29 +37,27 @@ export class WcaService {
 
   private rpcRequest(method: string, params: any[]): Observable<any> {
     return from(WcaService.RPC_CLIENT.invokeFunction(environment.wcaContractHash, method, params))
-    .pipe(map(resp => JSON.parse(atob(resp.stack?.[0].value as string))));
+    .pipe(map(resp => resp.stack[0]?.value as string));
   }
 
-  public filterWCA(req: AdvanceQueryReqBody): Observable<string[]> {
+  public filterWCA(req: AdvanceQueryReqBody): Observable<WCA[]> {
     const params = [
       sc.ContractParam.hash160(req.creator ?? WcaService.HASH160_ZERO),
       sc.ContractParam.hash160(req.buyer ?? WcaService.HASH160_ZERO),
-      sc.ContractParam.boolean(req.unpaid),
-      sc.ContractParam.boolean(req.canPurchase),
-      sc.ContractParam.boolean(req.onGoing),
-      sc.ContractParam.boolean(req.finished),
       sc.ContractParam.integer(req.page),
       sc.ContractParam.integer(req.size)
     ];
-    return this.rpcRequest("advanceQuery", params);
+    return this.rpcRequest("advanceQuery", params).pipe(
+      map(res => JSON.parse(atob(res))),
+      map(res => res.map(v => this.mapToWCA(v))));
   }
 
-  public queryWCA(identifier: string): Observable<WCA> {
+  /* public queryWCA(identifier: string): Observable<WCA> {
     const params = [
       sc.ContractParam.string(identifier)
     ];
     return this.rpcRequest("queryWCA", params).pipe(map(resp => this.mapToWCA(resp)));
-  }
+  } */
 
   public queryPurchase(identifier: string, buyer: string): Observable<number> {
     const params = [
@@ -73,8 +67,17 @@ export class WcaService {
     return this.rpcRequest("queryPurchase", params);
   }
 
-  public createWca(info: CreateWcaRequestBody): string {
-    return null;
+  public createWCA(info: CreateWcaRequestBody): Observable<string> {
+    const owner = {type: 'Address', value: info.hash};
+    const stakePer100Token = {type: 'Integer', value: info.stakePer100Token};
+    const maxTokenSoldCount = {type: 'Integer', value: info.maxTokenSoldCount};
+    const descriptions = {type: 'Array', value: info.descriptions};
+    const endTimestamps = {type: 'Array', value: info.endTimestamps};
+    const thresholdIndex = {type: 'Integer', value: info.thresholdIndex};
+    const coolDownInterval = {type: 'Integer', value: info.coolDownInterval};
+    const identifier = {type: 'String', value: info.identifier};
+    const parameters = [owner, stakePer100Token, maxTokenSoldCount, descriptions, endTimestamps, thresholdIndex, coolDownInterval, identifier];
+    return this.walletConnectService.invokeFunction(environment.wcaContractHash, "createWCA", parameters).pipe(map(r => r.result));
   }
 
   public finishMilestone(identifier: string, index: number, proofOfWork: string): void {
@@ -88,27 +91,31 @@ export class WcaService {
 
   private mapToWCA(resp: any): WCA {
     return {
-      creator: WcaService.processBase64Hash160(resp[0]),
-      stakePer100Token: resp[1],
-      maxTokenSoldCount: resp[2],
-      stakePaid: resp[3] == 1,
-      milestonesCount: resp[4],
-      milestones: this.parseMilestones(resp[5]),
-      thresholdMilestoneIndex: resp[6],
-      coolDownInterval: resp[7],
-      lastUpdateTimestamp: resp[8] == -1 ? null : new Date(resp[8]),
-      nextMilestone: resp[9],
-      remainTokenCount: resp[10],
-      buyerCount: resp[11],
+      identifier: resp[0],
+      description: resp[1],
+      creator: wallet.getAddressFromScriptHash(WcaService.processBase64Hash160(resp[2])),
+      creationTimestamp: resp[3] == -1 ? null : new Date(resp[3]),
+      stakePer100Token: resp[4],
+      maxTokenSoldCount: resp[5],
+      milestonesCount: resp[6],
+      milestones: this.parseMilestones(resp[7]),
+      thresholdMilestoneIndex: resp[8],
+      coolDownInterval: resp[9],
+      lastUpdateTimestamp: resp[10] == -1 ? null : new Date(resp[10]),
+      nextMilestone: resp[11],
+      remainTokenCount: resp[12],
+      buyerCount: resp[13],
+      status: resp[14]
      };
   }
 
-  private parseMilestones(raw: any[]): Milestone[] {
-    return raw.map((ms) => {
+  private parseMilestones(milestones: any[]): Milestone[] {
+    return milestones.map((ms) => {
       return {
-        description: ms[0],
-        endTimestamp: new Date(ms[1]),
-        linkToResult: ms[2],
+        title: ms[0],
+        description: ms[1],
+        endTimestamp: new Date(ms[2]),
+        linkToResult: ms[3],
       };
     })
   }

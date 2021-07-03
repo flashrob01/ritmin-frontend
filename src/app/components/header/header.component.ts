@@ -14,7 +14,10 @@ export class HeaderComponent implements OnInit {
   constructor(public walletConnectService: WalletConnectService) {}
 
   ngOnInit(): void {
-    this.items = [];
+    this.items = [
+      {icon: 'pi pi-search', label: 'Browse', routerLink: ''},
+      {icon: 'pi pi-question', label: 'How it works', routerLink: 'about'}
+    ];
   }
 
   onConnectBtnClick() {

@@ -9,7 +9,6 @@ import { HomeComponent } from './components/home/home.component';
 
 import { FormsModule } from '@angular/forms';
 
-/*  PRIME NG */
 import { MenuModule } from 'primeng/menu';
 import { HeaderComponent } from './components/header/header.component';
 import { MenubarModule } from 'primeng/menubar';
@@ -20,12 +19,30 @@ import { MessageService } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
 import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
+import { TruncateAddressPipe } from './pipes/truncateAddress.pipe';
+import { TooltipModule } from 'primeng/tooltip';
+import { FooterComponent } from './components/footer/footer.component';
+import { WcaTableComponent } from './components/wca-table/wca-table.component';
+import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
+import { WcaDetailComponent } from './components/wca-detail/wca-detail.component';
+import { ToastModule } from 'primeng/toast';
+import { TimeAgoPipe } from './pipes/timeAgo.pipe';
+import { TagModule } from 'primeng/tag';
+import { TruncatePipe } from './pipes/truncate.pipe';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    HeaderComponent
+    HeaderComponent,
+    TruncateAddressPipe,
+    TruncatePipe,
+    FooterComponent,
+    WcaTableComponent,
+    WcaDetailComponent,
+    TimeAgoPipe
   ],
   imports: [
     BrowserModule,
@@ -40,7 +57,13 @@ import { TableModule } from 'primeng/table';
     MessagesModule,
     RippleModule,
     TabViewModule,
-    TableModule
+    TableModule,
+    TooltipModule,
+    CardModule,
+    DividerModule,
+    ToastModule,
+    TagModule,
+    ProgressBarModule
   ],
   providers: [
     MessageService

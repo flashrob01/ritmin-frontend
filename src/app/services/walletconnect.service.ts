@@ -18,16 +18,18 @@ export class WalletConnectService {
 
   private session$: BehaviorSubject<SessionTypes.Settled> = new BehaviorSubject(null);
 
-  public readonly address: Observable<string> = this.session$.asObservable().pipe(
-    map(s => {
+  public address$: BehaviorSubject<string> = new BehaviorSubject(null);
+
+  constructor() {
+    this.session$.pipe(map(s => {
       if (!!s) {
         let adr = s.state.accounts[0];
         adr = adr.substring(0, adr.indexOf("@"))
         return adr;
       }
       return null;
-    })
-  );
+    })).subscribe(adr => this.address$.next(adr));
+  }
 
   /**
    * initialises a walletconnect client
@@ -59,7 +61,6 @@ export class WalletConnectService {
       }
     }).then(session => {
       this.session$.next(session);
-      console.log("session", session);
     })
   }
 
@@ -68,7 +69,6 @@ export class WalletConnectService {
    */
   private updateSession(): void {
     WcSdk.getSession(this.client$.getValue()).then(session => {
-      console.log("session", session);
       this.session$.next(session);
     }).catch(err => {
       console.error(err);
