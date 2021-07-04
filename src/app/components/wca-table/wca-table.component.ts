@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { WCA } from 'src/app/models/wca';
+import { getStatusTag } from 'src/app/utils';
 
 @Component({
   selector: 'app-wca-table',
@@ -10,6 +11,7 @@ export class WcaTableComponent implements OnInit, OnChanges {
 
   @Input() wcas: WCA[] = [];
   isLoading = true;
+  getStatusTag = getStatusTag;
 
   constructor() { }
 
@@ -21,13 +23,6 @@ export class WcaTableComponent implements OnInit, OnChanges {
     }
   }
 
-  public getStatusTag(status: string): string {
-    switch(status) {
-      case "PENDING": return "warning";
-      case "OPEN": return "success";
-      case "ACTIVE": return "info";
-      case "FINISHED": return "danger"
-    }
-  }
+
 
 }

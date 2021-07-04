@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { WCA } from 'src/app/models/wca';
+import { getStatusTag } from 'src/app/utils';
 
 @Component({
   selector: 'app-my-wca',
@@ -10,20 +11,12 @@ export class MyWcaComponent implements OnInit {
 
   @Input() wcas: WCA[];
   @Input() address: string;
+  getStatusTag = getStatusTag;
 
   constructor() { }
 
   ngOnInit(): void {
     this.wcas = this.wcas.filter(wca => wca.creator === this.address);
-  }
-
-  public getStatusTag(status: string): string {
-    switch(status) {
-      case "PENDING": return "warning";
-      case "OPEN": return "success";
-      case "ACTIVE": return "info";
-      case "FINISHED": return "danger"
-    }
   }
 
 }
