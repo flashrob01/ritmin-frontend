@@ -31,6 +31,7 @@ import { TimeAgoPipe } from './pipes/timeAgo.pipe';
 import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { MyWcaComponent } from './components/my-wca/my-wca.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
     FooterComponent,
     WcaTableComponent,
     WcaDetailComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    MyWcaComponent
   ],
   imports: [
     BrowserModule,

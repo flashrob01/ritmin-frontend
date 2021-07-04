@@ -1,7 +1,8 @@
 <div class="wca-table-layout">
-  <p-table [value]="wcas" styleClass="p-datatable-sm" [autoLayout]="true" [loading]="isLoading" [paginator]="true"
-  [rows]="20" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,20,50]" [totalRecords]="wcas.length" sortField="changePercent" sortOrder="1"
-  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" stateStorage="session" stateKey="pennycapstable-session">
+  <p-table [value]="wcas" styleClass="p-datatable-sm p-datatable-responsive-demo" [autoLayout]="true" [loading]="isLoading" [paginator]="true"
+  [rows]="20" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,20,50]" [totalRecords]="wcas.length" sortField="created" sortOrder="1"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" stateStorage="session" stateKey="pennycapstable-session"
+  [responsive]="true">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="creator">Creator <p-sortIcon field="creator"></p-sortIcon></th>
@@ -31,7 +32,7 @@
         </td>
         <td>{{wca.creationTimestamp | timeAgo}}</td>
         <td>
-          <button pButton type="button" label="Details"></button>
+          <button pButton type="button" label="Details" icon="pi pi-search" class="p-button-outlined"></button>
         </td>
       </tr>
     </ng-template>

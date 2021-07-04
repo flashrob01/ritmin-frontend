@@ -9,12 +9,15 @@ import { Milestone } from "../models/milestone";
 
 export interface CreateWcaRequestBody {
   hash: string;
+  wcaDescription: string;
   stakePer100Token: number;
   maxTokenSoldCount: number,
-  descriptions: string[],
+  msTitles: string[],
+  msDescriptions: string[],
   endTimestamps: number[],
   thresholdIndex: number,
   coolDownInterval: number,
+  isPublic: boolean,
   identifier: string
 }
 
@@ -71,12 +74,21 @@ export class WcaService {
     const owner = {type: 'Address', value: info.hash};
     const stakePer100Token = {type: 'Integer', value: info.stakePer100Token};
     const maxTokenSoldCount = {type: 'Integer', value: info.maxTokenSoldCount};
-    const descriptions = {type: 'Array', value: info.descriptions};
-    const endTimestamps = {type: 'Array', value: info.endTimestamps};
+    const wcaDesc = {type: 'String', value: info.wcaDescription}
+    const msDescs = {type: 'Array', value: info.msDescriptions.map(ms => { return {type: 'String', value: ms}})};
+    const msTitles = {type: 'Array', value: info.msTitles.map(ms => { return {type: 'String', value: ms}})};
+    const endTimestamps = {type: 'Array', value: info.endTimestamps.map(ms => { return {type: 'Integer', value: ms}})};
     const thresholdIndex = {type: 'Integer', value: info.thresholdIndex};
     const coolDownInterval = {type: 'Integer', value: info.coolDownInterval};
     const identifier = {type: 'String', value: info.identifier};
-    const parameters = [owner, stakePer100Token, maxTokenSoldCount, descriptions, endTimestamps, thresholdIndex, coolDownInterval, identifier];
+    const isPublic = { type: 'Boolean', value: info.isPublic};
+    const parameters = [
+      owner, wcaDesc, stakePer100Token, maxTokenSoldCount, msTitles, msDescs,
+      endTimestamps, thresholdIndex, coolDownInterval, isPublic, identifier];
+
+    /* const params = [info.hash, info.wcaDescription, info.stakePer100Token, info.maxTokenSoldCount,
+      info.msTitles, info.msDescriptions, info.endTimestamps, info.thresholdIndex, info.coolDownInterval,
+      info.identifier, info.isPublic]; */
     return this.walletConnectService.invokeFunction(environment.wcaContractHash, "createWCA", parameters).pipe(map(r => r.result));
   }
 

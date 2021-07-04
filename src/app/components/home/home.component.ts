@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
 import { WCA } from 'src/app/models/wca';
 import { WalletConnectService } from 'src/app/services/walletconnect.service';
 import { AdvanceQueryReqBody, WcaService } from 'src/app/services/wca.service';
@@ -16,7 +15,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private readonly wcaService: WcaService,
-    private readonly wallet: WalletConnectService) {}
+    public readonly wallet: WalletConnectService) {}
 
   ngOnInit() {
     const defaultQuery: AdvanceQueryReqBody = {
@@ -27,8 +26,6 @@ export class HomeComponent implements OnInit {
     };
     this.wcaService.filterWCA(defaultQuery).subscribe(res => {
       this.wcas = res
-      this.myWCAS = this.wcas.filter(wca => wca.creator === this.wallet.address$.getValue());
-      console.log("myWCAS", this.myWCAS);
     });
   }
 
@@ -36,13 +33,16 @@ export class HomeComponent implements OnInit {
     this.wcaService.createWCA(
       {
         hash: this.wallet.address$.getValue(),
+        wcaDescription: "amazing",
         coolDownInterval: 1,
-        descriptions: ["asdf", "asdfff", "dddd"],
-        endTimestamps: [343, 3434, 3434],
+        msTitles: ["asdf", "dd", "aaa"],
+        msDescriptions: ["asdf", "asdfff", "dddd"],
+        endTimestamps: [1656855948000, 1659534348000, 1662212748000],
         identifier: "xyz",
         maxTokenSoldCount: 100,
         stakePer100Token: 5,
-        thresholdIndex: 2
+        thresholdIndex: 2,
+        isPublic: true
       }).subscribe(res => console.log(res));
 
   }
