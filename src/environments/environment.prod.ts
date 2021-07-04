@@ -5,6 +5,6 @@ export const environment = {
   catTokenHash: '0xf461dff74f454e5016421341f115a2e789eadbd7',
   walletConnectLogLevel: '',
   relayServer: 'wss://connect.coz.io:443',
-  testNetUrl: 'https://testnet2.neo.coz.io:443/', //http://seed1t.neo.org:20332',
+  testNetUrl: 'https://testnet1.neo.coz.io:443',
   appVersion: require('../../package.json').version,
 };
