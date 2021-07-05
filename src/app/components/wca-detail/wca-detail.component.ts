@@ -14,6 +14,7 @@ export class WcaDetailComponent implements OnInit {
   wca: WCA | null = null;
   purchasedAmount = 0;
   isOwner = false;
+  now = new Date();
 
   constructor(
     private route: ActivatedRoute,

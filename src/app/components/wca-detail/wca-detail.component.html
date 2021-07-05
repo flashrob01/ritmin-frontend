@@ -1,8 +1,14 @@
 <div class="p-d-flex p-flex-row p-jc-around p-flex-wrap">
-  <div *ngIf="wca != null">
-    <h2>Basic info of {{wca.identifier}}</h2>
+
+  <p-card *ngIf="wca != null">
+    <ng-template pTemplate="title">
+      {{wca.identifier}}
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+      <p>By {{wca.creator}}</p>
+      <p>At {{wca.creationTimestamp.toLocaleString()}}</p>
+    </ng-template>
     <p>Description: {{wca.description}}</p>
-    <p>Owner Address: {{wca.creator}}</p>
     <p>Stake rate: {{wca.stakePer100Token}}CAT</p>
     <p>Total amount: {{wca.maxTokenSoldCount}} CAT</p>
     <p>Remain amount: {{wca.remainTokenCount}} CAT</p>
@@ -12,35 +18,50 @@
     <p>Last
       update: {{wca.lastUpdateTimestamp == null ? "Never" : wca.lastUpdateTimestamp.toLocaleString()}}</p>
     <p>Current status: {{wca.status}}</p>
-    <div class="p-d-flex p-jc-center p-ai-center p-mb-2">
-      <button pButton type="button" label="Pay Stake"
-              icon="pi pi-money-bill" class="p-button-outlined"
-              *ngIf="wca.status == 'PENDING' && isOwner"
-      ></button>
-      <button pButton type="button" label="Purchase"
-              icon="pi pi-shopping-cart" class="p-button-outlined"
-              *ngIf="wca.status == 'OPEN' && !isOwner"
-      ></button>
-      <button pButton type="button" label="Update"
-              icon="pi pi-arrow-circle-up" class="p-button-outlined"
-              *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
-      ></button>
-      <button pButton type="button" label="Finish"
-              icon="pi pi-times" class="p-button-outlined"
-              *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
-      ></button>
-    </div>
-  </div>
+
+
+    <ng-template pTemplate="footer">
+      <div class="p-d-flex p-jc-center p-ai-center p-mb-2">
+        <button pButton type="button" label="Pay Stake"
+                icon="pi pi-money-bill" class="p-button-outlined"
+                *ngIf="wca.status == 'PENDING' && isOwner"
+        ></button>
+        <button pButton type="button" label="Purchase"
+                icon="pi pi-shopping-cart" class="p-button-outlined"
+                *ngIf="wca.status == 'OPEN' && !isOwner"
+        ></button>
+        <button pButton type="button" label="Update"
+                icon="pi pi-arrow-circle-up" class="p-button-outlined"
+                *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+        ></button>
+        <button pButton type="button" label="Finish"
+                icon="pi pi-times" class="p-button-outlined"
+                *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+        ></button>
+      </div>
+    </ng-template>
+  </p-card>
 
   <div *ngIf="wca != null">
-    <h2>Milestone info: </h2>
-    <div *ngFor="let ms of wca.milestones; let i = index" [attr.data-index]="i">
-      <p>Title: {{ms.title}}</p>
-      <p *ngIf="i == wca.thresholdMilestoneIndex">*threshold*</p>
-      <p *ngIf="i == wca.nextMilestone">*next*</p>
-      <p>Description: {{ms.description}}</p>
-      <p>End time: {{ms.endTimestamp.toLocaleString()}}</p>
-      <p *ngIf="ms.linkToResult != null">Link to result: {{ms.linkToResult}}</p>
+    <h2>Milestones: </h2>
+    <div class="p-d-flex p-flex-column">
+      <p-card *ngFor="let ms of wca.milestones; let i = index" [attr.data-index]="i">
+        <ng-template pTemplate="title">
+          <i *ngIf="i == wca.nextMilestone" class="pi pi-arrow-right"></i>
+          {{ms.title}}
+          <i *ngIf="i == wca.thresholdMilestoneIndex" class="pi pi-star"></i>
+          <i *ngIf="ms.linkToResult != null" class="pi pi-check"></i>
+          <i *ngIf="ms.endTimestamp <= now" class="pi pi-times"></i>
+        </ng-template>
+        <ng-template pTemplate="subtitle">
+          <p>Deadline: {{ms.endTimestamp.toLocaleString()}}</p>
+        </ng-template>
+        {{ms.description}}
+        <ng-template pTemplate="footer" *ngIf="ms.linkToResult != null">
+          <p>Result of this milestone:</p>
+          <p>{{ms.linkToResult}}</p>
+        </ng-template>
+      </p-card>
     </div>
   </div>
 </div>
