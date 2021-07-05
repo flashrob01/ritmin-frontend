@@ -55,12 +55,16 @@ export class WcaService {
       map(res => res.map(v => this.mapToWCA(v))));
   }
 
-  /* public queryWCA(identifier: string): Observable<WCA> {
+  public queryWCA(identifier: string): Observable<WCA> {
     const params = [
       sc.ContractParam.string(identifier)
     ];
-    return this.rpcRequest("queryWCA", params).pipe(map(resp => this.mapToWCA(resp)));
-  } */
+    return this.rpcRequest("queryWCA", params)
+      .pipe(
+        map(res => JSON.parse(atob(res))),
+        map(resp => this.mapToWCA(resp))
+      );
+  }
 
   public queryPurchase(identifier: string, buyer: string): Observable<number> {
     const params = [
@@ -107,15 +111,15 @@ export class WcaService {
       description: resp[1],
       creator: wallet.getAddressFromScriptHash(WcaService.processBase64Hash160(resp[2])),
       creationTimestamp: resp[3] == -1 ? null : new Date(resp[3]),
-      stakePer100Token: resp[4],
-      maxTokenSoldCount: resp[5],
+      stakePer100Token: resp[4] / 100,
+      maxTokenSoldCount: resp[5] / 100,
       milestonesCount: resp[6],
       milestones: this.parseMilestones(resp[7]),
       thresholdMilestoneIndex: resp[8],
       coolDownInterval: resp[9],
       lastUpdateTimestamp: resp[10] == -1 ? null : new Date(resp[10]),
       nextMilestone: resp[11],
-      remainTokenCount: resp[12],
+      remainTokenCount: resp[12] / 100,
       buyerCount: resp[13],
       status: resp[14]
      };
