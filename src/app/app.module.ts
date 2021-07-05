@@ -32,7 +32,7 @@ import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MyWcaComponent } from './components/my-wca/my-wca.component';
-import { WcaInventoryComponent } from './components/wca-inventory/wca-inventory.component';
+import { AboutComponent } from './components/about/about.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +46,7 @@ import { WcaInventoryComponent } from './components/wca-inventory/wca-inventory.
     WcaDetailComponent,
     TimeAgoPipe,
     MyWcaComponent,
-    WcaInventoryComponent
+    AboutComponent,
   ],
   imports: [
     BrowserModule,
