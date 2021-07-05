@@ -14,19 +14,19 @@
     <p>Current status: {{wca.status}}</p>
     <div class="p-d-flex p-jc-center p-ai-center p-mb-2">
       <button pButton type="button" label="Pay Stake"
-              icon="pi pi-search" class="p-button-outlined"
+              icon="pi pi-money-bill" class="p-button-outlined"
               *ngIf="wca.status == 'PENDING' && isOwner"
       ></button>
       <button pButton type="button" label="Purchase"
-              icon="pi pi-search" class="p-button-outlined"
+              icon="pi pi-shopping-cart" class="p-button-outlined"
               *ngIf="wca.status == 'OPEN' && !isOwner"
       ></button>
       <button pButton type="button" label="Update"
-              icon="pi pi-search" class="p-button-outlined"
+              icon="pi pi-arrow-circle-up" class="p-button-outlined"
               *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
       ></button>
       <button pButton type="button" label="Finish"
-              icon="pi pi-search" class="p-button-outlined"
+              icon="pi pi-times" class="p-button-outlined"
               *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
       ></button>
     </div>
