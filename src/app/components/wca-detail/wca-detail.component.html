@@ -24,6 +24,7 @@
       <div class="p-d-flex p-jc-center p-ai-center p-mb-2">
         <button pButton type="button" label="Pay Stake"
                 icon="pi pi-money-bill" class="p-button-outlined"
+                (click)="payStake()"
                 *ngIf="wca.status == 'PENDING' && isOwner"
         ></button>
         <button pButton type="button" label="Purchase"
@@ -37,6 +38,12 @@
         <button pButton type="button" label="Finish"
                 icon="pi pi-times" class="p-button-outlined"
                 *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+        ></button>
+        <!-- Last milestone is expired and not finished, then anyone can finish -->
+        <button pButton type="button" label="Request Finish"
+                icon="pi pi-times" class="p-button-outlined"
+                *ngIf="wca.milestones[wca.milestones.length - 1].endTimestamp < now
+                && wca.status == 'ACTIVE' && !isOwner"
         ></button>
       </div>
     </ng-template>

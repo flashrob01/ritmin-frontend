@@ -65,4 +65,16 @@ export class WcaDetailComponent implements OnInit {
       .map(([key, val]) => `${val} ${key}${val !== 1 ? 's' : ''}`)
       .join(', ');
   }
+
+  payStake(): void {
+    if (this.walletService.address$.getValue() != null) {
+      this.wcaService.transferCatToken(
+        this.walletService.address$.getValue(),
+        this.wca.stakePer100Token * this.wca.maxTokenSoldCount * 100,
+        this.wca.identifier
+      ).subscribe((r) => {
+        console.log(r);
+      });
+    }
+  }
 }
