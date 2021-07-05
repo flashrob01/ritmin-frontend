@@ -32,7 +32,10 @@
         </td>
         <td>{{wca.creationTimestamp | timeAgo}}</td>
         <td>
-          <button pButton type="button" label="Details" icon="pi pi-search" class="p-button-outlined"></button>
+          <button pButton type="button" label="Details"
+                  icon="pi pi-search" class="p-button-outlined"
+                  [routerLink]="['/wcas' , wca.identifier]"
+          ></button>
         </td>
       </tr>
     </ng-template>
