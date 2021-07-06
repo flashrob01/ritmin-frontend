@@ -2,8 +2,8 @@
   <h1>What is this</h1>
   <div class="paragraph p-text-left">
     This is NekoHit Project. A project let you support other's project using the bleeding
-    edge blockchain technology. It looks like Pateron, but it's a better version of Pateron,
-    on Neo N3 blockchain.
+    edge blockchain technology. It looks like Pateron, but it's a better version of
+    Pateron, on Neo N3 blockchain.
   </div>
   <div class="paragraph p-text-left">
     If you're a content creator, then you can create a WCA for your current project.
@@ -12,7 +12,7 @@
     milestones, so creator can have a better control on their project. For each milestone,
     beyond basic title and description, you have to specify a deadline. You have to finish
     those milestones before their deadline, with a link to your work, otherwise you will be
-    punished (see next paragraph).
+    punished (see next paragraph). Now your WCA should be "PENDING".
   </div>
   <div class="paragraph p-text-left">
     Then you should stake some CAT token to your WCA, this is decided by you when you are
@@ -21,7 +21,7 @@
     distributed to your supporters, based on how much they supported you. Thus you can
     gain trust by staking higher rate and finished your project one time. But you should
     make a good plan before you create the WCA, if you cannot catch the time, you'd better
-    hope your supporters can tolerate you.
+    hope your supporters can tolerate you. By staking, your WCA become "OPEN".
   </div>
   <div class="paragraph p-text-left">
     After you pay the stake, your WCA is available to purchase for supporters. If you
@@ -31,15 +31,36 @@
     plan always attract more supporters.
   </div>
   <div class="paragraph p-text-left">
-    Once you finished your first milestone, or
-    After you pay the stake, your WCA is available to purchase for supporters. If you
-    choose to public your project when you create it, them everyone can see your WCA
-    and read the details, then decide if they want to support. If you make it private,
-    then you have to advertise your WCA on your self. A good description and a detailed
-    plan always attract more supporters.
+    Once you finished your first milestone, or you missed your first milestone, your
+    WCA will become "ACTIVE", and no one can make a purchase any more. At this stage,
+    you can continue your work, or early stop it (but you will lose all your unfinished
+    milestones). Please do notice you have to obey your cool down interval you set when
+    you created your WCA. Once the last milestone is finished, WCA contract will
+    automatically compute and transfer then tokens. At this stage, your WCA is "FINISHED".
   </div>
   <div class="paragraph p-text-left">
-    TODO, this is unfinished.
+    If you are a supporter, feel free to browse all kinds of WCAs. Our contract have
+    users in mind when we built it. As a supporter, when you decide to support some
+    project by sending tokens to their WCA, you will be displayed all details of this
+    WCA before you make the purchase, you can go through those important details, like
+    milestones set up, staking rate, and the most important two, the cool down interval
+    and threshold milestone.
+  </div>
+  <div class="paragraph p-text-left">
+    Cool down interval is a limitation set by creator to limit how fast they can finish a
+    milestone. If it's too short, then it's possible to quickly finish all milestones and
+    take away the token, you won't have time to notice this. With some reasonable cool down
+    interval, a creator must wait this amount of time before finish next milestone, so if
+    there is anything goes wrong, you will have time to make refund. Don't forget, you can
+    make a refund at anytime, as long as the WCA isn't finished.
+  </div>
+  <div class="paragraph p-text-left">
+    The threshold milestone is important for refunding. Before that threshold milestone,
+    aka not finished nor expired, you can make a 100% refund, all your token will transfer
+    back to you. But once the WCA passes this threshold, you can only refund for what left,
+    aka what creator haven't done yet. At this point, all finished milestones will count
+    tokens and those part of tokens will be transferred to creator when you make a refund,
+    the rest of your token will be transfer back to you.
   </div>
 
   <h1>How it work</h1>
@@ -68,7 +89,10 @@
     review the code and compile the contract by yourself, then check with the contract we
     deployed to see if this is trustable.
   </div>
-
-  <h1>About us</h1>
-
+  <div class="paragraph p-text-left">
+    For more technical details, please refer to our GitHub repo:
+    <a href="https://github.com/NekoHitDev/Ritmin" target="_blank">contract</a> and
+    <a href="https://github.com/NekoHitDev/ritmin-frontend" target="_blank">frontend</a>
+    . If you have any questions, feel free to join our discord server, we will be there.
+  </div>
 </div>
