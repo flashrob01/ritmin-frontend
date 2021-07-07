@@ -3,11 +3,11 @@ import { MenuItem } from 'primeng/api';
 import { WalletConnectService } from 'src/app/services/walletconnect.service';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class MenuComponent implements OnInit {
 
   items: MenuItem[];
 
@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.items = [
       {icon: 'pi pi-search', label: 'Browse', routerLink: '/'},
+      {icon: 'pi pi-plus', label: 'Create', routerLink: '/new'},
       {icon: 'pi pi-question', label: 'How it works', routerLink: '/about'}
     ];
   }

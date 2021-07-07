@@ -7,10 +7,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MenuModule } from 'primeng/menu';
-import { HeaderComponent } from './components/header/header.component';
+import { MenuComponent } from './components/menu/menu.component';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { MessagesModule } from 'primeng/messages';
@@ -33,12 +33,18 @@ import { TruncatePipe } from './pipes/truncate.pipe';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MyWcaComponent } from './components/my-wca/my-wca.component';
 import { AboutComponent } from './components/about/about.component';
+import { CreateWcaComponent } from './components/create-wca/create-wca.component';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
+import { StepsModule } from 'primeng/steps';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    HeaderComponent,
+    MenuComponent,
     TruncateAddressPipe,
     TruncatePipe,
     FooterComponent,
@@ -47,12 +53,14 @@ import { AboutComponent } from './components/about/about.component';
     TimeAgoPipe,
     MyWcaComponent,
     AboutComponent,
+    CreateWcaComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     MenuModule,
     MenubarModule,
@@ -67,7 +75,12 @@ import { AboutComponent } from './components/about/about.component';
     DividerModule,
     ToastModule,
     TagModule,
-    ProgressBarModule
+    ProgressBarModule,
+    InputTextModule,
+    InputTextareaModule,
+    InputNumberModule,
+    CheckboxModule,
+    StepsModule
   ],
   providers: [
     MessageService
