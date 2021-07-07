@@ -16,4 +16,5 @@ export interface WCA {
   remainTokenCount: number;
   buyerCount: number;
   status: string;
+  isPublic?: boolean;
 }

@@ -39,6 +39,10 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { StepsModule } from 'primeng/steps';
+import { BasicInfoComponent } from './components/create-wca/basic-info/basic-info.component';
+import { MsInfoComponent } from './components/create-wca/ms-info/ms-info.component';
+import { CalendarModule } from 'primeng/calendar';
+import { CompleteComponent } from './components/create-wca/complete/complete.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +58,9 @@ import { StepsModule } from 'primeng/steps';
     MyWcaComponent,
     AboutComponent,
     CreateWcaComponent,
+    BasicInfoComponent,
+    MsInfoComponent,
+    CompleteComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,7 +87,8 @@ import { StepsModule } from 'primeng/steps';
     InputTextareaModule,
     InputNumberModule,
     CheckboxModule,
-    StepsModule
+    StepsModule,
+    CalendarModule
   ],
   providers: [
     MessageService
