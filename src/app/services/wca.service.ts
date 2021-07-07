@@ -55,12 +55,16 @@ export class WcaService {
       map(res => res.map(v => this.mapToWCA(v))));
   }
 
-  /* public queryWCA(identifier: string): Observable<WCA> {
+  public queryWCA(identifier: string): Observable<WCA> {
     const params = [
       sc.ContractParam.string(identifier)
     ];
-    return this.rpcRequest("queryWCA", params).pipe(map(resp => this.mapToWCA(resp)));
-  } */
+    return this.rpcRequest("queryWCA", params)
+      .pipe(
+        map(res => JSON.parse(atob(res))),
+        map(resp => this.mapToWCA(resp))
+      );
+  }
 
   public queryPurchase(identifier: string, buyer: string): Observable<number> {
     const params = [
@@ -89,16 +93,57 @@ export class WcaService {
     /* const params = [info.hash, info.wcaDescription, info.stakePer100Token, info.maxTokenSoldCount,
       info.msTitles, info.msDescriptions, info.endTimestamps, info.thresholdIndex, info.coolDownInterval,
       info.identifier, info.isPublic]; */
-    return this.walletConnectService.invokeFunction(environment.wcaContractHash, "createWCA", parameters).pipe(map(r => r.result));
+    return this.walletConnectService.invokeFunction(environment.wcaContractHash, 'createWCA', parameters).pipe(map(r => r.result));
   }
 
-  public finishMilestone(identifier: string, index: number, proofOfWork: string): void {
+  public transferCatToken(fromAccount: string, amount: number, identifier: string): Observable<any> {
+    const fromParam = {type: 'Address', value: fromAccount};
+    const toParam = {type: 'Hash160', value: environment.wcaContractHash};
+    const amountParam = {type: 'Integer', value: amount};
+    const identifierParam = {type: 'String', value: identifier};
+    const parameters = [fromParam, toParam, amountParam, identifierParam];
+    // this returns nothing, but website might redirect when it's done.
+    return this.walletConnectService.invokeFunction(
+      environment.catTokenHash,
+      'transfer',
+      parameters
+    ).pipe(map(r => r.result));
   }
 
-  public finishWCA(identifier: string): void {
+  public finishMilestone(identifier: string, index: number, proofOfWork: string): Observable<any> {
+    const identifierParam = {type: 'String', value: identifier};
+    const indexParam = {type: 'Integer', value: index};
+    const proofOfWorkParam = {type: 'String', value: proofOfWork};
+    const parameters = [identifierParam, indexParam, proofOfWorkParam];
+    // this returns nothing, but website might redirect when it's done.
+    return this.walletConnectService.invokeFunction(
+      environment.wcaContractHash,
+      'finishMilestone',
+      parameters
+    ).pipe(map(r => r.result));
   }
 
-  public refund(identifier: string, buyer: string): void {
+  public finishWCA(identifier: string): Observable<any> {
+    const identifierParam = {type: 'String', value: identifier};
+    const parameters = [identifierParam];
+    // this returns nothing, but website might redirect when it's done.
+    return this.walletConnectService.invokeFunction(
+      environment.wcaContractHash,
+      'finishWCA',
+      parameters
+    ).pipe(map(r => r.result));
+  }
+
+  public refund(identifier: string, buyer: string): Observable<any> {
+    const identifierParam = {type: 'String', value: identifier};
+    const buyerParam = {type: 'Address', value: buyer};
+    const parameters = [identifierParam, buyerParam];
+    // this returns nothing, but website might redirect when it's done.
+    return this.walletConnectService.invokeFunction(
+      environment.wcaContractHash,
+      'refund',
+      parameters
+    ).pipe(map(r => r.result));
   }
 
   private mapToWCA(resp: any): WCA {
@@ -106,16 +151,16 @@ export class WcaService {
       identifier: resp[0],
       description: resp[1],
       creator: wallet.getAddressFromScriptHash(WcaService.processBase64Hash160(resp[2])),
-      creationTimestamp: resp[3] == -1 ? null : new Date(resp[3]),
-      stakePer100Token: resp[4],
-      maxTokenSoldCount: resp[5],
+      creationTimestamp: new Date(resp[3]),
+      stakePer100Token: resp[4] / 100,
+      maxTokenSoldCount: resp[5] / 100,
       milestonesCount: resp[6],
       milestones: this.parseMilestones(resp[7]),
       thresholdMilestoneIndex: resp[8],
       coolDownInterval: resp[9],
-      lastUpdateTimestamp: resp[10] == -1 ? null : new Date(resp[10]),
+      lastUpdateTimestamp: resp[10] === -1 ? null : new Date(resp[10]),
       nextMilestone: resp[11],
-      remainTokenCount: resp[12],
+      remainTokenCount: resp[12] / 100,
       buyerCount: resp[13],
       status: resp[14]
      };

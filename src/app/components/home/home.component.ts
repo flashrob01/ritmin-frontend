@@ -28,22 +28,4 @@ export class HomeComponent implements OnInit {
       this.wcas = res
     });
   }
-
-  createWCA() {
-    this.wcaService.createWCA(
-      {
-        hash: this.wallet.address$.getValue(),
-        wcaDescription: "amazing",
-        coolDownInterval: 1,
-        msTitles: ["asdf", "dd", "aaa"],
-        msDescriptions: ["asdf", "asdfff", "dddd"],
-        endTimestamps: [1656855948000, 1659534348000, 1662212748000],
-        identifier: "xyz",
-        maxTokenSoldCount: 100,
-        stakePer100Token: 5,
-        thresholdIndex: 2,
-        isPublic: true
-      }).subscribe(res => console.log(res));
-
-  }
 }
