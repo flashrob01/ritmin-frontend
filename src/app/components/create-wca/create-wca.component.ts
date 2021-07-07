@@ -37,7 +37,7 @@ export class CreateWcaComponent implements OnInit {
       {
         hash: this.wallet.address$.getValue(),
         wcaDescription: this.form.get('description').value,
-        coolDownInterval: this.form.get('description').value,
+        coolDownInterval: this.form.get('cooldownInterval').value,
         msTitles: ["asdf", "dd", "aaa"],
         msDescriptions: ["asdf", "asdfff", "dddd"],
         endTimestamps: [1656855948000, 1659534348000, 1662212748000],
