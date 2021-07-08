@@ -4,6 +4,8 @@ import {WcaService} from '../../services/wca.service';
 import {ActivatedRoute} from '@angular/router';
 import {WalletConnectService} from '../../services/walletconnect.service';
 import {wallet} from '@cityofzion/neon-js';
+import { MessageService } from 'primeng/api';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-wca-detail',
@@ -15,11 +17,15 @@ export class WcaDetailComponent implements OnInit {
   purchasedAmount = 0;
   isOwner = false;
   now = new Date();
+  displayPurchase = false;
+  purchaseAmount: number;
+  isLoading = false;
 
   constructor(
     private route: ActivatedRoute,
     private readonly wcaService: WcaService,
-    public readonly walletService: WalletConnectService
+    public readonly walletService: WalletConnectService,
+    private messageService: MessageService
   ) {
   }
 
@@ -73,7 +79,30 @@ export class WcaDetailComponent implements OnInit {
         this.wca.stakePer100Token * this.wca.maxTokenSoldCount * 100,
         this.wca.identifier
       ).subscribe((r) => {
-        console.log(r);
+        if(r['error']) {
+          const message = r['error'].message;
+          this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+        } else {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your payment was successful'});
+        }
+      });
+    }
+  }
+
+  purchase(): void {
+    if (this.walletService.address$.getValue() != null) {
+      this.isLoading = true;
+      this.wcaService.transferCatToken(
+        this.walletService.address$.getValue(),
+        this.purchaseAmount,
+        this.wca.identifier
+      ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+        if(r['error']) {
+          const message = r['error'].message;
+          this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+        } else {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your purchase was successful'});
+        }
       });
     }
   }

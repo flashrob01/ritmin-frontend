@@ -44,6 +44,7 @@ import { MsInfoComponent } from './components/create-wca/ms-info/ms-info.compone
 import { CalendarModule } from 'primeng/calendar';
 import { CompleteComponent } from './components/create-wca/complete/complete.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     CheckboxModule,
     StepsModule,
     CalendarModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    DialogModule
   ],
   providers: [
     MessageService

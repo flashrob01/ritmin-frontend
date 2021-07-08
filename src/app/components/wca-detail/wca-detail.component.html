@@ -30,6 +30,7 @@
         <button pButton type="button" label="Purchase"
                 icon="pi pi-shopping-cart" class="p-button-outlined"
                 *ngIf="wca.status == 'OPEN' && !isOwner"
+                (click)="displayPurchase = true"
         ></button>
         <button pButton type="button" label="Update"
                 icon="pi pi-arrow-circle-up" class="p-button-outlined"
@@ -72,3 +73,19 @@
     </div>
   </div>
 </div>
+
+<p-dialog header="Purchase WCA" [(visible)]="displayPurchase">
+  <ng-container *ngIf="isLoading">
+    <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
+      <p-progressSpinner></p-progressSpinner>
+      <div class="p-mt-2">
+        <small>Please approve the pending request</small>
+      </div>
+    </div>
+  </ng-container>
+  <h4>Set your purchase amount:</h4>
+  <p-inputNumber [(ngModel)]="purchaseAmount"></p-inputNumber>
+  <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()" [disabled]="isLoading"></button>
+</p-dialog>
+
+
