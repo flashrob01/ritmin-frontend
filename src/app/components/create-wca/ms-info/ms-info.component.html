@@ -4,6 +4,7 @@
     <ng-template pTemplate="header">
         <tr>
             <th>#</th>
+            <th>Set threshold</th>
             <th>Title</th>
             <th>Description</th>
             <th>End Date</th>
@@ -13,6 +14,7 @@
     <ng-template pTemplate="body" let-ms>
         <tr>
             <td>{{getIndex(ms.endTimestamp) + 1}}</td>
+            <td><p-checkbox name="groupname" [binary]="true" [(ngModel)]="ms.isThreshold" (click)="setThreshhold(ms)"></p-checkbox></td>
             <td>{{ms.title}}</td>
             <td>{{ms.description}}</td>
             <td>{{ms.endTimestamp | date: 'longDate'}}</td>
@@ -28,7 +30,7 @@
 </ng-template>
 
 <p-divider></p-divider>
-  <form [formGroup]="form" (ngSubmit)="onAdd()">
+  <form [formGroup]="form">
 
     <h4>Title</h4>
     <small>
@@ -53,10 +55,10 @@
       Here comes the Milestone End description
     </small>
     <div class="p-fluid">
-      <p-calendar formControlName="endTimestamp"></p-calendar>
+      <p-calendar formControlName="endTimestamp" [minDate]="minDate" [readonlyInput]="true"></p-calendar>
     </div>
     <div class="p-fluid p-mt-2">
-      <button pButton label="Add" icon="pi pi-plus" type="submit" [disabled]="!form.valid"></button>
+      <button pButton label="Add" icon="pi pi-plus" type="submit" [disabled]="!form.valid" (click)="onAdd()"></button>
     </div>
     <div class="p-d-flex p-jc-between p-mt-2">
       <button pButton label="Go back" icon="pi pi-caret-left" (click)="onBefore()"></button>

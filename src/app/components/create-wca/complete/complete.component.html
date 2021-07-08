@@ -1,11 +1,29 @@
-<h1>Review and create</h1>
+<ng-container *ngIf="!created; else successCreate">
+  <h1>Review and create</h1>
+  <ng-container *ngIf="isLoading">
+    <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
+      <p-progressSpinner></p-progressSpinner>
+      <div class="p-mt-2">
+        <small>Please approve the pending request</small>
+      </div>
+    </div>
+  </ng-container>
+  <h4>Basic Info</h4>
+  {{basicInfo | json}}
 
-<h4>Basic Info</h4>
-{{basicInfo | json}}
+  <h4>Milestones</h4>
+  {{milestones | json}}
 
-<h4>Milestones</h4>
-{{milestones | json}}
+  <div class="p-d-flex p-jc-between">
+    <button pButton label="Go back" icon="pi pi-caret-left" (click)="onBefore()" [disabled]="isLoading"></button>
+    <button pButton label="Create" icon="pi pi-plus" (click)="onComplete()" [disabled]="isLoading"></button>
+  </div>
+</ng-container>
 
-<div class="p-d-flex p-jc-end">
-  <button pButton label="Create" icon="pi pi-plus" (click)="onComplete()"></button>
-</div>
+
+<ng-template #successCreate>
+  <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
+    <h1>Your WCA has been created!</h1>
+    <button pButton label="Browse" icon="pi pi-search" routerLink=""></button>
+  </div>
+</ng-template>

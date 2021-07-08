@@ -23,7 +23,7 @@
     Here comes the cooldown description
   </small>
   <div class="p-fluid">
-    <p-inputNumber formControlName="cooldownInterval"></p-inputNumber>
+    <p-inputNumber [min]="1" formControlName="cooldownInterval"></p-inputNumber>
   </div>
 
   <h4>Tokens to sell</h4>
@@ -31,7 +31,7 @@
     Here comes the Tokens to sell description
   </small>
   <div class="p-fluid">
-    <p-inputNumber formControlName="maxTokenSoldCount"></p-inputNumber>
+    <p-inputNumber [min]="1" formControlName="maxTokenSoldCount"></p-inputNumber>
   </div>
 
   <h4>Stake/Token</h4>
@@ -39,15 +39,7 @@
     Here comes the Stake/Token description
   </small>
   <div class="p-fluid">
-    <p-inputNumber formControlName="stakePerToken"></p-inputNumber>
-  </div>
-
-  <h4>Threshold Index</h4>
-  <small>
-    Here comes the Threshold Index description
-  </small>
-  <div class="p-fluid">
-    <p-inputNumber formControlName="thresholdIndex"></p-inputNumber>
+    <p-inputNumber [min]="0" formControlName="stakePerToken"></p-inputNumber>
   </div>
 
   <h4>Public</h4>

@@ -14,12 +14,18 @@ export class MsInfoComponent implements OnInit {
   form: FormGroup;
   lastForm: any;
   milestones: Milestone[] = [];
+  minDate = new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+1);
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private messageService: MessageService) {
     this.lastForm = this.router.getCurrentNavigation()?.extras?.state?.basicInformation;
+    const saved = this.router?.getCurrentNavigation()?.extras?.state?.ms;
+    if (saved) {
+      this.milestones = saved;
+    }
+
     if (!this.lastForm) {
       this.router.navigate(['']);
     }
@@ -29,7 +35,7 @@ export class MsInfoComponent implements OnInit {
     this.form = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
-      endTimestamp: [new Date(), Validators.required]
+      endTimestamp: [this.minDate, Validators.required]
     });
   }
 
@@ -44,7 +50,12 @@ export class MsInfoComponent implements OnInit {
   }
 
   onNext() {
-    this.router.navigate(['new/complete'], { state: { ms: this.milestones, basicInformation: this.lastForm } });
+    const hasThreshold = !!this.milestones.filter(m => m['isThreshold'] === true).length;
+    if(!hasThreshold) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'You need to select a threshold milestone'});
+    } else {
+      this.router.navigate(['new/complete'], { state: { ms: this.milestones, basicInformation: this.lastForm } });
+    }
   }
 
   onBefore() {
@@ -58,6 +69,12 @@ export class MsInfoComponent implements OnInit {
   onRemove(ms: Milestone) {
     const index = this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]);
     this.milestones.splice(index, 1);
+  }
+
+  setThreshhold(ms: Milestone) {
+    const index = this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]);
+    this.milestones.forEach(m => m['isThreshold'] = false);
+    this.milestones[index]['isThreshold'] = true;
   }
 
 

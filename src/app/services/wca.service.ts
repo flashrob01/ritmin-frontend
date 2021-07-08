@@ -89,10 +89,6 @@ export class WcaService {
     const parameters = [
       owner, wcaDesc, stakePer100Token, maxTokenSoldCount, msTitles, msDescs,
       endTimestamps, thresholdIndex, coolDownInterval, isPublic, identifier];
-
-    /* const params = [info.hash, info.wcaDescription, info.stakePer100Token, info.maxTokenSoldCount,
-      info.msTitles, info.msDescriptions, info.endTimestamps, info.thresholdIndex, info.coolDownInterval,
-      info.identifier, info.isPublic]; */
     return this.walletConnectService.invokeFunction(environment.wcaContractHash, 'createWCA', parameters).pipe(map(r => r.result));
   }
 

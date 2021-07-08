@@ -43,6 +43,7 @@ import { BasicInfoComponent } from './components/create-wca/basic-info/basic-inf
 import { MsInfoComponent } from './components/create-wca/ms-info/ms-info.component';
 import { CalendarModule } from 'primeng/calendar';
 import { CompleteComponent } from './components/create-wca/complete/complete.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { CompleteComponent } from './components/create-wca/complete/complete.com
     InputNumberModule,
     CheckboxModule,
     StepsModule,
-    CalendarModule
+    CalendarModule,
+    ProgressSpinnerModule
   ],
   providers: [
     MessageService
