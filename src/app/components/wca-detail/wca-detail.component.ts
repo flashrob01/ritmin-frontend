@@ -4,8 +4,8 @@ import {WcaService} from '../../services/wca.service';
 import {ActivatedRoute} from '@angular/router';
 import {WalletConnectService} from '../../services/walletconnect.service';
 import {wallet} from '@cityofzion/neon-js';
-import { MessageService } from 'primeng/api';
-import { finalize } from 'rxjs/operators';
+import {MessageService} from 'primeng/api';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-wca-detail',
@@ -50,41 +50,35 @@ export class WcaDetailComponent implements OnInit {
       this.isOwner = this.wca.creator === address;
       if (address != null && !this.isOwner) {
         this.wcaService.queryPurchase(this.wca.identifier, wallet.getScriptHashFromAddress(address))
-          .subscribe((amount) => this.purchasedAmount = amount);
+          .subscribe((amount) => this.purchasedAmount = amount / 100);
       }
     }
   }
 
-  formatDuration(ms: number): string {
-    if (ms < 0) {
-      ms = -ms;
-    }
-    const time = {
-      day: Math.floor(ms / 86400000),
-      hour: Math.floor(ms / 3600000) % 24,
-      minute: Math.floor(ms / 60000) % 60,
-      second: Math.floor(ms / 1000) % 60,
-      millisecond: Math.floor(ms) % 1000
-    };
-    return Object.entries(time)
-      .filter(val => val[1] !== 0)
-      .map(([key, val]) => `${val} ${key}${val !== 1 ? 's' : ''}`)
-      .join(', ');
-  }
-
   payStake(): void {
     if (this.walletService.address$.getValue() != null) {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Request sent',
+        detail: 'Please approve the request in your wallet.'
+      });
       this.wcaService.transferCatToken(
         this.walletService.address$.getValue(),
         this.wca.stakePer100Token * this.wca.maxTokenSoldCount * 100,
         this.wca.identifier
       ).subscribe((r) => {
-        if(r['error']) {
+        if (r['error']) {
           const message = r['error'].message;
           this.messageService.add({severity: 'error', summary: 'Error', detail: message});
         } else {
           this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your payment was successful'});
         }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot get account address. Please connect your wallet first.'
       });
     }
   }
@@ -94,7 +88,7 @@ export class WcaDetailComponent implements OnInit {
       this.isLoading = true;
       this.wcaService.transferCatToken(
         this.walletService.address$.getValue(),
-        this.purchaseAmount,
+        this.purchaseAmount * 100,
         this.wca.identifier
       ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
         if(r['error']) {

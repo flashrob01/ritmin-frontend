@@ -14,11 +14,12 @@
     <p>Remain amount: {{wca.remainTokenCount}} CAT</p>
     <p>Buyer count: {{wca.buyerCount}}</p>
     <p>Total milestone count: {{wca.milestonesCount}}</p>
-    <p>Cool down interval: {{formatDuration(wca.coolDownInterval)}}</p>
+    <p>Cool down interval: {{wca.coolDownInterval | timeDuration}}</p>
     <p>Last
       update: {{wca.lastUpdateTimestamp == null ? "Never" : wca.lastUpdateTimestamp.toLocaleString()}}</p>
     <p>Current status: {{wca.status}}</p>
 
+    <p style="font-weight: bold" *ngIf="purchasedAmount != 0">You have purchased {{purchasedAmount}}CAT</p>
 
     <ng-template pTemplate="footer">
       <div class="p-d-flex p-jc-center p-ai-center p-mb-2">
@@ -84,7 +85,7 @@
     </div>
   </ng-container>
   <h4>Set your purchase amount:</h4>
-  <p-inputNumber [(ngModel)]="purchaseAmount"></p-inputNumber>
+  <p-inputNumber [(ngModel)]="purchaseAmount" [minFractionDigits]="2" [min]="0.01"></p-inputNumber>
   <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()" [disabled]="isLoading"></button>
 </p-dialog>
 

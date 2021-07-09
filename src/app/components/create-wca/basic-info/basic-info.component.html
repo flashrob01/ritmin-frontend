@@ -12,7 +12,7 @@
 
   <h4>Identifier</h4>
   <small>
-    Here comes the cooldown description
+    Here comes the identifier
   </small>
   <div class="p-fluid">
     <input pInputText formControlName="identifier"/>
@@ -20,7 +20,11 @@
 
   <h4>Cooldown Interval</h4>
   <small>
-    Here comes the cooldown description
+    Here comes the cooldown interval, unit is milliseconds
+  </small>
+  <br/>
+  <small>
+    Your input: {{form.get('cooldownInterval').value | timeDuration}}
   </small>
   <div class="p-fluid">
     <p-inputNumber [min]="1" formControlName="cooldownInterval"></p-inputNumber>
@@ -30,16 +34,19 @@
   <small>
     Here comes the Tokens to sell description
   </small>
-  <div class="p-fluid">
+  <div class="p-fluid p-inputgroup">
     <p-inputNumber [min]="1" formControlName="maxTokenSoldCount"></p-inputNumber>
+    <span class="p-inputgroup-addon">.00</span>
+    <span class="p-inputgroup-addon">CAT</span>
   </div>
 
   <h4>Stake/Token</h4>
   <small>
     Here comes the Stake/Token description
   </small>
-  <div class="p-fluid">
-    <p-inputNumber [min]="0" formControlName="stakePerToken"></p-inputNumber>
+  <div class="p-fluid p-inputgroup">
+    <p-inputNumber [min]="0.01" [minFractionDigits]="2" formControlName="stakePerToken"></p-inputNumber>
+    <span class="p-inputgroup-addon">CAT</span>
   </div>
 
   <h4>Public</h4>

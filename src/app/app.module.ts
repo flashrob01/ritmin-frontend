@@ -45,6 +45,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CompleteComponent } from './components/create-wca/complete/complete.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
+import { TimeDurationPipe } from './pipes/time-duration.pipe';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { DialogModule } from 'primeng/dialog';
     BasicInfoComponent,
     MsInfoComponent,
     CompleteComponent,
+    TimeDurationPipe,
   ],
   imports: [
     BrowserModule,
