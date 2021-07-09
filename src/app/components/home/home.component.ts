@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
       size: 100,
     };
     this.wcaService.filterWCA(defaultQuery).subscribe(res => {
-      this.wcas = res
+      this.wcas = res;
     });
   }
 }
