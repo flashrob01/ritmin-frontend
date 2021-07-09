@@ -21,13 +21,20 @@ export class WcaTableComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['wcas'] && !changes['wcas'].firstChange) {
       this.isLoading = false;
-
     }
   }
 
   getProgress(wca: WCA): number {
-    const past = wca.milestones.map(ms => new Date(ms.endTimestamp)).filter(end => end < new Date());
-    return past.length/wca.milestones.length * 100;
+    if (wca.status === 'FINISHED') {
+      return 100;
+    } else if (wca.status !== 'ACTIVE') {
+      return 0;
+    } else {
+      const past = wca.milestones
+        .map((ms, i) => ({index: i, end: ms.endTimestamp}))
+        .filter(ms => ms.end <= new Date() || ms.index < wca.nextMilestone);
+      return past.length / wca.milestones.length * 100;
+    }
   }
 
 }
