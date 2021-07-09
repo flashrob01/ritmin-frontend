@@ -46,6 +46,7 @@ import { CompleteComponent } from './components/create-wca/complete/complete.com
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { TimeDurationPipe } from './pipes/time-duration.pipe';
+import {DropdownModule} from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { TimeDurationPipe } from './pipes/time-duration.pipe';
     StepsModule,
     CalendarModule,
     ProgressSpinnerModule,
-    DialogModule
+    DialogModule,
+    DropdownModule
   ],
   providers: [
     MessageService

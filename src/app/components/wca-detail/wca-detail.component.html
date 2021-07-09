@@ -5,7 +5,7 @@
       {{wca.identifier}}
     </ng-template>
     <ng-template pTemplate="subtitle">
-      <p>By {{wca.creator}}</p>
+      <p>By <a [href]="'https://neo3.neotube.io/address/' + wca.creator">{{wca.creator}}</a></p>
       <p>At {{wca.creationTimestamp.toLocaleString()}}</p>
     </ng-template>
     <p>Description: {{wca.description}}</p>
@@ -41,6 +41,7 @@
         <button pButton type="button" label="Update"
                 icon="pi pi-arrow-circle-up" class="p-button-outlined"
                 *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+                (click)="displayUpdate = true"
         ></button>
         <button pButton type="button" label="Finish"
                 icon="pi pi-times" class="p-button-outlined"
@@ -96,4 +97,21 @@
   <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()" [disabled]="isLoading"></button>
 </p-dialog>
 
-
+<p-dialog header="Update milestone" [(visible)]="displayUpdate">
+  <ng-container *ngIf="isLoading">
+    <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
+      <p-progressSpinner></p-progressSpinner>
+      <div class="p-mt-2">
+        <small>Please approve the pending request</small>
+      </div>
+    </div>
+  </ng-container>
+  <h4>Choose a milestone to update:</h4>
+  <p-dropdown [options]="updatableMilestones" [(ngModel)]="selectedMilestones" optionLabel="title"></p-dropdown>
+  <br/>
+  <small *ngIf="selectedMilestones != undefined">Deadline: {{selectedMilestones.endTime.toLocaleString()}}</small>
+  <h4>Proof of your work:</h4>
+  <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="updateContent"></textarea>
+  <br/>
+  <button pButton icon="pi pi-arrow-circle-up" label="Update" (click)="update()" [disabled]="isLoading"></button>
+</p-dialog>

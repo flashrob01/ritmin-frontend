@@ -18,8 +18,12 @@ export class WcaDetailComponent implements OnInit {
   isOwner = false;
   now = new Date();
   displayPurchase = false;
+  displayUpdate = false;
   purchaseAmount: number;
   isLoading = false;
+  updatableMilestones: { index: number, title: string, endTime: Date }[] = [];
+  selectedMilestones: { index: number, title: string, endTime: Date };
+  updateContent: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,6 +38,14 @@ export class WcaDetailComponent implements OnInit {
       const identifier = param.id;
       this.wcaService.queryWCA(identifier).subscribe((result) => {
         this.wca = result;
+        this.updatableMilestones = this.wca.milestones
+          .map((ms, i) => ({
+            index: i,
+            title: ms.title,
+            endTime: ms.endTimestamp
+          }))
+          .filter((it) => it.index >= this.wca.nextMilestone)
+          .filter((it) => it.endTime > new Date());
         if (this.walletService.address$.getValue() == null) {
           this.walletService.address$.subscribe((address) => {
             this.refreshAddress(address);
@@ -155,6 +167,27 @@ export class WcaDetailComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Error', detail: message});
       } else {
         this.messageService.add({severity: 'success', summary: 'Success', detail: 'WCA is finished!'});
+      }
+    });
+  }
+
+  update(): void {
+    this.isLoading = true;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Request sent',
+      detail: 'Please approve the request in your wallet.'
+    });
+    this.wcaService.finishMilestone(
+      this.wca.identifier,
+      this.selectedMilestones.index,
+      this.updateContent
+    ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+      if (r['error']) {
+        const message = r['error'].message;
+        this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+      } else {
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Update milestone was successful'});
       }
     });
   }
