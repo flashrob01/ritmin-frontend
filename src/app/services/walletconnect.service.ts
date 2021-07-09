@@ -56,8 +56,8 @@ export class WalletConnectService {
       appMetadata: {
         name: "NekoHit",
         description: "NekoHit - A better Pateron on Neo N3",
-        url: "https://myapplicationdescription.app/",
-        icons: ["https://myapplicationdescription.app/myappicon.png"],
+        url: 'https://wca.nekohit.com/',
+        icons: ['https://wca.nekohit.com/assets/logo.png'],
       }
     }).then(session => {
       this.session$.next(session);
