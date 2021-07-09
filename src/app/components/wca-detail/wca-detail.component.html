@@ -33,6 +33,11 @@
                 *ngIf="wca.status == 'OPEN' && !isOwner"
                 (click)="displayPurchase = true"
         ></button>
+        <button pButton type="button" label="Refund"
+                icon="pi pi-times" class="p-button-outlined"
+                *ngIf="purchasedAmount != 0"
+                (click)="makeRefund()"
+        ></button>
         <button pButton type="button" label="Update"
                 icon="pi pi-arrow-circle-up" class="p-button-outlined"
                 *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
@@ -40,12 +45,14 @@
         <button pButton type="button" label="Finish"
                 icon="pi pi-times" class="p-button-outlined"
                 *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+                (click)="requestFinish()"
         ></button>
         <!-- Last milestone is expired and not finished, then anyone can finish -->
         <button pButton type="button" label="Request Finish"
                 icon="pi pi-times" class="p-button-outlined"
                 *ngIf="wca.milestones[wca.milestones.length - 1].endTimestamp < now
                 && wca.status == 'ACTIVE' && !isOwner"
+                (click)="requestFinish()"
         ></button>
       </div>
     </ng-template>

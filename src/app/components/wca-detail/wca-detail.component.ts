@@ -86,18 +86,76 @@ export class WcaDetailComponent implements OnInit {
   purchase(): void {
     if (this.walletService.address$.getValue() != null) {
       this.isLoading = true;
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Request sent',
+        detail: 'Please approve the request in your wallet.'
+      });
       this.wcaService.transferCatToken(
         this.walletService.address$.getValue(),
         this.purchaseAmount * 100,
         this.wca.identifier
       ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
-        if(r['error']) {
+        if (r['error']) {
           const message = r['error'].message;
           this.messageService.add({severity: 'error', summary: 'Error', detail: message});
         } else {
           this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your purchase was successful'});
         }
       });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot get account address. Please connect your wallet first.'
+      });
     }
+  }
+
+  makeRefund(): void {
+    if (this.walletService.address$.getValue() != null) {
+      this.isLoading = true;
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Request sent',
+        detail: 'Please approve the request in your wallet.'
+      });
+      this.wcaService.refund(
+        this.wca.identifier,
+        this.walletService.address$.getValue()
+      ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+        if (r['error']) {
+          const message = r['error'].message;
+          this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+        } else {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: 'Refund approved!'});
+        }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot get account address. Please connect your wallet first.'
+      });
+    }
+  }
+
+  requestFinish(): void {
+    this.isLoading = true;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Request sent',
+      detail: 'Please approve the request in your wallet.'
+    });
+    this.wcaService.finishWCA(
+      this.wca.identifier
+    ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+      if (r['error']) {
+        const message = r['error'].message;
+        this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+      } else {
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'WCA is finished!'});
+      }
+    });
   }
 }

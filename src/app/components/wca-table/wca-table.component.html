@@ -21,7 +21,7 @@
         <td><a [href]="'https://neo3.neotube.io/address/' + wca.creator"><small>{{wca.creator}}</small></a></td>
         <td>{{wca.description | truncate: [60, '...']}}</td>
         <td>
-          {{wca.maxTokenSoldCount*100 | number}}
+          {{wca.maxTokenSoldCount | number}}
         <td>
           {{wca.stakePer100Token}}
         </td>
