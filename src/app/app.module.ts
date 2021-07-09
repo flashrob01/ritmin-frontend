@@ -15,7 +15,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
 import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
@@ -45,6 +45,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { CompleteComponent } from './components/create-wca/complete/complete.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
+import { PendingRequestComponent } from './components/pending-request/pending-request.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
@@ -63,6 +65,7 @@ import { DialogModule } from 'primeng/dialog';
     BasicInfoComponent,
     MsInfoComponent,
     CompleteComponent,
+    PendingRequestComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,10 +95,12 @@ import { DialogModule } from 'primeng/dialog';
     StepsModule,
     CalendarModule,
     ProgressSpinnerModule,
-    DialogModule
+    DialogModule,
+    ConfirmDialogModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })

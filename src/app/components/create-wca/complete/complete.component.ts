@@ -44,7 +44,7 @@ export class CompleteComponent implements OnInit {
         endTimestamps: this.milestones.map(m => m.endTimestamp.getTime()),
         identifier: this.basicInfo.identifier,
         maxTokenSoldCount: this.basicInfo.maxTokenSoldCount,
-        stakePer100Token: this.basicInfo.stakePerToken,
+        stakePer100Token: this.basicInfo.stakePerToken * 100,
         thresholdIndex: this.basicInfo.thresholdMilestoneIndex,
         isPublic: this.basicInfo.isPublic
       }).pipe(finalize(() => this.isLoading = false)).subscribe(r => {
@@ -60,6 +60,10 @@ export class CompleteComponent implements OnInit {
 
   onBefore() {
     this.router.navigate(['new/ms-info'], { state: { basicInformation: this.basicInfo, ms: this.milestones } });
+  }
+
+  getIndex(timestamp: Date): number {
+    return this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === timestamp)[0]);
   }
 
 }
