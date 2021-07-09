@@ -18,8 +18,13 @@ export class WcaDetailComponent implements OnInit {
   isOwner = false;
   now = new Date();
   displayPurchase = false;
+  displayUpdate = false;
   purchaseAmount: number;
   displayPendingRequest = false;
+  isLoading = false;
+  updatableMilestones: { index: number, title: string, endTime: Date }[] = [];
+  selectedMilestones: { index: number, title: string, endTime: Date };
+  updateContent: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,6 +40,14 @@ export class WcaDetailComponent implements OnInit {
       const identifier = param.id;
       this.wcaService.queryWCA(identifier).subscribe((result) => {
         this.wca = result;
+        this.updatableMilestones = this.wca.milestones
+          .map((ms, i) => ({
+            index: i,
+            title: ms.title,
+            endTime: ms.endTimestamp
+          }))
+          .filter((it) => it.index >= this.wca.nextMilestone)
+          .filter((it) => it.endTime > new Date());
         if (this.walletService.address$.getValue() == null) {
           this.walletService.address$.subscribe((address) => {
             this.refreshAddress(address);
@@ -51,26 +64,9 @@ export class WcaDetailComponent implements OnInit {
       this.isOwner = this.wca.creator === address;
       if (address != null && !this.isOwner) {
         this.wcaService.queryPurchase(this.wca.identifier, wallet.getScriptHashFromAddress(address))
-          .subscribe((amount) => this.purchasedAmount = amount);
+          .subscribe((amount) => this.purchasedAmount = amount / 100);
       }
     }
-  }
-
-  formatDuration(ms: number): string {
-    if (ms < 0) {
-      ms = -ms;
-    }
-    const time = {
-      day: Math.floor(ms / 86400000),
-      hour: Math.floor(ms / 3600000) % 24,
-      minute: Math.floor(ms / 60000) % 60,
-      second: Math.floor(ms / 1000) % 60,
-      millisecond: Math.floor(ms) % 1000
-    };
-    return Object.entries(time)
-      .filter(val => val[1] !== 0)
-      .map(([key, val]) => `${val} ${key}${val !== 1 ? 's' : ''}`)
-      .join(', ');
   }
 
   payStake(): void {
@@ -103,7 +99,7 @@ export class WcaDetailComponent implements OnInit {
       this.displayPendingRequest = true;
       this.wcaService.transferCatToken(
         this.walletService.address$.getValue(),
-        this.purchaseAmount,
+        this.purchaseAmount * 100,
         this.wca.identifier
       ).subscribe((r) => {
         this.displayPendingRequest = false;
@@ -114,6 +110,80 @@ export class WcaDetailComponent implements OnInit {
           this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your purchase was successful'});
         }
       });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot get account address. Please connect your wallet first.'
+      });
     }
+  }
+
+  makeRefund(): void {
+   /*  if (this.walletService.address$.getValue() != null) {
+      this.isLoading = true;
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Request sent',
+        detail: 'Please approve the request in your wallet.'
+      });
+      this.wcaService.refund(
+        this.wca.identifier,
+        this.walletService.address$.getValue()
+      ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+        if (r['error']) {
+          const message = r['error'].message;
+          this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+        } else {
+          this.messageService.add({severity: 'success', summary: 'Success', detail: 'Refund approved!'});
+        }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot get account address. Please connect your wallet first.'
+      });
+    } */
+  }
+
+  requestFinish(): void {
+   /*  this.isLoading = true;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Request sent',
+      detail: 'Please approve the request in your wallet.'
+    });
+    this.wcaService.finishWCA(
+      this.wca.identifier
+    ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+      if (r['error']) {
+        const message = r['error'].message;
+        this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+      } else {
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'WCA is finished!'});
+      }
+    }); */
+  }
+
+  update(): void {
+    /* this.isLoading = true;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Request sent',
+      detail: 'Please approve the request in your wallet.'
+    });
+    this.wcaService.finishMilestone(
+      this.wca.identifier,
+      this.selectedMilestones.index,
+      this.updateContent
+    ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
+      if (r['error']) {
+        const message = r['error'].message;
+        this.messageService.add({severity: 'error', summary: 'Error', detail: message});
+      } else {
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Update milestone was successful'});
+      }
+    }); */
   }
 }

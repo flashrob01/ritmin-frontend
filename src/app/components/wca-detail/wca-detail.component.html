@@ -5,7 +5,7 @@
       {{wca.identifier}}
     </ng-template>
     <ng-template pTemplate="subtitle">
-      <p>By {{wca.creator}}</p>
+      <p>By <a [href]="'https://neo3.neotube.io/address/' + wca.creator">{{wca.creator}}</a></p>
       <p>At {{wca.creationTimestamp.toLocaleString()}}</p>
     </ng-template>
     <p>Description: {{wca.description}}</p>
@@ -14,11 +14,12 @@
     <p>Remain amount: {{wca.remainTokenCount}} CAT</p>
     <p>Buyer count: {{wca.buyerCount}}</p>
     <p>Total milestone count: {{wca.milestonesCount}}</p>
-    <p>Cool down interval: {{formatDuration(wca.coolDownInterval)}}</p>
+    <p>Cool down interval: {{wca.coolDownInterval | timeDuration}}</p>
     <p>Last
       update: {{wca.lastUpdateTimestamp == null ? "Never" : wca.lastUpdateTimestamp.toLocaleString()}}</p>
     <p>Current status: {{wca.status}}</p>
 
+    <p style="font-weight: bold" *ngIf="purchasedAmount != 0">You have purchased {{purchasedAmount}}CAT</p>
 
     <ng-template pTemplate="footer">
       <div class="p-d-flex p-jc-center p-ai-center p-mb-2">
@@ -32,19 +33,27 @@
                 *ngIf="wca.status == 'OPEN' && !isOwner"
                 (click)="displayPurchase = true"
         ></button>
+        <button pButton type="button" label="Refund"
+                icon="pi pi-times" class="p-button-outlined"
+                *ngIf="purchasedAmount != 0"
+                (click)="makeRefund()"
+        ></button>
         <button pButton type="button" label="Update"
                 icon="pi pi-arrow-circle-up" class="p-button-outlined"
                 *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+                (click)="displayUpdate = true"
         ></button>
         <button pButton type="button" label="Finish"
                 icon="pi pi-times" class="p-button-outlined"
                 *ngIf="(wca.status == 'OPEN' || wca.status == 'ACTIVE') && isOwner"
+                (click)="requestFinish()"
         ></button>
         <!-- Last milestone is expired and not finished, then anyone can finish -->
         <button pButton type="button" label="Request Finish"
                 icon="pi pi-times" class="p-button-outlined"
                 *ngIf="wca.milestones[wca.milestones.length - 1].endTimestamp < now
                 && wca.status == 'ACTIVE' && !isOwner"
+                (click)="requestFinish()"
         ></button>
       </div>
     </ng-template>
@@ -76,11 +85,29 @@
 
 <p-dialog header="Purchase WCA" [(visible)]="displayPurchase">
   <h4>Set your purchase amount:</h4>
-  <p-inputNumber [(ngModel)]="purchaseAmount"></p-inputNumber>
-  <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()"></button>
+  <p-inputNumber [(ngModel)]="purchaseAmount" [minFractionDigits]="2" [min]="0.01"></p-inputNumber>
+  <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()" [disabled]="isLoading"></button>
 </p-dialog>
-
 
 <app-pending-request [display]="displayPendingRequest">
 
 <p-confirmDialog appendTo="body" [style]="{width: '50vw'}" [baseZIndex]="1000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<p-dialog header="Update milestone" [(visible)]="displayUpdate">
+  <ng-container *ngIf="isLoading">
+    <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
+      <p-progressSpinner></p-progressSpinner>
+      <div class="p-mt-2">
+        <small>Please approve the pending request</small>
+      </div>
+    </div>
+  </ng-container>
+  <h4>Choose a milestone to update:</h4>
+  <p-dropdown [options]="updatableMilestones" [(ngModel)]="selectedMilestones" optionLabel="title"></p-dropdown>
+  <br/>
+  <small *ngIf="selectedMilestones != undefined">Deadline: {{selectedMilestones.endTime.toLocaleString()}}</small>
+  <h4>Proof of your work:</h4>
+  <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="updateContent"></textarea>
+  <br/>
+  <button pButton icon="pi pi-arrow-circle-up" label="Update" (click)="update()" [disabled]="isLoading"></button>
+</p-dialog>

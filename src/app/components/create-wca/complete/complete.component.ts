@@ -43,7 +43,7 @@ export class CompleteComponent implements OnInit {
         msDescriptions: this.milestones.map(m => m.description),
         endTimestamps: this.milestones.map(m => m.endTimestamp.getTime()),
         identifier: this.basicInfo.identifier,
-        maxTokenSoldCount: this.basicInfo.maxTokenSoldCount,
+        maxTokenSoldCount: this.basicInfo.maxTokenSoldCount * 100,
         stakePer100Token: this.basicInfo.stakePerToken * 100,
         thresholdIndex: this.basicInfo.thresholdMilestoneIndex,
         isPublic: this.basicInfo.isPublic

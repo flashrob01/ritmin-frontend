@@ -47,6 +47,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { PendingRequestComponent } from './components/pending-request/pending-request.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TimeDurationPipe } from './pipes/time-duration.pipe';
+import { DropdownModule} from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -66,6 +68,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     MsInfoComponent,
     CompleteComponent,
     PendingRequestComponent,
+    TimeDurationPipe,
   ],
   imports: [
     BrowserModule,
@@ -96,7 +99,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     CalendarModule,
     ProgressSpinnerModule,
     DialogModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    DropdownModule
   ],
   providers: [
     MessageService,
