@@ -6,6 +6,7 @@ import { RpcCallResult, WcSdk } from "./walletconnect";
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { SessionTypes } from "@walletconnect/types";
 import { map } from "rxjs/operators";
+import { MessageService } from "primeng/api";
 
 @Injectable({providedIn: 'root'})
 export class WalletConnectService {
@@ -20,7 +21,9 @@ export class WalletConnectService {
 
   public address$: BehaviorSubject<string> = new BehaviorSubject(null);
 
-  constructor() {
+  public isLoading = true;
+
+  constructor(private messageService: MessageService) {
     this.session$.pipe(map(s => {
       if (!!s) {
         let adr = s.state.accounts[0];
@@ -39,10 +42,11 @@ export class WalletConnectService {
       WalletConnectService.LOG_LEVEL,
       WalletConnectService.RELAY_SERVER,
     ).then((client: WalletConnectClient) => {
-      console.log("client", client);
       this.client$.next(client);
       this.updateSession();
-    });
+    }).catch(err => {
+      this.messageService.add({severity: 'error', summary: 'Error: Initialize Client', detail: err})
+    })
   }
 
   /**
@@ -61,6 +65,8 @@ export class WalletConnectService {
       }
     }).then(session => {
       this.session$.next(session);
+    }).catch(err => {
+      this.messageService.add({severity: 'error', summary: 'Error: Connect Wallet', detail: err})
     })
   }
 
@@ -68,10 +74,16 @@ export class WalletConnectService {
    * updates the current session of the client
    */
   private updateSession(): void {
+    this.isLoading = true;
     WcSdk.getSession(this.client$.getValue()).then(session => {
       this.session$.next(session);
+      this.isLoading = false;
+      if (session) {
+        this.messageService.add({severity: 'success', summary: 'Success: Connect Wallet', detail: 'You have connected your wallet'})
+      }
     }).catch(err => {
-      console.error(err);
+      this.isLoading = false;
+      this.messageService.add({severity: 'error', summary: 'Error: Update Session', detail: err})
     })
   }
 

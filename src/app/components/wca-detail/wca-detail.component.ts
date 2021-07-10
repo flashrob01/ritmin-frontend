@@ -5,6 +5,8 @@ import {ActivatedRoute} from '@angular/router';
 import {WalletConnectService} from '../../services/walletconnect.service';
 import {wallet} from '@cityofzion/neon-js';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { getStatusTag } from 'src/app/utils';
+import { Milestone } from 'src/app/models/milestone';
 
 @Component({
   selector: 'app-wca-detail',
@@ -25,6 +27,7 @@ export class WcaDetailComponent implements OnInit {
   updatableMilestones: { index: number, title: string, endTime: Date }[] = [];
   selectedMilestones: { index: number, title: string, endTime: Date };
   updateContent: string;
+  getStatusTag = getStatusTag;
 
   constructor(
     private route: ActivatedRoute,
@@ -119,6 +122,38 @@ export class WcaDetailComponent implements OnInit {
     }
   }
 
+  getIndex(timestamp: Date): number {
+    return this.wca.milestones.indexOf(this.wca.milestones.filter(m => m.endTimestamp === timestamp)[0]);
+  }
+
+  getStatusTagForMs(ms: Milestone): string {
+    const index = this.wca.nextMilestone;
+    if (this.wca.milestones[index] === ms) {
+      return 'success';
+    }
+    if (ms.endTimestamp < this.wca.milestones[index].endTimestamp) {
+      return 'warning';
+    }
+    else return 'info';
+  }
+
+  getStatusTextForMs(ms: Milestone): string {
+    const index = this.wca.nextMilestone;
+    if (this.wca.milestones[index] === ms) {
+      return 'ACTIVE';
+    }
+    if (ms.endTimestamp < this.wca.milestones[index].endTimestamp) {
+      return 'FINISHED';
+    }
+    else return 'TBR';
+  }
+
+  getMilestoneRowClass(ms: Milestone): string {
+    const index = this.wca.thresholdMilestoneIndex;
+    return this.wca.milestones[index] === ms ? 'highlight' : '';
+
+  }
+
   makeRefund(): void {
    /*  if (this.walletService.address$.getValue() != null) {
       this.isLoading = true;
@@ -186,4 +221,5 @@ export class WcaDetailComponent implements OnInit {
       }
     }); */
   }
+
 }

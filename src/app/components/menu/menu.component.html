@@ -6,14 +6,14 @@
     </div>
   </ng-template>
   <ng-template pTemplate="end">
-    <ng-container *ngIf="walletConnectService.address$ | async as a; else connect">
+    <ng-container *ngIf="wallet.address$ | async as a; else connect">
       <div class="p-d-flex p-flex-row p-ai-center p-jc-center p-mr-2">
-        <img src="assets/neo/neo.png" height="30" alt="neo-n3-logo" class="p-mr-2"/>
-        <div class="p-text-italic"><small>{{ a | truncateAddress}}</small></div>
+        <div class=""><small>{{ a | truncateAddress}}</small></div>
+        <img src="assets/neo/neo.png" height="30" alt="neo-n3-logo" class="p-ml-2"/>
       </div>
     </ng-container>
     <ng-template #connect>
-      <button pButton label="Connect Wallet" icon="fa fa-link" (click)="onConnectBtnClick()"></button>
+      <button pButton label="Connect Wallet" [disabled]="wallet.isLoading" [icon]="wallet.isLoading ? loadingIcon : connectIcon" (click)="onConnectBtnClick()"></button>
     </ng-template>
   </ng-template>
 </p-menubar>

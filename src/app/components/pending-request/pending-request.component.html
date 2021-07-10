@@ -1,9 +1,9 @@
-<p-dialog header="Pending Request" [(visible)]="display" [modal]="true" [closable]="false">
+<p-dialog [header]="header" [(visible)]="display" [modal]="true" [closable]="false">
   <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
-    <img src="assets/logo.png">
+    <img src="assets/logo.png" height="120">
     <div class="p-mt-2">
-      <small>Please approve the pending request</small>
+      <small><p>Please approve the pending request</p></small>
     </div>
-    <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner [style]="{width: '70px', height: '70px'}" ></p-progressSpinner>
   </div>
 </p-dialog>

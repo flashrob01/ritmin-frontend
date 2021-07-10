@@ -1,0 +1,47 @@
+<div class="p-d-flex p-jc-center">
+  <div style="max-width: 1000px;">
+    <p-panel header="Created WCAs" [toggleable]="true">
+      <p-dataView [value]="createdWCAs" [paginator]="true" [rows]="5" sortField="creationTimestamp" [sortOrder]="-1" layout="list">
+        <ng-template let-wca pTemplate="listItem">
+          <div class="p-col-12">
+            <div class="p-d-flex p-jc-between p-ai-center p-m-2">
+              <div>
+                <span class="p-mr-5"><p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag></span>
+                <span class="p-text-bold">{{wca.identifier}}</span>
+              </div>
+              <div>
+                <button pButton type="button" label="Details"
+                        icon="pi pi-search" class="p-button-outlined"
+                        [routerLink]="['/wcas' , wca.identifier]"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </p-panel>
+    <br>
+    <p-panel header="Bought WCAs" [toggleable]="true">
+      <p-dataView [value]="boughtWCAs" [paginator]="true" [rows]="5" sortField="creationTimestamp" [sortOrder]="-1" layout="list">
+        <ng-template let-wca pTemplate="listItem">
+          <div class="p-col-12">
+            <div class="p-d-flex p-jc-between p-ai-center p-m-2">
+              <div>
+                <span class="p-mr-5"><p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag></span>
+                <span class="p-text-bold">{{wca.identifier}}</span>
+              </div>
+              <div>
+                <button pButton type="button" label="Details"
+                        icon="pi pi-search" class="p-button-outlined"
+                        [routerLink]="['/wcas' , wca.identifier]"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </p-panel>
+    </div>
+
+</div>
+

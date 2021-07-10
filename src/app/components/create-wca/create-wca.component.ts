@@ -11,8 +11,8 @@ export class CreateWcaComponent {
 
   activeIndex: number = 0;
   items: MenuItem[] = [
-    {label: 'Informations', routerLink: 'basic-info'},
-    {label: 'Milestones', routerLink: 'ms-info'},
+    {label: 'Informations', routerLink: 'wca'},
+    {label: 'Milestones', routerLink: 'milestones'},
     {label: 'Create'}
   ];
 

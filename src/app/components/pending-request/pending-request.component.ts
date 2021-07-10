@@ -7,6 +7,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class PendingRequestComponent implements OnInit {
 
+  @Input() header = 'Pending Request'
   @Input() display = false;
 
   constructor() { }

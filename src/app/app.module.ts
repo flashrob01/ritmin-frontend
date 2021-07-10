@@ -49,6 +49,10 @@ import { PendingRequestComponent } from './components/pending-request/pending-re
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TimeDurationPipe } from './pipes/time-duration.pipe';
 import { DropdownModule} from 'primeng/dropdown';
+import { FieldsetModule } from 'primeng/fieldset';
+import { PanelModule } from 'primeng/panel';
+import { InventoryComponent } from './components/inventory/inventory.component';
+import { DataViewModule } from 'primeng/dataview';
 
 @NgModule({
   declarations: [
@@ -69,6 +73,7 @@ import { DropdownModule} from 'primeng/dropdown';
     CompleteComponent,
     PendingRequestComponent,
     TimeDurationPipe,
+    InventoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -100,7 +105,10 @@ import { DropdownModule} from 'primeng/dropdown';
     ProgressSpinnerModule,
     DialogModule,
     ConfirmDialogModule,
-    DropdownModule
+    DropdownModule,
+    FieldsetModule,
+    PanelModule,
+    DataViewModule
   ],
   providers: [
     MessageService,
