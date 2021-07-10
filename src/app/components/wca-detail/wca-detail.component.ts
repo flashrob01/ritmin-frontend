@@ -22,7 +22,7 @@ export class WcaDetailComponent implements OnInit {
   purchaseAmount: number;
   isLoading = false;
   updatableMilestones: { index: number, title: string, endTime: Date }[] = [];
-  selectedMilestones: { index: number, title: string, endTime: Date };
+  selectedMilestone: { index: number, title: string, endTime: Date };
   updateContent: string;
 
   constructor(
@@ -46,6 +46,7 @@ export class WcaDetailComponent implements OnInit {
           }))
           .filter((it) => it.index >= this.wca.nextMilestone)
           .filter((it) => it.endTime > new Date());
+        this.selectedMilestone = this.updatableMilestones[0];
         if (this.walletService.address$.getValue() == null) {
           this.walletService.address$.subscribe((address) => {
             this.refreshAddress(address);
@@ -180,7 +181,7 @@ export class WcaDetailComponent implements OnInit {
     });
     this.wcaService.finishMilestone(
       this.wca.identifier,
-      this.selectedMilestones.index,
+      this.selectedMilestone.index,
       this.updateContent
     ).pipe(finalize(() => this.isLoading = false)).subscribe((r) => {
       if (r['error']) {

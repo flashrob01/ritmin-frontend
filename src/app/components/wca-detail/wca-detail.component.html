@@ -107,9 +107,9 @@
     </div>
   </ng-container>
   <h4>Choose a milestone to update:</h4>
-  <p-dropdown [options]="updatableMilestones" [(ngModel)]="selectedMilestones" optionLabel="title"></p-dropdown>
+  <p-dropdown [options]="updatableMilestones" [(ngModel)]="selectedMilestone" optionLabel="title"></p-dropdown>
   <br/>
-  <small *ngIf="selectedMilestones != undefined">Deadline: {{selectedMilestones.endTime.toLocaleString()}}</small>
+  <small *ngIf="selectedMilestone != undefined">Deadline: {{selectedMilestone.endTime.toLocaleString()}}</small>
   <h4>Proof of your work:</h4>
   <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="updateContent"></textarea>
   <br/>
