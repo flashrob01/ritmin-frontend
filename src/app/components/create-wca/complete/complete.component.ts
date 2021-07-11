@@ -59,7 +59,11 @@ export class CompleteComponent implements OnInit {
   }
 
   onBefore() {
-    this.router.navigate(['new/ms-info'], { state: { basicInformation: this.basicInfo, ms: this.milestones } });
+    this.router.navigate(['new/milestones'], { state: { basicInformation: this.basicInfo, ms: this.milestones } });
+  }
+
+  getIndex(timestamp: Date): number {
+    return this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === timestamp)[0]);
   }
 
 }

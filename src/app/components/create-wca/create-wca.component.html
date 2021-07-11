@@ -1,6 +1,8 @@
 <div class="p-d-flex p-jc-center p-ai-center">
   <div class="content-area">
-    <p-steps [model]="items" [(activeIndex)]="activeIndex"></p-steps>
-    <router-outlet></router-outlet>
+    <p-panel header="Create WCA">
+      <p-steps [model]="items" [(activeIndex)]="activeIndex"></p-steps>
+      <router-outlet></router-outlet>
+    </p-panel>
   </div>
 </div>

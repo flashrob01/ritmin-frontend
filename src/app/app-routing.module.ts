@@ -7,6 +7,8 @@ import { AboutComponent } from './components/about/about.component';
 import { BasicInfoComponent } from './components/create-wca/basic-info/basic-info.component';
 import { MsInfoComponent } from './components/create-wca/ms-info/ms-info.component';
 import { CompleteComponent } from './components/create-wca/complete/complete.component';
+import { AuthGuard } from './guards/auth.guard';
+import { InventoryComponent } from './components/inventory/inventory.component';
 
 const routes: Routes = [
   {
@@ -22,13 +24,19 @@ const routes: Routes = [
     component: AboutComponent
   },
   {
+    path: 'inventory',
+    component: InventoryComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'new',
     component: CreateWcaComponent,
     children: [
-      { path: 'basic-info', component: BasicInfoComponent },
-      { path: 'ms-info', component: MsInfoComponent },
+      { path: 'wca', component: BasicInfoComponent },
+      { path: 'milestones', component: MsInfoComponent },
       { path: 'complete', component: CompleteComponent },
-    ]
+    ],
+    canActivate: [AuthGuard]
   },
   {
     path: '**',

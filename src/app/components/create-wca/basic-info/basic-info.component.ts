@@ -44,15 +44,23 @@ export class BasicInfoComponent implements OnInit {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cooldown interval must be a positive value'});
       return;
     }
-    if (this.form.get('identifier').value.length > 40) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Identifier cannot be longer than 40 characters'});
+    if (this.form.get('identifier').value.length > 50) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Identifier cannot be longer than 50 characters'});
       return;
     }
-    if (this.form.get('description').value.length > 400) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Description cannot be longer than 400 characters'});
+    if (this.form.get('description').value.length > 1000) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Description cannot be longer than 1000 characters'});
       return;
     }
-    this.router.navigate(['new/ms-info'], { state: { basicInformation: this.form.getRawValue() } });
+    this.router.navigate(['new/milestones'], { state: { basicInformation: this.form.getRawValue() } });
+  }
+
+  get identifier(): string {
+    return this.form.get('identifier').value;
+  }
+
+  get description(): string {
+    return this.form.get('description').value;
   }
 
 }

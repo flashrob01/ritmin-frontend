@@ -1,31 +1,4 @@
 <div class="p-d-flex p-flex-column p-jc-around p-flex-wrap">
-  <!-- <div class="my-wcas-layout p-mb-5">
-    <p-card>
-      <p-divider align="left">
-        <span class="p-text-bold">My WCAs</span>
-      </p-divider>
-      <div class="p-d-flex p-ai-center p-jc-center">
-        <ng-container *ngIf="!myWCAS.length"; else mywca>
-          <div class="p-d-flex p-flex-column p-jc-center p-ai-center">
-            <ng-container *ngIf="wallet.address$ | async as a; else loggedOut">
-              <div class="p-mb-2">
-                <app-my-wca [wcas]="wcas" [address]="a"></app-my-wca>
-              </div>
-              <button pButton label="Create" icon="pi pi-plus" (click)="createWCA()"></button>
-            </ng-container>
-            <ng-template #loggedOut>
-              <button pButton label="Connect Wallet" icon="pi pi-play" (click)="createWCA()" class="p-button-outlined"></button>
-            </ng-template>
-          </div>
-        </ng-container>
-        <ng-template #mywca></ng-template>
-      </div>
-    </p-card>
-  </div> -->
-
-    <p-divider align="left">
-      <span class="p-text-bold">Browse</span>
-    </p-divider>
-    <app-wca-table [wcas]="wcas"></app-wca-table>
+  <app-wca-table [wcas]="wcas"></app-wca-table>
 </div>
 

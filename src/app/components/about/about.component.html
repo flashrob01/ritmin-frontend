@@ -1,98 +1,109 @@
 <div class="article">
-  <h1>What is this</h1>
-  <div class="paragraph p-text-left">
-    This is NekoHit Project. A project let you support other's project using the bleeding
-    edge blockchain technology. It looks like Pateron, but it's a better version of
-    Pateron, on Neo N3 blockchain.
-  </div>
-  <div class="paragraph p-text-left">
-    If you're a content creator, then you can create a WCA for your current project.
-    By supplying some details information about your project, if everything is ok, then
-    your WCA detail will be stored on blockchain. For each WCA, we split it into multiple
-    milestones, so creator can have a better control on their project. For each milestone,
-    beyond basic title and description, you have to specify a deadline. You have to finish
-    those milestones before their deadline, with a link to your work, otherwise you will be
-    punished (see next paragraph). Now your WCA should be "PENDING".
-  </div>
-  <div class="paragraph p-text-left">
-    Then you should stake some CAT token to your WCA, this is decided by you when you are
-    creating a WCA: A higher stake rate means you will lose more if you don't finish your
-    milestones on time, what you lose is part of token you staked, and this will be
-    distributed to your supporters, based on how much they supported you. Thus you can
-    gain trust by staking higher rate and finished your project one time. But you should
-    make a good plan before you create the WCA, if you cannot catch the time, you'd better
-    hope your supporters can tolerate you. By staking, your WCA become "OPEN".
-  </div>
-  <div class="paragraph p-text-left">
-    After you pay the stake, your WCA is available to purchase for supporters. If you
-    choose to public your project when you create it, them everyone can see your WCA
-    and read the details, then decide if they want to support. If you make it private,
-    then you have to advertise your WCA on your self. A good description and a detailed
-    plan always attract more supporters.
-  </div>
-  <div class="paragraph p-text-left">
-    Once you finished your first milestone, or you missed your first milestone, your
-    WCA will become "ACTIVE", and no one can make a purchase any more. At this stage,
-    you can continue your work, or early stop it (but you will lose all your unfinished
-    milestones). Please do notice you have to obey your cool down interval you set when
-    you created your WCA. Once the last milestone is finished, WCA contract will
-    automatically compute and transfer then tokens. At this stage, your WCA is "FINISHED".
-  </div>
-  <div class="paragraph p-text-left">
-    If you are a supporter, feel free to browse all kinds of WCAs. Our contract have
-    users in mind when we built it. As a supporter, when you decide to support some
-    project by sending tokens to their WCA, you will be displayed all details of this
-    WCA before you make the purchase, you can go through those important details, like
-    milestones set up, staking rate, and the most important two, the cool down interval
-    and threshold milestone.
-  </div>
-  <div class="paragraph p-text-left">
-    Cool down interval is a limitation set by creator to limit how fast they can finish a
-    milestone. If it's too short, then it's possible to quickly finish all milestones and
-    take away the token, you won't have time to notice this. With some reasonable cool down
-    interval, a creator must wait this amount of time before finish next milestone, so if
-    there is anything goes wrong, you will have time to make refund. Don't forget, you can
-    make a refund at anytime, as long as the WCA isn't finished.
-  </div>
-  <div class="paragraph p-text-left">
-    The threshold milestone is important for refunding. Before that threshold milestone,
-    aka not finished nor expired, you can make a 100% refund, all your token will transfer
-    back to you. But once the WCA passes this threshold, you can only refund for what left,
-    aka what creator haven't done yet. At this point, all finished milestones will count
-    tokens and those part of tokens will be transferred to creator when you make a refund,
-    the rest of your token will be transfer back to you.
-  </div>
+    <p-panel header="About NekoHit" [toggleable]="true">
+      <div class="paragraph p-text-left">
+        <div class="p-d-flex p-jc-center">
+          <img src="assets/logo.png">
+        </div>
+        Welcome to the NekoHit Project - a platform built on top of NEO N3 which allows you to support projects from people all around the world
+        using the bleeding edge blockchain technology. As a creator you can fund your "WCA" (Work Completion Agreements)
+        with CAT tokens. On the other hand as a supporter you can help out your favorite content creators.
+        NekoHit has specifically been designed so that both parties are taking a risk as less as possible.
+      </div>
+    </p-panel>
+    <br>
+    <p-panel header="CAT Tokens" [toggleable]="true">
+      <div class="paragraph p-text-left">
+        The CAT token is the currency for the WCA contract. It has a fixed amount of supply of 1 billion in total,
+        with no changes planned in the future.
+        The minimal unit is 0.01CAT. We are trying to make it feel like the real world currency,
+        so you can feel more familiar to spend it. By supplying this amount of tokens,
+        we hope we can eliminate the dramatic change of price caused by crypto currency market.
+      </div>
+    </p-panel>
+    <br>
 
-  <h1>How it work</h1>
+    <p-panel header="How does it work?" [toggleable]="true">
+      <div class="paragraph p-text-left">
+        <div class="paragraph p-text-left">
+          The WCA contract is the core of NekoHit Project. It handles all requests from you.
+          It will create and save your WCA to the blockchain. All of your updates to your WCA
+          are also stored on the blockchain. This means a more open and clear platform to let people
+          trust you and support your project.
 
-  <div class="paragraph p-text-left">
-    The NekoHit Project is a blockchain application built on top of Neo N3.
-    There are two part of this project: CAT token and WCA contract.
-  </div>
-  <div class="paragraph p-text-left">
-    The CAT token is the currency for WCA contract. It has a fixed amount of
-    supply, 1 billion in total, with no change in the future. And the minimal
-    unit is 0.01CAT. We are trying to make it feels like the real world currency,
-    so you can feel more familiar to spend it. By supplying this amount of tokens,
-    we hope we can eliminate the dramatic change of price caused by crypto currency
-    market.
-  </div>
-  <div class="paragraph p-text-left">
-    The WCA contract is the core of NekoHit Project. It handles all requests from you.
-    It will create and save your WCA to the blockchain, all your updates to your WCA
-    also stored on blockchain, this means a more open and clear platform to let people
-    trust you and support your project. If you are a supporter, you can trust the technology
-    of blockchain, no one can tamper the data. You decide which project to support, when
-    to make a refund (at any time). All those requests are processed by our WCA contract
-    running on Neo N3 network automatically. If you don't trust this contract, we make it
-    open sourced on <a href="https://github.com/NekoHitDev/Ritmin">GitHub</a>, so you can
-    review the code and compile the contract by yourself, then check with the contract we
-    deployed to see if this is trustable.
-  </div>
-  <div class="paragraph p-text-left">
-    For more technical details, please refer to our GitHub repo:
-    <a href="https://github.com/NekoHitDev/Ritmin" target="_blank">contract</a> and
-    <a href="https://github.com/NekoHitDev/ritmin-frontend" target="_blank">frontend</a>
-    . If you have any questions, feel free to join our discord server, we will be there.
-  </div>
-</div>
+          <p>If you are a supporter, you can trust the technology
+          of blockchain, no one can tamper the data. You decide which project to support and when
+          to make a refund (at any time).</p>
+
+          All those requests are processed by our WCA contract
+          running on Neo N3 network automatically. If you don't trust this contract or have any doubts then don't worry,
+          we open sourced everything on <a href="https://github.com/NekoHitDev/Ritmin">GitHub</a>, so you can
+          review the code and compile the contract yourself.
+        </div>
+        <div class="paragraph p-text-left">
+          For more technical details, please refer to our GitHub repo:
+          <a href="https://github.com/NekoHitDev/Ritmin" target="_blank">contract</a> and
+          <a href="https://github.com/NekoHitDev/ritmin-frontend" target="_blank">frontend</a>
+          . If you have any questions, feel free to join our discord server, we will be there.
+        </div>
+      </div>
+    </p-panel>
+    <br>
+    <p-panel header="For Creators" [toggleable]="true">
+      <div class="paragraph p-text-left">
+        If you're a content creator then you can create a WCA for your current project and store it on the
+        N3 NEO blockchain. Simply provide some basic information what your project is about, set milestones
+        and you can get started.
+        Each WCA will be split into multiple milestones, so you can have a better control over your project which
+        at the same time provides more transparency for your supporters.
+        Each milestone requires a title, description and a deadline. It is important that you finish your milestones
+        <b>before</b> that and provide proof to your work with a link which leads to said proof. Not finishing a milestone
+        in time will have consequences. After finishing a milestone your WCA should now have the status <p-tag value="PENDING" severity="warning"></p-tag>.
+      </div>
+      <div class="paragraph p-text-left">
+        Your last step before your WCA becomes available for the public is staking some CAT tokens.
+        The amount of tokens you will have to provide is your choice. A higher stake rate means you will lose more tokens
+        if you don't finish a milestone in time. In case this happens, part of the staked tokens will
+        be distributed to your supporters based on how much they initially supported you.
+        <p>
+          Thus you can gain trust by staking higher rates and finish your project on time. But you should
+          make a good plan before you create the WCA, if you can't finish a milestone in time, you better
+          hope that your supporters tolerate you. After successfully staking, your WCA has now the status <p-tag value="OPEN" severity="success"></p-tag>.
+        </p>
+      </div>
+      <div class="paragraph p-text-left">
+        After you pay the stake, your WCA is available to purchase for supporters. If you
+        chose the option that your WCA will be publicly listed then everyone can see your WCA, read the details,
+        and then decide if they want to support you. If you set it to private,
+        then you have to advertise your WCA on your self by sharing the identifier of your WCA.
+        A good description and a detailed plan always attract more supporters.
+      </div>
+      <div class="paragraph p-text-left">
+        Once you finished your first milestone or you missed your first milestone, your
+        WCA will become <p-tag value="ACTIVE" severity="info"></p-tag>, and no one can make a purchase anymore.
+        At this stage you can continue your work, or early stop it (but you will lose all your unfinished
+        milestones). Please do notice you have to obey your cooldown interval you set when
+        you created your WCA. Once the last milestone is finished, WCA contract will
+        automatically compute and transfer the tokens. At this stage, your WCA is <p-tag value="FINISHED" severity="danger"></p-tag>.
+      </div>
+    </p-panel>
+    <br>
+
+    <p-panel header="For Supporters" [toggleable]="true">
+      <div class="paragraph p-text-left">
+        If you are a supporter feel free to browse all kinds of WCAs. Our contract have
+        users in mind when we built it. As a supporter when you decide to support some
+        projects by sending tokens to their WCA, you will be displayed all details of this
+        WCA before you make the purchase, you can go through those important details, like
+        milestones set up, staking rate, and the most important two options which are the cool down interval
+        and the threshold milestone.
+      </div>
+      <div class="paragraph p-text-left">
+        The cooldown interval is a limitation set by creator to limit how fast they can finish a
+        milestone. If it's too short then it's possible to quickly finish all milestones and
+        take away the tokens and you won't have time to notice this. With some reasonable cooldown
+        interval a creator must wait this amount of time before finishing the next milestone. If
+        anything goes wrong, you will have time to make a refund. Don't forget, you can
+        make a refund anytime, as long as the WCA isn't finished.
+      </div>
+    </p-panel>
+

@@ -5,3 +5,10 @@ p-card {
 button {
   margin-left: 1.25rem;
 }
+:host ::ng-deep .highlight {
+  background-color: rgba(183, 248, 153, 0.397) !important;
+}
+
+:host ::ng-deep .purchasedRow {
+  background-color: rgb(245, 149, 149);
+}

@@ -1,38 +1,43 @@
-<h1>Basic Information</h1>
 <form [formGroup]="form" (ngSubmit)="onNext()">
-  <h4>Description</h4>
-  <small>
-    Describe what your WCA is about in 2-3 short but precise sentences.
-    Add a link which leads to your project website which may show more information
-    about your goals.
-  </small>
-  <div class="p-fluid">
-    <textarea [rows]="5" [cols]="30" pInputTextarea [autoResize]="true" formControlName="description"></textarea>
-  </div>
-
   <h4>Identifier</h4>
   <small>
-    Here comes the identifier
+    <p>Each identifier is unique and can only be used once. Share this identifier
+    with others so they can quickly find your WCA. It can contain special characters and have a maximum length of 50.</p>
   </small>
   <div class="p-fluid">
-    <input pInputText formControlName="identifier"/>
+    <input pInputText formControlName="identifier" [maxlength]="50"/>
   </div>
-
+  <p [ngClass]="{'warning' : identifier.length == 50}"><small>{{ 50 - identifier.length }} characters left</small></p>
+  <h4>Description</h4>
+  <small>
+    <p>
+    Describe your WCA as precise as possible. What are you trying to do, what are the goals... It is helpful to add some links where buyers can
+    find out even more about your project. The description can have a maximum length of 1000 characters.</p>
+  </small>
+  <div class="p-fluid">
+    <textarea [maxlength]="1000" [rows]="5" [cols]="30" pInputTextarea [autoResize]="true" formControlName="description"></textarea>
+  </div>
+  <p [ngClass]="{'warning' : description.length == 1000}"><small>{{ 1000 - description.length }} characters left</small></p>
   <h4>Cooldown Interval</h4>
-  <small>
-    Here comes the cooldown interval, unit is milliseconds
-  </small>
+  <small><p>
+    The cooldown interval is the duration you as a creator will have to wait until you can mark a milestone as completed.
+    Please keep in mind that the input is in <i>milliseconds</i>.</p></small>
   <br/>
-  <small>
-    Your input: {{form.get('cooldownInterval').value | timeDuration}}
-  </small>
   <div class="p-fluid">
     <p-inputNumber [min]="1" formControlName="cooldownInterval"></p-inputNumber>
   </div>
+  <div class="p-text-center p-fluid" style="border: 1px solid lightgreen">
+    <small><p>
+      <b>{{form.get('cooldownInterval').value | timeDuration}}</b>
+      </p>
+    </small>
+  </div>
 
-  <h4>Tokens to sell</h4>
+  <h4>Available Tokens</h4>
   <small>
-    Here comes the Tokens to sell description
+    <p>
+      Specify how many tokens are available to be bought by your supporters.
+    </p>
   </small>
   <div class="p-fluid p-inputgroup">
     <p-inputNumber [min]="1" formControlName="maxTokenSoldCount"></p-inputNumber>
@@ -42,21 +47,25 @@
 
   <h4>Stake/Token</h4>
   <small>
-    Here comes the Stake/Token description
+    <p>
+      This option determines how many tokens you will have to stake in order to start your WCA. The total
+      stake amount is calculated with the following formula: availableTokens * stake/token. </p> <p>Ex.: If there are 5000 tokens to buy
+      and your stake/token value 0.5, your staking amount is 2500 tokens.</p>
+
   </small>
   <div class="p-fluid p-inputgroup">
-    <p-inputNumber [min]="0.01" [minFractionDigits]="2" formControlName="stakePerToken"></p-inputNumber>
+    <p-inputNumber [min]="0" [minFractionDigits]="2" formControlName="stakePerToken"></p-inputNumber>
     <span class="p-inputgroup-addon">CAT</span>
   </div>
 
   <h4>Public</h4>
   <small>
-    Here comes the public description
+    <p>Check this box if you want your WCA to be publicly listed. Private WCA's can only be found with the identifier.</p>
   </small>
   <div class="p-fluid">
     <p-checkbox formControlName="isPublic" [binary]="true"></p-checkbox>
   </div>
   <div class="p-d-flex p-jc-end">
-    <button pButton label="Next" icon="pi pi-caret-right" type="submit" [disabled]="!form.valid"></button>
+    <button pButton label="Next" icon="pi pi-forward" type="submit" [disabled]="!form.valid"></button>
   </div>
 </form>

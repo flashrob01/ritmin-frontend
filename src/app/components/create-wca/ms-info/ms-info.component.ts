@@ -45,6 +45,14 @@ export class MsInfoComponent implements OnInit {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Another miletone already ends on this date'});
       return;
     }
+    if (this.form.get('title').value.length > 30) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Title cannot be longer than 30 characters'});
+      return;
+    }
+    if (this.form.get('description').value.length > 400) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Description cannot be longer than 400 characters'});
+      return;
+    }
     this.milestones.push(ms);
     this.milestones.sort((a,b)=>a.endTimestamp.getTime()-b.endTimestamp.getTime());
   }
@@ -59,7 +67,7 @@ export class MsInfoComponent implements OnInit {
   }
 
   onBefore() {
-    this.router.navigate(['new/basic-info'], { state: { basicInformation: this.lastForm } });
+    this.router.navigate(['new/wca'], { state: { basicInformation: this.lastForm } });
   }
 
   getIndex(timestamp: Date): number {
@@ -75,6 +83,15 @@ export class MsInfoComponent implements OnInit {
     const index = this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]);
     this.milestones.forEach(m => m['isThreshold'] = false);
     this.milestones[index]['isThreshold'] = true;
+  }
+
+
+  get title(): string {
+    return this.form.get('title').value;
+  }
+
+  get description(): string {
+    return this.form.get('description').value;
   }
 
 

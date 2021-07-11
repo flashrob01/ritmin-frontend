@@ -15,7 +15,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
 import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
@@ -45,8 +45,14 @@ import { CalendarModule } from 'primeng/calendar';
 import { CompleteComponent } from './components/create-wca/complete/complete.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
+import { PendingRequestComponent } from './components/pending-request/pending-request.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TimeDurationPipe } from './pipes/time-duration.pipe';
-import {DropdownModule} from 'primeng/dropdown';
+import { DropdownModule} from 'primeng/dropdown';
+import { FieldsetModule } from 'primeng/fieldset';
+import { PanelModule } from 'primeng/panel';
+import { InventoryComponent } from './components/inventory/inventory.component';
+import { DataViewModule } from 'primeng/dataview';
 
 @NgModule({
   declarations: [
@@ -65,7 +71,9 @@ import {DropdownModule} from 'primeng/dropdown';
     BasicInfoComponent,
     MsInfoComponent,
     CompleteComponent,
+    PendingRequestComponent,
     TimeDurationPipe,
+    InventoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -96,10 +104,15 @@ import {DropdownModule} from 'primeng/dropdown';
     CalendarModule,
     ProgressSpinnerModule,
     DialogModule,
-    DropdownModule
+    ConfirmDialogModule,
+    DropdownModule,
+    FieldsetModule,
+    PanelModule,
+    DataViewModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })
