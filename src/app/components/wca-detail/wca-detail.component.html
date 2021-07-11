@@ -38,6 +38,10 @@
                   </td>
                 </tr>
                 <tr>
+                  <td>Status</td>
+                  <td><p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag></td>
+                </tr>
+                <tr>
                   <td>Creator</td>
                   <td><a [href]="'https://neo3.neotube.io/address/' + wca.creator">{{wca.creator}}</a></td>
                 </tr>
@@ -81,10 +85,6 @@
                 <tr>
                   <td>Last update</td>
                   <td>{{wca.lastUpdateTimestamp == null ? "Never" : (wca.lastUpdateTimestamp | date: 'medium')}}</td>
-                </tr>
-                <tr>
-                  <td>Status</td>
-                  <td><p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag></td>
                 </tr>
               </ng-template>
             </p-table>
