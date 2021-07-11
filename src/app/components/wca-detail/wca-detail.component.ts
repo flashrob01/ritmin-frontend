@@ -81,6 +81,9 @@ export class WcaDetailComponent implements OnInit {
     if (this.wca.milestones[index] === ms) {
       return 'success';
     }
+    if (this.wca.milestones.indexOf(ms) < index && !ms.linkToResult) {
+      return 'warning';
+    }
     if (index === this.wca.milestones.length || ms.endTimestamp < this.wca.milestones[index]?.endTimestamp) {
       return 'danger';
     }
@@ -92,6 +95,10 @@ export class WcaDetailComponent implements OnInit {
     if (this.wca.milestones[index] === ms) {
       return 'ACTIVE';
     }
+    if (this.wca.milestones.indexOf(ms) < index && !ms.linkToResult) {
+      return 'SKIPPED';
+    }
+
     if (index === this.wca.milestones.length || ms.endTimestamp < this.wca.milestones[index]?.endTimestamp) {
       return 'FINISHED';
     }
