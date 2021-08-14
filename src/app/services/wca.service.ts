@@ -39,7 +39,13 @@ export class WcaService {
   constructor(private readonly walletConnectService: WalletConnectService) {}
 
   private rpcRequest(method: string, params: any[]): Observable<any> {
-    return from(WcaService.RPC_CLIENT.invokeFunction(environment.wcaContractHash, method, params))
+    return from(
+      WcaService.RPC_CLIENT.invokeFunction(environment.wcaContractHash, method, params)
+        .then(r => {
+          console.log(`invokeRead: ${method}\nparam: ${JSON.stringify(params)}\nresult: ${JSON.stringify(r)}`);
+          return r;
+        })
+    )
     .pipe(map(resp => resp.stack[0]?.value as string));
   }
 

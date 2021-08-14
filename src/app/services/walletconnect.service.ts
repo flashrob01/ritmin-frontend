@@ -114,7 +114,13 @@ export class WalletConnectService {
   } */
 
   public invokeFunction(scriptHash: string, method: string, params: any[]): Observable<RpcCallResult> {
-    return from(WcSdk.invokeFunction(this.client$.getValue(), this.session$.getValue(), environment.chainId, scriptHash, method, params));
+    return from(
+      WcSdk.invokeFunction(this.client$.getValue(), this.session$.getValue(), environment.chainId, scriptHash, method, params)
+        .then(r => {
+          console.log(`invokeWrite: ${method}\nparam: ${JSON.stringify(params)}\nresult: ${JSON.stringify(r)}`);
+          return r;
+        })
+    );
   }
 
 }
