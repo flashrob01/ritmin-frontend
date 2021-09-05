@@ -1,19 +1,38 @@
 <p-panel header="Browse">
   <div>
-    <p-table [value]="wcas" styleClass="p-datatable-sm p-datatable-responsive-demo" [autoLayout]="true" [loading]="isLoading" [paginator]="true"
-    [rows]="20" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,20,50]" [totalRecords]="wcas.length" sortField="creationTimestamp" [sortOrder]="-1"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" stateStorage="session" stateKey="pennycapstable-session"
-    [responsive]="true">
+    <p-table [value]="wcas" styleClass="p-datatable-sm p-datatable-responsive-demo" [autoLayout]="true"
+             [loading]="isLoading" [paginator]="true"
+             [rows]="20" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,20,50]" [totalRecords]="wcas.length"
+             sortField="creationTimestamp" [sortOrder]="-1"
+             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" stateStorage="session"
+             stateKey="pennycapstable-session"
+             [responsive]="true">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="identifier">Identifier <p-sortIcon field="identifier"></p-sortIcon></th>
-          <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
-          <th pSortableColumn="maxTokenSoldCount">Tokens <p-sortIcon field="maxTokenSoldCount"></p-sortIcon></th>
-          <th pSortableColumn="stakePer100Token">Stake Rate <p-sortIcon field="stakePer100Token"></p-sortIcon></th>
-          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="progress">Progress <p-sortIcon field="progress"></p-sortIcon></th>
-          <th pSortableColumn="creationTimestamp">Created <p-sortIcon field="creationTimestamp"></p-sortIcon></th>
-          <th pSortableColumn="buyerCount">Buyers <p-sortIcon field="buyerCount"></p-sortIcon></th>
+          <th pSortableColumn="identifier">Identifier
+            <p-sortIcon field="identifier"></p-sortIcon>
+          </th>
+          <th pSortableColumn="description">Description
+            <p-sortIcon field="description"></p-sortIcon>
+          </th>
+          <th pSortableColumn="maxTokenSoldCount">Tokens
+            <p-sortIcon field="maxTokenSoldCount"></p-sortIcon>
+          </th>
+          <th pSortableColumn="stakePer100Token">Stake Rate
+            <p-sortIcon field="stakePer100Token"></p-sortIcon>
+          </th>
+          <th pSortableColumn="status">Status
+            <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th pSortableColumn="progress">Progress
+            <p-sortIcon field="progress"></p-sortIcon>
+          </th>
+          <th pSortableColumn="creationTimestamp">Created
+            <p-sortIcon field="creationTimestamp"></p-sortIcon>
+          </th>
+          <th pSortableColumn="buyerCount">Buyers
+            <p-sortIcon field="buyerCount"></p-sortIcon>
+          </th>
           <th></th>
         </tr>
       </ng-template>
@@ -26,7 +45,9 @@
           <td>
             {{wca.stakePer100Token}}
           </td>
-          <td><p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag></td>
+          <td>
+            <p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag>
+          </td>
           <td>
             <p-progressBar [value]="getProgress(wca)"></p-progressBar>
           </td>

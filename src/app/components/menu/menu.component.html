@@ -1,7 +1,7 @@
 <p-menubar [model]="items">
   <ng-template pTemplate="start">
     <div pRipple class="p-d-flex p-ai-center p-jc-center p-mr-4" [routerLink]="''">
-     <img src="assets/logo.png" height="46" class="logo" alt="nekohit-logo"/>
+      <img src="assets/logo.png" height="46" class="logo" alt="nekohit-logo"/>
       <span class="p-ml-3 p-text-bold">NekoHit</span>
     </div>
   </ng-template>
@@ -13,7 +13,8 @@
       </div>
     </ng-container>
     <ng-template #connect>
-      <button pButton label="Connect Wallet" [disabled]="wallet.isLoading()" [icon]="wallet.isLoading() ? loadingIcon : connectIcon" (click)="onConnectBtnClick()"></button>
+      <button pButton label="Connect Wallet" [disabled]="wallet.isLoading()"
+              [icon]="wallet.isLoading() ? loadingIcon : connectIcon" (click)="onConnectBtnClick()"></button>
     </ng-template>
   </ng-template>
 </p-menubar>

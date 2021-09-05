@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { Milestone } from 'src/app/models/milestone';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {MessageService} from 'primeng/api';
+import {Milestone} from 'src/app/models/milestone';
 
 @Component({
   selector: 'app-ms-info',
@@ -14,7 +14,7 @@ export class MsInfoComponent implements OnInit {
   form: FormGroup;
   lastForm: any;
   milestones: Milestone[] = [];
-  minDate = new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+1);
+  minDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1);
 
   constructor(
     private fb: FormBuilder,
@@ -41,7 +41,7 @@ export class MsInfoComponent implements OnInit {
 
   onAdd() {
     const ms = this.form.getRawValue();
-    if( this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]) {
+    if (this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Another miletone already ends on this date'});
       return;
     }
@@ -54,20 +54,20 @@ export class MsInfoComponent implements OnInit {
       return;
     }
     this.milestones.push(ms);
-    this.milestones.sort((a,b)=>a.endTimestamp.getTime()-b.endTimestamp.getTime());
+    this.milestones.sort((a, b) => a.endTimestamp.getTime() - b.endTimestamp.getTime());
   }
 
   onNext() {
     const hasThreshold = !!this.milestones.filter(m => m['isThreshold'] === true).length;
-    if(!hasThreshold) {
+    if (!hasThreshold) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'You need to select a threshold milestone'});
     } else {
-      this.router.navigate(['new/complete'], { state: { ms: this.milestones, basicInformation: this.lastForm } });
+      this.router.navigate(['new/complete'], {state: {ms: this.milestones, basicInformation: this.lastForm}});
     }
   }
 
   onBefore() {
-    this.router.navigate(['new/wca'], { state: { basicInformation: this.lastForm } });
+    this.router.navigate(['new/wca'], {state: {basicInformation: this.lastForm}});
   }
 
   getIndex(timestamp: Date): number {

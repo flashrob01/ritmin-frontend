@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-pending-request',
@@ -7,10 +7,11 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class PendingRequestComponent implements OnInit {
 
-  @Input() header = 'Pending Request'
+  @Input() header = 'Pending Request';
   @Input() display = false;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

@@ -1,6 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { WCA } from 'src/app/models/wca';
-import { getStatusTag } from 'src/app/utils';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {WCA} from 'src/app/models/wca';
+import {getStatusTag} from 'src/app/utils';
 
 @Component({
   selector: 'app-wca-table',
@@ -14,9 +14,11 @@ export class WcaTableComponent implements OnInit, OnChanges {
   isLoading = true;
   getStatusTag = getStatusTag;
 
-  constructor() { }
+  constructor() {
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['wcas'] && !changes['wcas'].firstChange) {

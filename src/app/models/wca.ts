@@ -1,4 +1,4 @@
-import { Milestone } from "./milestone";
+import {Milestone} from './milestone';
 
 export interface WCA {
   identifier: string;

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-basic-info',
@@ -52,7 +52,7 @@ export class BasicInfoComponent implements OnInit {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Description cannot be longer than 1000 characters'});
       return;
     }
-    this.router.navigate(['new/milestones'], { state: { basicInformation: this.form.getRawValue() } });
+    this.router.navigate(['new/milestones'], {state: {basicInformation: this.form.getRawValue()}});
   }
 
   get identifier(): string {

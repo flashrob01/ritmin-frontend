@@ -2,9 +2,11 @@ p-card {
   width: 30rem;
   margin-bottom: 2rem;
 }
+
 button {
   margin-left: 1.25rem;
 }
+
 :host ::ng-deep .highlight {
   background-color: rgba(183, 248, 153, 0.397) !important;
 }

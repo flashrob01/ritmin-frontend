@@ -1,125 +1,129 @@
+<ng-container *ngIf="wca; else noWCA">
+  <div class="p-d-flex p-flex-column">
 
-    <ng-container *ngIf="wca; else noWCA">
-      <div class="p-d-flex p-flex-column">
+    <div class="p-d-flex p-flex-row p-flex-wrap">
+      <p-panel header="Details" [toggleable]="true">
+        <p-table [value]="[1]">
+          <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-end" *ngIf="walletService.getAddress$().getValue() != null">
 
-        <div class="p-d-flex p-flex-row p-flex-wrap">
-          <p-panel header="Details" [toggleable]="true">
-            <p-table [value]="[1]">
-              <ng-template pTemplate="caption">
-                <div class="p-d-flex p-ai-center p-jc-end" *ngIf="walletService.getAddress$().getValue() != null">
+              <ng-container *ngIf="isOwner">
+                <button pButton type="button" label="Pay Stake" icon="pi pi-send" (click)="payStake()"
+                        [disabled]="wca.status !== 'PENDING'"></button>
 
-                  <ng-container *ngIf="isOwner">
-                    <button pButton type="button" label="Pay Stake" icon="pi pi-send" (click)="payStake()"
-                            [disabled]="wca.status !== 'PENDING'"></button>
+                <button pButton type="button" label="Update" icon="pi pi-upload"
+                        [disabled]="wca.status !== 'OPEN' && wca.status != 'ACTIVE'"
+                        (click)="displayUpdate = true"></button>
 
-                    <button pButton type="button" label="Update" icon="pi pi-upload"
-                            [disabled]="wca.status !== 'OPEN' && wca.status != 'ACTIVE'"
-                            (click)="displayUpdate = true"></button>
+                <button pButton type="button" label="Finish" icon="pi pi-check"
+                        [disabled]="wca.status !== 'OPEN' && wca.status !== 'ACTIVE'"
+                        (click)="requestFinish()"></button>
+              </ng-container>
 
-                    <button pButton type="button" label="Finish" icon="pi pi-check"
-                            [disabled]="wca.status !== 'OPEN' && wca.status !== 'ACTIVE'"
-                            (click)="requestFinish()"></button>
-                  </ng-container>
+              <ng-container *ngIf="!isOwner" class="p-fluid">
+                <button pButton type="button" label="Refund" icon="pi pi-undo" [disabled]="purchasedAmount === 0"
+                        (click)="makeRefund()"></button>
 
-                  <ng-container *ngIf="!isOwner" class="p-fluid">
-                    <button pButton type="button" label="Refund" icon="pi pi-undo" [disabled]="purchasedAmount === 0"
-                    (click)="makeRefund()"></button>
+                <button pButton type="button" label="Purchase" icon="pi pi-shopping-cart"
+                        [disabled]="wca.status !== 'OPEN'"
+                        (click)="displayPurchase = true"></button>
 
-                    <button pButton type="button" label="Purchase" icon="pi pi-shopping-cart" [disabled]="wca.status !== 'OPEN'"
-                      (click)="displayPurchase = true"></button>
-
-                    <button pButton type="button" label="Request Finish" icon="pi pi-times"
-                    *ngIf="wca.milestones[wca.milestones.length - 1].endTimestamp < now && wca.status == 'ACTIVE'" (click)="requestFinish()"></button>
-                  </ng-container>
-                </div>
-              </ng-template>
-              <ng-template pTemplate="body">
-                <tr *ngIf="walletService.getAddress$().getValue() != null">
-                  <td colspan="2" class="purchasedRow p-text-center">
+                <button pButton type="button" label="Request Finish" icon="pi pi-times"
+                        *ngIf="wca.milestones[wca.milestones.length - 1].endTimestamp < now && wca.status == 'ACTIVE'"
+                        (click)="requestFinish()"></button>
+              </ng-container>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="body">
+            <tr *ngIf="walletService.getAddress$().getValue() != null">
+              <td colspan="2" class="purchasedRow p-text-center">
                     <span class="p-text-bold p-text-center">You have purchased {{purchasedAmount}}
                       CAT from this WCA</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Status</td>
-                  <td><p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag></td>
-                </tr>
-                <tr>
-                  <td>Creator</td>
-                  <td><a [href]="'https://neo3.neotube.io/address/' + wca.creator">{{wca.creator}}</a></td>
-                </tr>
+              </td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>
+                <p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag>
+              </td>
+            </tr>
+            <tr>
+              <td>Creator</td>
+              <td><a [href]="'https://neo3.neotube.io/address/' + wca.creator">{{wca.creator}}</a></td>
+            </tr>
 
-                <tr>
-                  <td>Created at</td>
-                  <td>{{wca.creationTimestamp.toLocaleString()}}</td>
-                </tr>
-                <tr>
-                  <td>Identifier</td>
-                  <td>{{wca.identifier}}</td>
-                </tr>
-                <tr>
-                  <td>Description</td>
-                  <td>{{wca.description}}</td>
-                </tr>
-                <tr>
-                  <td>Cooldown Interval</td>
-                  <td>{{wca.coolDownInterval | timeDuration}}</td>
-                </tr>
-                <tr>
-                  <td>Tokens to sell</td>
-                  <td>{{wca.maxTokenSoldCount}}</td>
-                </tr>
-                <tr>
-                  <td>Tokens remaining</td>
-                  <td>{{wca.remainTokenCount}}</td>
-                </tr>
-                <tr>
-                  <td>Total milestones</td>
-                  <td>{{wca.milestonesCount}}</td>
-                </tr>
-                <tr>
-                  <td>Stake/Token</td>
-                  <td>{{wca.stakePer100Token}}</td>
-                </tr>
-                <tr>
-                  <td>Last update</td>
-                  <td>{{wca.lastUpdateTimestamp == null ? "Never" : (wca.lastUpdateTimestamp | date: 'medium')}}</td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </p-panel>
-        </div>
-        <p-panel header="Milestones" [toggleable]="true" class="p-mt-4">
-          <p-table [value]="wca.milestones" [autoLayout]="true">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>End Date</th>
-                <th>Link to result</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-ms>
-              <tr [ngClass]="getMilestoneRowClass(ms)">
-                <td>{{getIndex(ms.endTimestamp) + 1}}</td>
-                <td>{{ms.title}}</td>
-                <td>{{ms.description }}</td>
-                <th><p-tag [value]="getStatusTextForMs(ms)" [severity]="getStatusTagForMs(ms)"></p-tag></th>
-                <td>{{ms.endTimestamp | date: 'medium'}}</td>
-                <td><a [href]="ms.linkToResult">{{ms.linkToResult}}</a></td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </p-panel>
-      </div>
-    </ng-container>
+            <tr>
+              <td>Created at</td>
+              <td>{{wca.creationTimestamp.toLocaleString()}}</td>
+            </tr>
+            <tr>
+              <td>Identifier</td>
+              <td>{{wca.identifier}}</td>
+            </tr>
+            <tr>
+              <td>Description</td>
+              <td>{{wca.description}}</td>
+            </tr>
+            <tr>
+              <td>Cooldown Interval</td>
+              <td>{{wca.coolDownInterval | timeDuration}}</td>
+            </tr>
+            <tr>
+              <td>Tokens to sell</td>
+              <td>{{wca.maxTokenSoldCount}}</td>
+            </tr>
+            <tr>
+              <td>Tokens remaining</td>
+              <td>{{wca.remainTokenCount}}</td>
+            </tr>
+            <tr>
+              <td>Total milestones</td>
+              <td>{{wca.milestonesCount}}</td>
+            </tr>
+            <tr>
+              <td>Stake/Token</td>
+              <td>{{wca.stakePer100Token}}</td>
+            </tr>
+            <tr>
+              <td>Last update</td>
+              <td>{{wca.lastUpdateTimestamp == null ? "Never" : (wca.lastUpdateTimestamp | date: 'medium')}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-panel>
+    </div>
+    <p-panel header="Milestones" [toggleable]="true" class="p-mt-4">
+      <p-table [value]="wca.milestones" [autoLayout]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>End Date</th>
+            <th>Link to result</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ms>
+          <tr [ngClass]="getMilestoneRowClass(ms)">
+            <td>{{getIndex(ms.endTimestamp) + 1}}</td>
+            <td>{{ms.title}}</td>
+            <td>{{ms.description }}</td>
+            <th>
+              <p-tag [value]="getStatusTextForMs(ms)" [severity]="getStatusTagForMs(ms)"></p-tag>
+            </th>
+            <td>{{ms.endTimestamp | date: 'medium'}}</td>
+            <td><a [href]="ms.linkToResult">{{ms.linkToResult}}</a></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-panel>
+  </div>
+</ng-container>
 
-    <ng-template #noWCA>
-      <p-progressSpinner [style]="{width: '70px', height: '70px'}" ></p-progressSpinner>
-    </ng-template>
-
+<ng-template #noWCA>
+  <p-progressSpinner [style]="{width: '70px', height: '70px'}"></p-progressSpinner>
+</ng-template>
 
 
 <div class="p-d-flex p-flex-row p-jc-around p-flex-wrap">
@@ -131,7 +135,8 @@
 
   <app-pending-request [display]="displayPendingRequest"></app-pending-request>
 
-  <p-confirmDialog appendTo="body" [style]="{width: '50vw'}" [baseZIndex]="1000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-confirmDialog appendTo="body" [style]="{width: '50vw'}" [baseZIndex]="1000"
+                   rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
   <p-dialog header="Update WCA" [(visible)]="displayUpdate">
     <h4>Select the milestone you want to finish:</h4>
@@ -142,7 +147,7 @@
     <br/>
     <h4>Proof of work:</h4>
     <p><small>It is required to post proof of work when finishing a milestone
-      <p>so your supporters can take a look and see the progress
+    <p>so your supporters can take a look and see the progress
       for themselves. </p>
     </small></p>
     <div class="p-fluid">
