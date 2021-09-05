@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   ) {
     NeolineService.networkChangedSubject.subscribe(() => {
       // refresh page if user switch to different network
-      location.reload();
+      // location.reload();
     });
   }
 

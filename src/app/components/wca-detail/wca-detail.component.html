@@ -10,7 +10,7 @@
               <ng-container *ngIf="isOwner">
                 <button pButton type="button" label="Pay Stake" icon="pi pi-send" (click)="payStake()"
                         [disabled]="wca.status !== 'PENDING'"></button>
-
+                <!-- TODO rework here -->
                 <button pButton type="button" label="Update" icon="pi pi-upload"
                         [disabled]="wca.status !== 'OPEN' && wca.status != 'ACTIVE'"
                         (click)="displayUpdate = true"></button>

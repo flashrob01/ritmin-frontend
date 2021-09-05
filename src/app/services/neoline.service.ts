@@ -7,7 +7,10 @@ import {BehaviorSubject, Subject} from 'rxjs';
 })
 export class NeolineService {
   constructor() {
-    // if neoline is not found or cannot be init
+    // remove old listener
+    NeolineService.removeListeners();
+    // add new listener
+    NeolineService.registerListeners();
     if (!NeolineService.initNeoline()) {
       // subscribe to this ready event
       window.addEventListener('NEOLine.N3.EVENT.READY', NeolineService.readyListener);
@@ -36,6 +39,7 @@ export class NeolineService {
   };
   private static networkChangedListener = (result: any) => {
     // push event on network changed event
+    console.log(result);
     NeolineService.networkChangedSubject.next(result.detail);
   };
   private static txConfirmedListener = (result: any) => {
@@ -76,7 +80,6 @@ export class NeolineService {
     try {
       this.isLoading = true;
       this.neolineN3 = new (window as any).NEOLineN3.Init();
-      this.registerListeners();
       this.neolineN3.getAccount()
         .then((account: NeoAccount) => {
           if (NeolineService.currentAddress$.getValue() == null) {
@@ -85,7 +88,6 @@ export class NeolineService {
         })
         .catch((error: any) => {
           this.neolineN3 = undefined;
-          this.removeListeners();
           // rethrow the error
           throw error;
         });
@@ -128,7 +130,7 @@ export class NeolineService {
         console.log(result);
         // TODO
         if (result.state !== 'HALT') {
-          throw new Error('???');
+          throw new Error(result.exception);
         }
         // everything is ok, do the write invoke
         return NeolineService.neolineN3.invoke(
@@ -152,7 +154,13 @@ export class NeolineService {
 
   public invokeRead(
     params: InvokeReadArgs
-  ): Promise<{ script: string; stack: TypedValue[]; state: string }> {
+  ): Promise<{
+    exception: string;
+    gasconsumed: string;
+    script: string;
+    stack: TypedValue[];
+    state: string
+  }> {
     // Reject if neoline is not found or cannot be init
     if (!NeolineService.initNeoline()) {
       return Promise.reject('Neoline not found');
@@ -175,8 +183,8 @@ export class NeolineService {
 
   public handleError(error: any): string {
     console.error(error);
-    const {type, description, data} = error;
-    let msg = '';
+    const {type, description} = error;
+    let msg: string;
     switch (type) {
       case 'NO_PROVIDER':
         msg = 'No provider available.';

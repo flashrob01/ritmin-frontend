@@ -235,7 +235,8 @@ export class WcaService {
       nextMilestone: resp[11],
       remainTokenCount: resp[12] / 100,
       buyerCount: resp[13],
-      status: resp[14]
+      status: resp[14],
+      stage: resp[15],
     };
   }
 
