@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { WCA } from 'src/app/models/wca';
-import { WalletConnectService } from 'src/app/services/walletconnect.service';
-import { AdvanceQueryReqBody, WcaService } from 'src/app/services/wca.service';
-import { getStatusTag } from 'src/app/utils';
+import {Component, OnInit} from '@angular/core';
+import {WCA} from 'src/app/models/wca';
+import {AdvanceQueryReqBody, WcaService} from 'src/app/services/wca.service';
+import {getStatusTag} from 'src/app/utils';
+import {NeolineService} from '../../services/neoline.service';
 
 @Component({
   selector: 'app-inventory',
@@ -15,11 +15,15 @@ export class InventoryComponent implements OnInit {
   createdWCAs: WCA[] = [];
   getStatusTag = getStatusTag;
 
-  constructor(private wcaService: WcaService, private wallet: WalletConnectService) { }
+  constructor(
+    private wcaService: WcaService,
+    private wallet: NeolineService
+  ) {
+  }
 
   ngOnInit(): void {
     const createdWCAQuery: AdvanceQueryReqBody = {
-      creator: this.wallet.address$.getValue(),
+      creator: this.wallet.getAddress$().getValue(),
       buyer: null,
       page: 1,
       size: 100,
@@ -31,7 +35,7 @@ export class InventoryComponent implements OnInit {
 
     const boughtWCAQuery: AdvanceQueryReqBody = {
       creator: null,
-      buyer: this.wallet.address$.getValue(),
+      buyer: this.wallet.getAddress$().getValue(),
       page: 1,
       size: 100,
     };

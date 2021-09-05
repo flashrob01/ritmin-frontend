@@ -6,17 +6,19 @@
           <p-panel header="Details" [toggleable]="true">
             <p-table [value]="[1]">
               <ng-template pTemplate="caption">
-                <div class="p-d-flex p-ai-center p-jc-end" *ngIf="walletService.address$.getValue() != null">
+                <div class="p-d-flex p-ai-center p-jc-end" *ngIf="walletService.getAddress$().getValue() != null">
 
                   <ng-container *ngIf="isOwner">
                     <button pButton type="button" label="Pay Stake" icon="pi pi-send" (click)="payStake()"
-                    [disabled]="wca.status !== 'PENDING'" ></button>
+                            [disabled]="wca.status !== 'PENDING'"></button>
 
                     <button pButton type="button" label="Update" icon="pi pi-upload"
-                    [disabled]="wca.status !== 'OPEN' && wca.status != 'ACTIVE'" (click)="displayUpdate = true"></button>
+                            [disabled]="wca.status !== 'OPEN' && wca.status != 'ACTIVE'"
+                            (click)="displayUpdate = true"></button>
 
                     <button pButton type="button" label="Finish" icon="pi pi-check"
-                    [disabled]="wca.status !== 'OPEN' && wca.status !== 'ACTIVE'" (click)="requestFinish()"></button>
+                            [disabled]="wca.status !== 'OPEN' && wca.status !== 'ACTIVE'"
+                            (click)="requestFinish()"></button>
                   </ng-container>
 
                   <ng-container *ngIf="!isOwner" class="p-fluid">
@@ -32,9 +34,10 @@
                 </div>
               </ng-template>
               <ng-template pTemplate="body">
-                <tr *ngIf="walletService.address$.getValue() != null">
+                <tr *ngIf="walletService.getAddress$().getValue() != null">
                   <td colspan="2" class="purchasedRow p-text-center">
-                    <span class="p-text-bold p-text-center">You have purchased {{purchasedAmount}} CAT from this WCA</span>
+                    <span class="p-text-bold p-text-center">You have purchased {{purchasedAmount}}
+                      CAT from this WCA</span>
                   </td>
                 </tr>
                 <tr>
@@ -120,35 +123,35 @@
 
 
 <div class="p-d-flex p-flex-row p-jc-around p-flex-wrap">
+  <p-dialog header="Purchase WCA" [(visible)]="displayPurchase">
+    <h4>Set your purchase amount:</h4>
+    <p-inputNumber [(ngModel)]="purchaseAmount" [minFractionDigits]="2" [min]="0.01"></p-inputNumber>
+    <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()"></button>
+  </p-dialog>
 
-<p-dialog header="Purchase WCA" [(visible)]="displayPurchase">
-  <h4>Set your purchase amount:</h4>
-  <p-inputNumber [(ngModel)]="purchaseAmount" [minFractionDigits]="2" [min]="0.01"></p-inputNumber>
-  <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()"></button>
-</p-dialog>
+  <app-pending-request [display]="displayPendingRequest"></app-pending-request>
 
-<app-pending-request [display]="displayPendingRequest"></app-pending-request>
+  <p-confirmDialog appendTo="body" [style]="{width: '50vw'}" [baseZIndex]="1000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-<p-confirmDialog appendTo="body" [style]="{width: '50vw'}" [baseZIndex]="1000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
-
-<p-dialog header="Update WCA" [(visible)]="displayUpdate">
-  <h4>Select the milestone you want to finish:</h4>
-  <div class="p-fluid">
-    <p-dropdown [(ngModel)]="selectedMilestone" [options]="updatableMilestones" optionLabel="title"></p-dropdown>
-  </div>
-  <p><small>The deadline of this milestone is at {{selectedMilestone?.endTime| date: 'medium'}}</small></p>
-  <br/>
-  <h4>Proof of work:</h4>
-  <p><small>It is required to post proof of work when finishing a milestone
-    <p>so your supporters can take a look and see the progress
-    for themselves. </p>
-  </small></p>
-  <div class="p-fluid">
-    <input pInputText [(ngModel)]="proofLink" placeholder="www.link-to-your-proof.com">
-  </div>
-  <br/>
-  <div class="p-text-right">
-    <button pButton icon="pi pi-arrow-circle-up" label="Update" (click)="update()" [disabled]="proofLink?.length === 0"></button>
-  </div>
-</p-dialog>
-
+  <p-dialog header="Update WCA" [(visible)]="displayUpdate">
+    <h4>Select the milestone you want to finish:</h4>
+    <div class="p-fluid">
+      <p-dropdown [(ngModel)]="selectedMilestone" [options]="updatableMilestones" optionLabel="title"></p-dropdown>
+    </div>
+    <p><small>The deadline of this milestone is at {{selectedMilestone?.endTime| date: 'medium'}}</small></p>
+    <br/>
+    <h4>Proof of work:</h4>
+    <p><small>It is required to post proof of work when finishing a milestone
+      <p>so your supporters can take a look and see the progress
+      for themselves. </p>
+    </small></p>
+    <div class="p-fluid">
+      <input pInputText [(ngModel)]="proofLink" placeholder="www.link-to-your-proof.com">
+    </div>
+    <br/>
+    <div class="p-text-right">
+      <button pButton icon="pi pi-arrow-circle-up" label="Update" (click)="update()"
+              [disabled]="proofLink?.length === 0"></button>
+    </div>
+  </p-dialog>
+</div>

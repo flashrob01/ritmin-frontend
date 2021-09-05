@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { WalletConnectService } from 'src/app/services/walletconnect.service';
+import {Component, OnInit} from '@angular/core';
+import {MenuItem} from 'primeng/api';
+import {NeolineService} from '../../services/neoline.service';
 
 @Component({
   selector: 'app-menu',
@@ -13,8 +13,9 @@ export class MenuComponent implements OnInit {
   loadingIcon = 'pi pi-spin pi-spinner';
   connectIcon = 'pi pi-play';
 
-  constructor(public wallet: WalletConnectService) {
-    this.wallet.address$.subscribe(a => {
+  constructor(public wallet: NeolineService) {
+    this.wallet.getAddress$().subscribe(a => {
+      console.log(a);
       if (a != null) {
         this.items = [
           {icon: 'pi pi-search', label: 'Browse', routerLink: '/'},
@@ -26,16 +27,16 @@ export class MenuComponent implements OnInit {
         this.items = [
           {icon: 'pi pi-search', label: 'Browse', routerLink: '/'},
           {icon: 'pi pi-question', label: 'How it works', routerLink: '/about'}
-
         ];
       }
-    })
+    });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
-  onConnectBtnClick() {
-    this.wallet.connect();
+  onConnectBtnClick(): void {
+    NeolineService.initNeoline();
   }
 
 }

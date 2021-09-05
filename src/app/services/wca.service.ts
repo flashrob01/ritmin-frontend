@@ -1,52 +1,65 @@
-import { Injectable } from "@angular/core";
-import { environment } from "src/environments/environment";
-import { WalletConnectService } from "./walletconnect.service";
-import { from, Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { rpc, sc, wallet } from "@cityofzion/neon-js";
-import { WCA } from "../models/wca";
-import { Milestone } from "../models/milestone";
+import {Injectable} from '@angular/core';
+import {environment} from 'src/environments/environment';
+import {from, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {rpc, sc, wallet} from '@cityofzion/neon-js';
+import {WCA} from '../models/wca';
+import {Milestone} from '../models/milestone';
+import {NeolineService} from './neoline.service';
+import {TypedValue} from '../models/neoline';
 
 export interface CreateWcaRequestBody {
-  hash: string;
+  ownerAddress: string;
   wcaDescription: string;
   stakePer100Token: number;
-  maxTokenSoldCount: number,
-  msTitles: string[],
-  msDescriptions: string[],
-  endTimestamps: number[],
-  thresholdIndex: number,
-  coolDownInterval: number,
-  isPublic: boolean,
-  identifier: string
+  maxTokenSoldCount: number;
+  msTitles: string[];
+  msDescriptions: string[];
+  endTimestamps: number[];
+  thresholdIndex: number;
+  coolDownInterval: number;
+  isPublic: boolean;
+  identifier: string;
 }
 
 export interface AdvanceQueryReqBody {
-  creator: string,
-  buyer: string,
-  page: number,
-  size: number
+  creator: string;
+  buyer: string;
+  page: number;
+  size: number;
 }
+
+export type InvokeWriteResult = {
+  txId: string;
+  error: string;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class WcaService {
 
-  private static RPC_CLIENT = new rpc.RPCClient(environment.testNetUrl);
-  private static HASH160_ZERO = "0000000000000000000000000000000000000000";
+  constructor(
+    private readonly neoline: NeolineService
+  ) {
+  }
 
-  constructor(private readonly walletConnectService: WalletConnectService) {}
+  private static RPC_CLIENT = new rpc.RPCClient(environment.testNetUrl);
+  private static HASH160_ZERO = '0000000000000000000000000000000000000000';
+
+  private static processBase64Hash160(base64: string): string {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[len - 1 - i] = binaryString.charCodeAt(i);
+    }
+    return Array.from(bytes).map(x => x.toString(16).padStart(2, '0')).join('');
+  }
 
   private rpcRequest(method: string, params: any[]): Observable<any> {
-    return from(
-      WcaService.RPC_CLIENT.invokeFunction(environment.wcaContractHash, method, params)
-        .then(r => {
-          console.log(`invokeRead: ${method}\nparam: ${JSON.stringify(params)}\nresult: ${JSON.stringify(r)}`);
-          return r;
-        })
-    )
-    .pipe(map(resp => resp.stack[0]?.value as string));
+    return from(WcaService.RPC_CLIENT.invokeFunction(environment.wcaContractHash, method, params))
+      .pipe(map(resp => resp.stack[0]?.value as string));
   }
 
   public filterWCA(req: AdvanceQueryReqBody): Observable<WCA[]> {
@@ -56,7 +69,7 @@ export class WcaService {
       sc.ContractParam.integer(req.page),
       sc.ContractParam.integer(req.size)
     ];
-    return this.rpcRequest("advanceQuery", params).pipe(
+    return this.rpcRequest('advanceQuery', params).pipe(
       map(res => JSON.parse(atob(res))),
       map(res => res.map(v => this.mapToWCA(v))));
   }
@@ -65,7 +78,7 @@ export class WcaService {
     const params = [
       sc.ContractParam.string(identifier)
     ];
-    return this.rpcRequest("queryWCA", params)
+    return this.rpcRequest('queryWCA', params)
       .pipe(
         map(res => JSON.parse(atob(res))),
         map(resp => this.mapToWCA(resp))
@@ -77,75 +90,133 @@ export class WcaService {
       sc.ContractParam.string(identifier),
       sc.ContractParam.hash160(buyer)
     ];
-    return this.rpcRequest("queryPurchase", params);
+    return this.rpcRequest('queryPurchase', params);
   }
 
-  public createWCA(info: CreateWcaRequestBody): Observable<string> {
-    const owner = {type: 'Address', value: info.hash};
-    const stakePer100Token = {type: 'Integer', value: info.stakePer100Token};
-    const maxTokenSoldCount = {type: 'Integer', value: info.maxTokenSoldCount};
-    const wcaDesc = {type: 'String', value: info.wcaDescription}
-    const msDescs = {type: 'Array', value: info.msDescriptions.map(ms => { return {type: 'String', value: ms}})};
-    const msTitles = {type: 'Array', value: info.msTitles.map(ms => { return {type: 'String', value: ms}})};
-    const endTimestamps = {type: 'Array', value: info.endTimestamps.map(ms => { return {type: 'Integer', value: ms}})};
-    const thresholdIndex = {type: 'Integer', value: info.thresholdIndex};
-    const coolDownInterval = {type: 'Integer', value: info.coolDownInterval};
-    const identifier = {type: 'String', value: info.identifier};
-    const isPublic = { type: 'Boolean', value: info.isPublic};
+  public createWCA(info: CreateWcaRequestBody): Observable<InvokeWriteResult> {
+    const owner: TypedValue = {type: 'Address', value: info.ownerAddress};
+    const stakePer100Token: TypedValue = {type: 'Integer', value: info.stakePer100Token.toString()};
+    const maxTokenSoldCount: TypedValue = {type: 'Integer', value: info.maxTokenSoldCount.toString()};
+    const wcaDesc: TypedValue = {type: 'String', value: info.wcaDescription};
+    const msDescs: TypedValue = {type: 'Array', value: info.msDescriptions.map(ms => ({type: 'String', value: ms}))};
+    const msTitles: TypedValue = {type: 'Array', value: info.msTitles.map(ms => ({type: 'String', value: ms}))};
+    const endTimestamps: TypedValue = {type: 'Array', value: info.endTimestamps.map(ms => ({type: 'Integer', value: ms}))};
+    const thresholdIndex: TypedValue = {type: 'Integer', value: info.thresholdIndex.toString()};
+    const coolDownInterval: TypedValue = {type: 'Integer', value: info.coolDownInterval.toString()};
+    const identifier: TypedValue = {type: 'String', value: info.identifier};
+    const isPublic: TypedValue = {type: 'Boolean', value: info.isPublic};
     const parameters = [
       owner, wcaDesc, stakePer100Token, maxTokenSoldCount, msTitles, msDescs,
       endTimestamps, thresholdIndex, coolDownInterval, isPublic, identifier];
-    return this.walletConnectService.invokeFunction(environment.wcaContractHash, 'createWCA', parameters).pipe(map(r => r.result));
+
+    return from(
+      this.neoline.invoke({
+        scriptHash: environment.wcaContractHash,
+        operation: 'createWCA',
+        args: parameters
+      })
+        .then(r => ({
+          txId: r.txid,
+          error: null
+        }))
+        .catch((error) => ({
+          txId: null,
+          error: this.neoline.handleError(error)
+        }))
+    );
   }
 
-  public transferCatToken(fromAccount: string, amount: number, identifier: string): Observable<any> {
-    const fromParam = {type: 'Address', value: fromAccount};
-    const toParam = {type: 'Hash160', value: environment.wcaContractHash};
-    const amountParam = {type: 'Integer', value: amount};
-    const identifierParam = {type: 'String', value: identifier};
+  public transferCatToken(fromAccount: string, amount: number, identifier: string): Observable<InvokeWriteResult> {
+    const fromParam: TypedValue = {type: 'Address', value: fromAccount};
+    const toParam: TypedValue = {type: 'Hash160', value: environment.wcaContractHash};
+    const amountParam: TypedValue = {type: 'Integer', value: amount.toString()};
+    const identifierParam: TypedValue = {type: 'String', value: identifier};
     const parameters = [fromParam, toParam, amountParam, identifierParam];
-    // this returns nothing, but website might redirect when it's done.
-    return this.walletConnectService.invokeFunction(
-      environment.catTokenHash,
-      'transfer',
-      parameters
-    ).pipe(map(r => r.result));
+
+    return from(
+      this.neoline.invoke({
+        scriptHash: environment.catTokenHash,
+        operation: 'transfer',
+        args: parameters
+      })
+        .then(r => ({
+          txId: r.txid,
+          error: null
+        }))
+        .catch((error) => ({
+          txId: null,
+          error: this.neoline.handleError(error)
+        }))
+    );
   }
 
-  public finishMilestone(identifier: string, index: number, proofOfWork: string): Observable<any> {
-    const identifierParam = {type: 'String', value: identifier};
-    const indexParam = {type: 'Integer', value: index};
-    const proofOfWorkParam = {type: 'String', value: proofOfWork};
+  public finishMilestone(identifier: string, index: number, proofOfWork: string): Observable<InvokeWriteResult> {
+    const identifierParam: TypedValue = {type: 'String', value: identifier};
+    const indexParam: TypedValue = {type: 'Integer', value: index.toString()};
+    const proofOfWorkParam: TypedValue = {type: 'String', value: proofOfWork};
     const parameters = [identifierParam, indexParam, proofOfWorkParam];
-    // this returns nothing, but website might redirect when it's done.
-    return this.walletConnectService.invokeFunction(
-      environment.wcaContractHash,
-      'finishMilestone',
-      parameters
-    ).pipe(map(r => r.result));
+
+    return from(
+      this.neoline.invoke({
+        scriptHash: environment.wcaContractHash,
+        operation: 'finishMilestone',
+        args: parameters
+      })
+        .then(r => {
+          console.log(r);
+          return {
+            txId: r.txid,
+            error: null
+          };
+        })
+        .catch((error) => ({
+          txId: null,
+          error: this.neoline.handleError(error)
+        }))
+    );
   }
 
-  public finishWCA(identifier: string): Observable<any> {
-    const identifierParam = {type: 'String', value: identifier};
+  public finishWCA(identifier: string): Observable<InvokeWriteResult> {
+    const identifierParam: TypedValue = {type: 'String', value: identifier};
     const parameters = [identifierParam];
-    // this returns nothing, but website might redirect when it's done.
-    return this.walletConnectService.invokeFunction(
-      environment.wcaContractHash,
-      'finishWCA',
-      parameters
-    ).pipe(map(r => r.result));
+
+    return from(
+      this.neoline.invoke({
+        scriptHash: environment.wcaContractHash,
+        operation: 'finishWCA',
+        args: parameters
+      })
+        .then(r => ({
+          txId: r.txid,
+          error: null
+        }))
+        .catch((error) => ({
+          txId: null,
+          error: this.neoline.handleError(error)
+        }))
+    );
   }
 
-  public refund(identifier: string, buyer: string): Observable<any> {
-    const identifierParam = {type: 'String', value: identifier};
-    const buyerParam = {type: 'Address', value: buyer};
+  public refund(identifier: string, buyer: string): Observable<InvokeWriteResult> {
+    const identifierParam: TypedValue = {type: 'String', value: identifier};
+    const buyerParam: TypedValue = {type: 'Address', value: buyer};
     const parameters = [identifierParam, buyerParam];
-    // this returns nothing, but website might redirect when it's done.
-    return this.walletConnectService.invokeFunction(
-      environment.wcaContractHash,
-      'refund',
-      parameters
-    ).pipe(map(r => r.result));
+
+    return from(
+      this.neoline.invoke({
+        scriptHash: environment.wcaContractHash,
+        operation: 'refund',
+        args: parameters
+      })
+        .then(r => ({
+          txId: r.txid,
+          error: null
+        }))
+        .catch((error) => ({
+          txId: null,
+          error: this.neoline.handleError(error)
+        }))
+    );
   }
 
   private mapToWCA(resp: any): WCA {
@@ -165,7 +236,7 @@ export class WcaService {
       remainTokenCount: resp[12] / 100,
       buyerCount: resp[13],
       status: resp[14]
-     };
+    };
   }
 
   private parseMilestones(milestones: any[]): Milestone[] {
@@ -176,18 +247,7 @@ export class WcaService {
         endTimestamp: new Date(ms[2]),
         linkToResult: ms[3],
       };
-    })
-  }
-
-  private static processBase64Hash160(base64: string): string {
-    const binary_string = window.atob(base64);
-    const len = binary_string.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[len - 1 - i] = binary_string.charCodeAt(i);
-    }
-    return Array.from(bytes).map(x => x.toString(16).padStart(2, '0')).join('');
+    });
   }
 
 }
-

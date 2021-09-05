@@ -1,16 +1,17 @@
-import { Injectable } from "@angular/core";
-import { CanActivate, Router } from "@angular/router";
-import { WalletConnectService } from "../services/walletconnect.service";
+import {Injectable} from '@angular/core';
+import {CanActivate, Router} from '@angular/router';
+import {NeolineService} from '../services/neoline.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(public wallet: WalletConnectService, public router: Router) {}
+  constructor(public wallet: NeolineService, public router: Router) {
+  }
 
   canActivate(): boolean {
-    if (!this.wallet.address$.getValue()) {
+    if (!this.wallet.getAddress$().getValue()) {
       this.router.navigate(['']);
       return false;
     }

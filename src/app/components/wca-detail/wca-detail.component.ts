@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {WCA} from '../../models/wca';
 import {WcaService} from '../../services/wca.service';
 import {ActivatedRoute} from '@angular/router';
-import {WalletConnectService} from '../../services/walletconnect.service';
 import {wallet} from '@cityofzion/neon-js';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { getStatusTag } from 'src/app/utils';
-import { Milestone } from 'src/app/models/milestone';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {getStatusTag} from 'src/app/utils';
+import {Milestone} from 'src/app/models/milestone';
+import {NeolineService} from '../../services/neoline.service';
 
 @Component({
   selector: 'app-wca-detail',
@@ -23,15 +23,15 @@ export class WcaDetailComponent implements OnInit {
   displayUpdate = false;
   purchaseAmount: number;
   displayPendingRequest = false;
-  updatableMilestones: {index: number, title: string, endTime: Date}[] = [];
-  selectedMilestone: {index: number, title: string, endTime: Date};
-  proofLink: string = '';
+  updatableMilestones: { index: number, title: string, endTime: Date }[] = [];
+  selectedMilestone: { index: number, title: string, endTime: Date };
+  proofLink = '';
   getStatusTag = getStatusTag;
 
   constructor(
     private route: ActivatedRoute,
     private readonly wcaService: WcaService,
-    public readonly walletService: WalletConnectService,
+    public readonly walletService: NeolineService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
@@ -50,13 +50,13 @@ export class WcaDetailComponent implements OnInit {
           }))
           .filter((it) => it.index >= this.wca.nextMilestone)
           .filter((it) => it.endTime > new Date());
-          this.selectedMilestone = this.updatableMilestones[0];
-        if (this.walletService.address$.getValue() == null) {
-          this.walletService.address$.subscribe((address) => {
+        this.selectedMilestone = this.updatableMilestones[0];
+        if (this.walletService.getAddress$().getValue() == null) {
+          this.walletService.getAddress$().subscribe((address) => {
             this.refreshAddress(address);
           });
         } else {
-          this.refreshAddress(this.walletService.address$.getValue());
+          this.refreshAddress(this.walletService.getAddress$().getValue());
         }
       });
     });
@@ -86,8 +86,9 @@ export class WcaDetailComponent implements OnInit {
     }
     if (index === this.wca.milestones.length || ms.endTimestamp < this.wca.milestones[index]?.endTimestamp) {
       return 'danger';
+    } else {
+      return 'info';
     }
-    else return 'info';
   }
 
   getStatusTextForMs(ms: Milestone): string {
@@ -101,8 +102,9 @@ export class WcaDetailComponent implements OnInit {
 
     if (index === this.wca.milestones.length || ms.endTimestamp < this.wca.milestones[index]?.endTimestamp) {
       return 'FINISHED';
+    } else {
+      return 'TBR';
     }
-    else return 'TBR';
   }
 
   getMilestoneRowClass(ms: Milestone): string {
@@ -118,13 +120,13 @@ export class WcaDetailComponent implements OnInit {
       accept: () => {
         this.displayPendingRequest = true;
         this.wcaService.transferCatToken(
-          this.walletService.address$.getValue(),
+          this.walletService.getAddress$().getValue(),
           this.wca.stakePer100Token * this.wca.maxTokenSoldCount * 100,
           this.wca.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
-          if(r['error']) {
-            const message = r['error'].message;
+          if (r.error) {
+            const message = r.error;
             this.messageService.add({severity: 'error', summary: 'Error: Pay Stake', detail: message});
           } else {
             this.messageService.add({severity: 'success', summary: 'Success: Pay Stake', detail: 'Your payment was successful'});
@@ -143,13 +145,13 @@ export class WcaDetailComponent implements OnInit {
         this.displayPurchase = false;
         this.displayPendingRequest = true;
         this.wcaService.transferCatToken(
-          this.walletService.address$.getValue(),
+          this.walletService.getAddress$().getValue(),
           this.purchaseAmount * 100,
           this.wca.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
-          if(r['error']) {
-            const message = r['error'].message;
+          if (r.error) {
+            const message = r.error;
             this.messageService.add({severity: 'error', summary: 'Error: Purchase', detail: message});
           } else {
             this.messageService.add({severity: 'success', summary: 'Success: Purchase', detail: 'Your purchase was successful'});
@@ -169,11 +171,11 @@ export class WcaDetailComponent implements OnInit {
         this.displayPendingRequest = true;
         this.wcaService.refund(
           this.wca.identifier,
-          this.walletService.address$.getValue()
+          this.walletService.getAddress$().getValue()
         ).subscribe((r) => {
           this.displayPendingRequest = false;
-          if (r['error']) {
-            const message = r['error'].message;
+          if (r.error) {
+            const message = r.error;
             this.messageService.add({severity: 'error', summary: 'Error: Refund', detail: message});
           } else {
             this.messageService.add({severity: 'success', summary: 'Success: Refund', detail: 'Your refund has been approved'});
@@ -192,11 +194,11 @@ export class WcaDetailComponent implements OnInit {
       accept: () => {
         this.displayPendingRequest = true;
         this.wcaService.finishWCA(
-        this.wca.identifier
+          this.wca.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
-          if (r['error']) {
-            const message = r['error'].message;
+          if (r.error) {
+            const message = r.error;
             this.messageService.add({severity: 'error', summary: 'Error: Finish WCA', detail: message});
           } else {
             this.messageService.add({severity: 'success', summary: 'Success: Finish WCA', detail: 'The WCA has been finished'});
@@ -220,8 +222,8 @@ export class WcaDetailComponent implements OnInit {
           this.proofLink
         ).subscribe((r) => {
           this.displayPendingRequest = false;
-          if (r['error']) {
-            const message = r['error'].message;
+          if (r.error) {
+            const message = r.error;
             this.messageService.add({severity: 'error', summary: 'Error: Update milestone', detail: message});
           } else {
             this.messageService.add({severity: 'success', summary: 'Success: Update milestone', detail: 'The milestone has been upated'});
