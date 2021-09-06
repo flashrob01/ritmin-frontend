@@ -1,7 +1,11 @@
 .hero {
   min-height: 500px;
   background-color: #2196f3;
-  clip-path: circle(65% at 70% 40%);
+  clip-path: circle(80% at 70% 40%);
+}
+
+.hero-wrap {
+  filter: drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5));
 }
 
 .award-section {
@@ -17,4 +21,10 @@
 
 .award {
   height: 80px;
+}
+
+.cat-img {
+  width: 600px;
+  margin-bottom: -400px;
+  margin-left: -50px;
 }

@@ -5,7 +5,7 @@
       "projectType": "application",
       "root": "apps/nekohit",
       "sourceRoot": "apps/nekohit/src",
-      "prefix": "ritmin-frontend",
+      "prefix": "ritmin",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -28,7 +28,9 @@
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeflex/primeflex.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/chart.js/dist/chart.js"
+            ]
           },
           "configurations": {
             "production": {

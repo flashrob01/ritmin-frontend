@@ -1,0 +1,14 @@
+{
+  "MENU": {
+    "BROWSE": "Browse",
+    "WHITEPAPER": "White Paper",
+    "CONNECT": "Connect Wallet"
+  },
+  "HERO": {
+    "TITLE-ONE": "Join the first and fully decentralized",
+    "TITLE-TWO": "crowdfunding platform for content creators on the blockchain",
+    "SUBTEXT": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "BUTTON-WHITEPAPER": "White Paper",
+    "BUTTON-BROWSE": "Browse"
+  }
+}

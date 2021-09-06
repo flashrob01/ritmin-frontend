@@ -9,6 +9,8 @@ import { MenuComponent } from './menu/menu.component';
 import { MenubarModule } from 'primeng/menubar';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import { ChartModule } from 'primeng/chart';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [AppComponent, MenuComponent],
@@ -18,7 +20,13 @@ import { FormsModule } from '@angular/forms';
     ButtonModule,
     MenubarModule,
     DropdownModule,
-    FormsModule
+    FormsModule,
+    ChartModule,
+    TranslateModule.forRoot(
+      {
+        defaultLanguage: 'en'
+      }
+    )
   ],
   providers: [],
   bootstrap: [AppComponent],
