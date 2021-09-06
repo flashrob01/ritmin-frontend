@@ -1,30 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { MenuItem, SelectItem } from 'primeng/api';
 
 @Component({
   selector: 'ritmin-frontend-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  styleUrls: ['./menu.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MenuComponent implements OnInit {
 
   items: MenuItem[] = [];
+  walletOptions: SelectItem[] = [];
+  selectedWallet: SelectItem = { label: '', value: '' };
 
   ngOnInit() {
-    this.items = [{
-        label: 'File',
-        items: [
-            {label: 'New'},
-            {label: 'Open'}
-        ]
-    },
-    {
-        label: 'Edit',
-        items: [
-            {label: 'Undo'},
-            {label: 'Redo'}
-        ]
-    }];
+    this.walletOptions = [
+      {
+        value: 'walletconnect',
+        label: 'WalletConnect'
+      },
+      {
+        value: 'neoline',
+        label: 'Neoline'
+      }
+    ];
+    this.items = [
+      {
+        label: 'Browse',
+        icon: 'pi pi-search'
+      },
+      {
+        label: 'Whitepaper',
+        icon: 'pi pi-file-o'
+      }
+    ];
 }
 
 }

@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { ButtonModule } from 'primeng/button';
 import { MenuComponent } from './menu/menu.component';
 import { MenubarModule } from 'primeng/menubar';
+import { DropdownModule } from 'primeng/dropdown';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent, MenuComponent],
@@ -14,7 +16,9 @@ import { MenubarModule } from 'primeng/menubar';
     BrowserModule,
     BrowserAnimationsModule,
     ButtonModule,
-    MenubarModule
+    MenubarModule,
+    DropdownModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

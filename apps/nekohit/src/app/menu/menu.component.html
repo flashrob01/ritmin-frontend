@@ -1,1 +1,24 @@
-<p-menubar [model]="items"></p-menubar>
+<div class="logo ml-2 mr-3 mt-1">
+  <img src="assets/images/cat-dark.png" height="50">
+</div>
+<p-menubar [model]="items" styleClass="nekohit-menu">
+  <ng-template pTemplate="end">
+    <p-dropdown [options]="walletOptions" optionLabel="label" [(ngModel)]="selectedWallet" placeholder="Connect Wallet">
+      <ng-template pTemplate="selectedItem">
+          <div *ngIf="selectedWallet" class="flex align-items-center">
+              <img height="20" [src]="'assets/images/' + selectedWallet.value + '.png'" />
+              <div class="ml-2">{{selectedWallet.label}}</div>
+          </div>
+      </ng-template>
+      <ng-template let-wallet pTemplate="item">
+          <div class="flex align-items-center">
+            <img height="30" [src]="'assets/images/' + wallet.value + '.png'" />
+            <div class="ml-2 text-lg">{{wallet.label}}</div>
+          </div>
+      </ng-template>
+    </p-dropdown>
+  </ng-template>
+</p-menubar>
+
+
+

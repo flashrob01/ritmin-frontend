@@ -1,0 +1,11 @@
+.logo {
+  float: left;
+}
+
+.nekohit-menu {
+  &.p-menubar {
+    border: 0px;
+    background-color: #fff;
+    font-size: 110%;
+  }
+}
