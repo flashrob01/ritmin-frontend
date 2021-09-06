@@ -10,7 +10,6 @@ import {AdvanceQueryReqBody, WcaService} from 'src/app/services/wca.service';
 export class HomeComponent implements OnInit {
 
   wcas: WCA[] = [];
-  myWCAS: WCA[] = [];
 
   constructor(
     private readonly wcaService: WcaService,
@@ -18,6 +17,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // TODO what if we have thousand of project?
     const defaultQuery: AdvanceQueryReqBody = {
       creator: null,
       buyer: null,

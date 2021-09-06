@@ -46,7 +46,8 @@
             {{wca.stakePer100Token}}
           </td>
           <td>
-            <p-tag [value]="wca.status" [severity]="getStatusTag(wca.status)"></p-tag>
+            <p-tag [value]="wca.status === 'ONGOING' ? wca.stage : wca.status"
+                   [severity]="getStatusTag(wca.status === 'ONGOING' ? wca.stage : wca.status)"></p-tag>
           </td>
           <td>
             <p-progressBar [value]="getProgress(wca)"></p-progressBar>

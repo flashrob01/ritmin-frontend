@@ -39,7 +39,7 @@ export class MsInfoComponent implements OnInit {
     });
   }
 
-  onAdd() {
+  onAdd(): void {
     const ms = this.form.getRawValue();
     if (this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Another miletone already ends on this date'});
@@ -57,7 +57,8 @@ export class MsInfoComponent implements OnInit {
     this.milestones.sort((a, b) => a.endTimestamp.getTime() - b.endTimestamp.getTime());
   }
 
-  onNext() {
+  onNext(): void {
+    // tslint:disable-next-line:no-string-literal
     const hasThreshold = !!this.milestones.filter(m => m['isThreshold'] === true).length;
     if (!hasThreshold) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'You need to select a threshold milestone'});
@@ -66,7 +67,7 @@ export class MsInfoComponent implements OnInit {
     }
   }
 
-  onBefore() {
+  onBefore(): void {
     this.router.navigate(['new/wca'], {state: {basicInformation: this.lastForm}});
   }
 
@@ -74,14 +75,16 @@ export class MsInfoComponent implements OnInit {
     return this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === timestamp)[0]);
   }
 
-  onRemove(ms: Milestone) {
+  onRemove(ms: Milestone): void {
     const index = this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]);
     this.milestones.splice(index, 1);
   }
 
-  setThreshhold(ms: Milestone) {
+  setThreshold(ms: Milestone): void {
     const index = this.milestones.indexOf(this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]);
+    // tslint:disable-next-line:no-string-literal
     this.milestones.forEach(m => m['isThreshold'] = false);
+    // tslint:disable-next-line:no-string-literal
     this.milestones[index]['isThreshold'] = true;
   }
 
@@ -93,6 +96,4 @@ export class MsInfoComponent implements OnInit {
   get description(): string {
     return this.form.get('description').value;
   }
-
-
 }

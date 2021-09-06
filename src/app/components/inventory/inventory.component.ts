@@ -46,17 +46,4 @@ export class InventoryComponent implements OnInit {
 
   }
 
-  getProgress(wca: WCA): number {
-    if (wca.status === 'FINISHED') {
-      return 100;
-    } else if (wca.status !== 'ACTIVE') {
-      return 0;
-    } else {
-      const past = wca.milestones
-        .map((ms, i) => ({index: i, end: ms.endTimestamp}))
-        .filter(ms => ms.end <= new Date() || ms.index < wca.nextMilestone);
-      return past.length / wca.milestones.length * 100;
-    }
-  }
-
 }

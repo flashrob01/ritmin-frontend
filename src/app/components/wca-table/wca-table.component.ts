@@ -21,6 +21,7 @@ export class WcaTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // tslint:disable-next-line:no-string-literal
     if (changes['wcas'] && !changes['wcas'].firstChange) {
       this.isLoading = false;
     }
@@ -29,13 +30,14 @@ export class WcaTableComponent implements OnInit, OnChanges {
   getProgress(wca: WCA): number {
     if (wca.status === 'FINISHED') {
       return 100;
-    } else if (wca.status !== 'ACTIVE') {
+    } else if (wca.status === 'PENDING') {
       return 0;
     } else {
+      // ONGOING, count milestones
       const past = wca.milestones
         .map((ms, i) => ({index: i, end: ms.endTimestamp}))
         .filter(ms => ms.end <= new Date() || ms.index < wca.nextMilestone);
-      return past.length / wca.milestones.length * 100;
+      return Number((past.length / wca.milestones.length * 100).toFixed(2));
     }
   }
 

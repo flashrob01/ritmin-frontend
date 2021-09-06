@@ -1,19 +1,19 @@
-<form [formGroup]="form">
+<form [formGroup]="form" xmlns="http://www.w3.org/1999/html">
   <h4>Title</h4>
-  <small>
+  <p><small>
     Give your milestone a meaningful title. The title is restricted to 30 characters.
-  </small>
+  </small></p>
   <div class="p-fluid">
     <input [maxlength]="30" pInputText formControlName="title"/>
   </div>
   <p [ngClass]="{'warning' : title.length == 30}"><small>{{ 30 - title.length }} characters left</small></p>
 
   <h4>Description</h4>
-  <small><p>
-    Describe in 2-3 clear sentences what the goal of this milestone is. What are you trying to achieve until this
-    milestone,
-    what should be done until then. The description is restricted to 400 characters.</p>
-  </small>
+  <p><small>
+    Describe the goal of this milestone. What are you trying to achieve until this milestone,
+    what should be done until then. <br/>
+    The description is restricted to 400 characters.
+  </small></p>
   <div class="p-fluid">
     <textarea [maxlength]="400" [rows]="5" [cols]="30" pInputTextarea [autoResize]="true"
               formControlName="description"></textarea>
@@ -22,12 +22,12 @@
   </p>
 
   <h4>Deadline</h4>
-  <small><p>
+  <p><small>
     Set the deadline of the milestone. When the deadline is reached, the goals of the milestone should be reached.
-    Different milestones
-    can't have the same deadline. Please keep in mind that you set your cooldown interval
-    to {{lastForm['cooldownInterval'] | timeDuration}}.</p>
-  </small>
+    Different milestones can't have the same deadline. <br/>
+    Please keep in mind that you set your cooldown interval to
+    <b><i>{{lastForm['cooldownInterval'] | timeDuration}}</i></b>.
+  </small></p>
   <div class="p-fluid">
     <p-calendar [showTime]="true" formControlName="endTimestamp" [minDate]="minDate"
                 [readonlyInput]="true"></p-calendar>
@@ -54,7 +54,7 @@
       <td>{{getIndex(ms.endTimestamp) + 1}}</td>
       <td>
         <p-checkbox name="groupname" [binary]="true" [(ngModel)]="ms.isThreshold"
-                    (click)="setThreshhold(ms)"></p-checkbox>
+                    (click)="setThreshold(ms)"></p-checkbox>
       </td>
       <td>{{ms.title}}</td>
       <td>{{ms.description}}</td>

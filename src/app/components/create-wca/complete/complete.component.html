@@ -67,7 +67,8 @@
       <div class="p-mb-2">
         Share your WCA:
       </div>
-      <input type="text" readonly pInputText [ngModel]="'https://wca.nekohit.com/wcas/' + basicInfo.identifier">
+      <!-- TODO special char escape?-->
+      <p>https://wca.nekohit.com/wcas/{{basicInfo.identifier}}</p>
     </div>
   </div>
 </ng-template>

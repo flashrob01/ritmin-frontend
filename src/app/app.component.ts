@@ -13,13 +13,14 @@ export class AppComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private readonly neoline: NeolineService
   ) {
-    NeolineService.networkChangedSubject.subscribe(() => {
-      // refresh page if user switch to different network
-      // location.reload();
+    // TODO
+    NeolineService.accountChangedSubject.subscribe(() => {
+      // refresh page if user switch to different account
+      location.reload();
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.primengConfig.ripple = true;
   }
 

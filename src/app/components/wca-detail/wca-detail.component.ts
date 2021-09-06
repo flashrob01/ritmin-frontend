@@ -84,8 +84,11 @@ export class WcaDetailComponent implements OnInit {
     if (this.wca.milestones.indexOf(ms) < index && !ms.linkToResult) {
       return 'warning';
     }
-    if (index === this.wca.milestones.length || ms.endTimestamp < this.wca.milestones[index]?.endTimestamp) {
+    if (ms.linkToResult != null) {
       return 'danger';
+    }
+    if (ms.endTimestamp < this.wca.milestones[index].endTimestamp) {
+      return 'warning';
     } else {
       return 'info';
     }
@@ -99,11 +102,13 @@ export class WcaDetailComponent implements OnInit {
     if (this.wca.milestones.indexOf(ms) < index && !ms.linkToResult) {
       return 'SKIPPED';
     }
-
-    if (index === this.wca.milestones.length || ms.endTimestamp < this.wca.milestones[index]?.endTimestamp) {
+    if (ms.linkToResult != null) {
       return 'FINISHED';
+    }
+    if (ms.endTimestamp < this.wca.milestones[index].endTimestamp) {
+      return 'EXPIRED';
     } else {
-      return 'TBR';
+      return 'TODO';
     }
   }
 

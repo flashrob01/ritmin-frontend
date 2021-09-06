@@ -1,49 +1,49 @@
 <form [formGroup]="form" (ngSubmit)="onNext()">
   <h4>Identifier</h4>
-  <small>
-    <p>Each identifier is unique and can only be used once. Share this identifier
-      with others so they can quickly find your WCA. It can contain special characters and have a maximum length of
-      50.</p>
-  </small>
+  <p>
+    <small>
+      Each identifier is unique and can only be used once.
+      Share this identifier with others so they can quickly find your WCA. <br/>
+      It can contain special characters and have a maximum length of 50.
+    </small>
+  </p>
   <div class="p-fluid">
     <input pInputText formControlName="identifier" [maxlength]="50"/>
   </div>
   <p [ngClass]="{'warning' : identifier.length == 50}"><small>{{ 50 - identifier.length }} characters left</small></p>
+
   <h4>Description</h4>
-  <small>
-    <p>
-      Describe your WCA as precise as possible. What are you trying to do, what are the goals... It is helpful to add
-      some links where buyers can
-      find out even more about your project. The description can have a maximum length of 1000 characters.</p>
-  </small>
+  <p><small>
+    Describe your project. What are you trying to do, what are the goals... <br/>
+    It is helpful to add some links where buyers can find out even more about your project.
+  </small></p>
   <div class="p-fluid">
     <textarea [maxlength]="1000" [rows]="5" [cols]="30" pInputTextarea [autoResize]="true"
               formControlName="description"></textarea>
   </div>
   <p [ngClass]="{'warning' : description.length == 1000}"><small>{{ 1000 - description.length }} characters left</small>
   </p>
+
   <h4>Cooldown Interval</h4>
-  <small><p>
+  <p><small>
     The cooldown interval is the duration you as a creator will have to wait until you can mark a milestone as
-    completed.
-    Please keep in mind that the input is in <i>milliseconds</i>.</p></small>
+    completed.<br/>
+    Please keep in mind that the input is in <b><i>milliseconds</i></b>.
+  </small></p>
   <br/>
   <div class="p-fluid">
     <p-inputNumber [min]="1" formControlName="cooldownInterval"></p-inputNumber>
   </div>
   <div class="p-text-center p-fluid" style="border: 1px solid lightgreen">
-    <small><p>
+    <p><small>
       <b>{{form.get('cooldownInterval').value | timeDuration}}</b>
-    </p>
-    </small>
+    </small></p>
   </div>
 
   <h4>Available Tokens</h4>
-  <small>
-    <p>
-      Specify how many tokens are available to be bought by your supporters.
-    </p>
-  </small>
+  <p><small>
+    Specify how many tokens are available to be bought by your supporters.
+  </small></p>
   <div class="p-fluid p-inputgroup">
     <p-inputNumber [min]="1" formControlName="maxTokenSoldCount"></p-inputNumber>
     <span class="p-inputgroup-addon">.00</span>
@@ -51,24 +51,23 @@
   </div>
 
   <h4>Stake/Token</h4>
-  <small>
-    <p>
-      This option determines how many tokens you will have to stake in order to start your WCA. The total
-      stake amount is calculated with the following formula: availableTokens * stake/token. </p>
-    <p>Ex.: If there are 5000 tokens to buy
-      and your stake/token value 0.5, your staking amount is 2500 tokens.</p>
-
-  </small>
+  <p><small>
+    This rate determines how many tokens you will have to stake in order to start your WCA.<br/>
+    The total stake amount is calculated with the following formula:
+    availableTokens * stake/token. <br/>
+    Ex.: If there are 5000 available tokens and your stake/token value 0.5,
+    your staking amount is 2500 tokens.
+  </small></p>
   <div class="p-fluid p-inputgroup">
     <p-inputNumber [min]="0" [minFractionDigits]="2" formControlName="stakePerToken"></p-inputNumber>
     <span class="p-inputgroup-addon">CAT</span>
   </div>
 
   <h4>Public</h4>
-  <small>
-    <p>Check this box if you want your WCA to be publicly listed. Private WCA's can only be found with the
-      identifier.</p>
-  </small>
+  <p><small>
+    Check this box if you want your WCA to be publicly listed.
+    Private WCA's can only be found with the identifier.
+  </small></p>
   <div class="p-fluid">
     <p-checkbox formControlName="isPublic" [binary]="true"></p-checkbox>
   </div>

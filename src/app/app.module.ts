@@ -31,7 +31,6 @@ import {TimeAgoPipe} from './pipes/timeAgo.pipe';
 import {TagModule} from 'primeng/tag';
 import {TruncatePipe} from './pipes/truncate.pipe';
 import {ProgressBarModule} from 'primeng/progressbar';
-import {MyWcaComponent} from './components/my-wca/my-wca.component';
 import {AboutComponent} from './components/about/about.component';
 import {CreateWcaComponent} from './components/create-wca/create-wca.component';
 import {InputTextModule} from 'primeng/inputtext';
@@ -65,7 +64,6 @@ import {DataViewModule} from 'primeng/dataview';
     WcaTableComponent,
     WcaDetailComponent,
     TimeAgoPipe,
-    MyWcaComponent,
     AboutComponent,
     CreateWcaComponent,
     BasicInfoComponent,

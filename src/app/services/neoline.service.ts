@@ -128,7 +128,7 @@ export class NeolineService {
     return this.invokeRead(params)
       .then(result => {
         console.log(result);
-        // TODO
+        // TODO, handle this error on caller
         if (result.state !== 'HALT') {
           throw new Error(result.exception);
         }
