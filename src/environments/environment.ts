@@ -4,7 +4,6 @@
 
 export const environment = {
   production: false,
-  chainId: 'neo3:testnet',
   wcaContractHash: '0x4a4a9314f68ffaf68e5767491fb56f50743322ae',
   catTokenHash: '0xf461dff74f454e5016421341f115a2e789eadbd7',
   testNetUrl: 'https://testnet1.neo.coz.io:443',
