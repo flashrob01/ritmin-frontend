@@ -8,6 +8,8 @@ body {
   padding: 0;
   margin: 0;
   height: 100%;
-  color: #fff;
   font-family: 'Rubik';
+  .p-component {
+    font-family: 'Rubik' !important;
+  }
 }

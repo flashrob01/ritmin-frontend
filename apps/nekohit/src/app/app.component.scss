@@ -1,0 +1,18 @@
+.hero {
+  min-height: 500px;
+  background-color: #2196f3;
+  clip-path: circle(65% at 70% 40%);
+}
+
+.award-section {
+  background-color: rgb(58, 58, 58);
+  height: 120px;
+
+  .award-title {
+    color: #00e599;
+  }
+}
+
+.award {
+  height: 80px;
+}
