@@ -4,6 +4,13 @@
   clip-path: circle(80% at 70% 40%);
 }
 
+.promotion {
+  position: fixed;
+  bottom: 0px;
+  z-index: 1000;
+  width: 100%;
+}
+
 .hero-wrap {
   filter: drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5));
 }

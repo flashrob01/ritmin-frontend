@@ -6,6 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'nekohit';
 
+  title = 'nekohit';
+  showPromotion = true;
+
+  openTwitter(): void {
+    window.open('https://twitter.com/nekohitproject', '_blank');
+  }
+
+  openDiscord(): void {
+    window.open('https://discord.gg/YTePGhQne2', '_blank');
+  }
 }
