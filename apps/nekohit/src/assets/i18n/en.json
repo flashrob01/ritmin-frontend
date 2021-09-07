@@ -4,20 +4,38 @@
     "WHITEPAPER": "White Paper",
     "CONNECT": "Connect Wallet"
   },
-  "HERO": {
-    "TITLE-ONE": "Join the first and fully decentralized",
-    "TITLE-TWO": "crowdfunding platform for content creators on the blockchain",
-    "SUBTEXT": "Get started now and create your own Project on NekoHit",
-    "BUTTON-WHITEPAPER": "White Paper",
-    "BUTTON-BROWSE": "Browse"
-  },
-  "ABOUT": {
-    "TITLE": "What is NekoHit?",
-    "TEXT": "What is NekoHit?"
-  },
-  "DISCORD-ACTION": {
-    "TITLE": "Join Our Community",
-    "SUBTITLE": "Get in touch with other creators, your sponsors or just come and have a chat with the NekoHit team",
-    "BUTTON": "Join Now"
+  "LANDING": {
+    "HERO": {
+      "TITLE-ONE": "Join the first and fully decentralized",
+      "TITLE-TWO": "crowdfunding platform for content creators on the blockchain",
+      "SUBTEXT": "Get started now and create your own Project on NekoHit",
+      "BUTTON-WHITEPAPER": "White Paper",
+      "BUTTON-BROWSE": "Browse"
+    },
+    "ABOUT": {
+      "TITLE": "What is NekoHit?",
+      "TEXT": "Lorem Ipsum"
+    },
+    "HOWTO": {
+      "MORE": "Read more",
+      "TITLE": "How it works",
+      "STEP_1_TITLE": "Lorem Ipsum",
+      "STEP_1_TEXT": "Lorem Ipsum",
+      "STEP_2_TITLE": "Lorem Ipsum",
+      "STEP_2_TEXT": "Lorem Ipsum",
+      "STEP_3_TITLE": "Lorem Ipsum",
+      "STEP_3_TEXT": "Lorem Ipsum"
+    },
+    "DISCORD-ACTION": {
+      "TITLE": "Join Our Community",
+      "SUBTITLE": "Get in touch with other creators, your sponsors or just come and have a chat with the NekoHit team",
+      "BUTTON": "Join Now"
+    },
+    "BANNER": {
+      "TITLE": "Token Airdrop",
+      "TEXT": "Don't miss the upcoming CAT token airdrop!",
+      "LINK": "Learn More"
+    }
   }
+
 }

@@ -11,6 +11,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
 import { TranslateModule } from '@ngx-translate/core';
+import { InputTextModule } from 'primeng/inputtext';
+import { TimelineModule } from 'primeng/timeline';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [AppComponent, MenuComponent],
@@ -22,6 +25,9 @@ import { TranslateModule } from '@ngx-translate/core';
     DropdownModule,
     FormsModule,
     ChartModule,
+    InputTextModule,
+    TimelineModule,
+    CardModule,
     TranslateModule.forRoot(
       {
         defaultLanguage: 'en'

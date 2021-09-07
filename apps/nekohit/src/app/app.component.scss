@@ -1,5 +1,5 @@
 .hero {
-  min-height: 500px;
+  min-height: 600px;
   background-color: #2196f3;
   clip-path: circle(80% at 70% 40%);
 }
@@ -32,6 +32,40 @@
 
 .cat-img {
   width: 600px;
-  margin-bottom: -400px;
+  margin-bottom: -500px;
   margin-left: -50px;
+}
+
+.custom-marker {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  font-size: 150%;
+  align-items: center;
+  justify-content: center;
+  color: #2196f3;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+@media screen and (max-width: 960px) {
+  ::ng-deep {
+    .customized-timeline {
+      .p-timeline-event:nth-child(even) {
+        flex-direction: row !important;
+
+        .p-timeline-event-content {
+          text-align: left !important;
+        }
+      }
+
+      .p-timeline-event-opposite {
+        flex: 0;
+      }
+
+      .p-card {
+        margin-top: 1rem;
+      }
+    }
+  }
 }
