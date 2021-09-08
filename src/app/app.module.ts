@@ -22,17 +22,17 @@ import {TableModule} from 'primeng/table';
 import {TruncateAddressPipe} from './pipes/truncateAddress.pipe';
 import {TooltipModule} from 'primeng/tooltip';
 import {FooterComponent} from './components/footer/footer.component';
-import {WcaTableComponent} from './components/wca-table/wca-table.component';
+import {ProjectTableComponent} from './components/project-table/project-table.component';
 import {CardModule} from 'primeng/card';
 import {DividerModule} from 'primeng/divider';
-import {WcaDetailComponent} from './components/wca-detail/wca-detail.component';
+import {ProjectDetailComponent} from './components/project-detail/project-detail.component';
 import {ToastModule} from 'primeng/toast';
 import {TimeAgoPipe} from './pipes/timeAgo.pipe';
 import {TagModule} from 'primeng/tag';
 import {TruncatePipe} from './pipes/truncate.pipe';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {AboutComponent} from './components/about/about.component';
-import {CreateWcaComponent} from './components/create-wca/create-wca.component';
+import {DeclareProjectComponent} from './components/create-wca/declare-project.component';
 import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {InputNumberModule} from 'primeng/inputnumber';
@@ -61,11 +61,11 @@ import {DataViewModule} from 'primeng/dataview';
     TruncateAddressPipe,
     TruncatePipe,
     FooterComponent,
-    WcaTableComponent,
-    WcaDetailComponent,
+    ProjectTableComponent,
+    ProjectDetailComponent,
     TimeAgoPipe,
     AboutComponent,
-    CreateWcaComponent,
+    DeclareProjectComponent,
     BasicInfoComponent,
     MsInfoComponent,
     CompleteComponent,

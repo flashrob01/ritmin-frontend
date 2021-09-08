@@ -1,16 +1,15 @@
 import {Injectable} from '@angular/core';
-import {environment} from 'src/environments/environment';
 import {from, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {rpc, sc, wallet} from '@cityofzion/neon-js';
-import {WCA} from '../models/wca';
-import {Milestone} from '../models/milestone';
+import {sc, wallet} from '@cityofzion/neon-js';
+import {Milestone, Project} from '../models/project-models';
 import {NeolineService} from './neoline.service';
 import {TypedValue} from '../models/neoline';
+import {getCatContractAddress, getRpcNode, getWcaContractAddress} from '../utils';
 
-export interface CreateWcaRequestBody {
+export interface DeclareProjectRequestBody {
   ownerAddress: string;
-  wcaDescription: string;
+  projectDescription: string;
   stakePer100Token: number;
   maxTokenSoldCount: number;
   msTitles: string[];
@@ -44,7 +43,6 @@ export class WcaService {
   ) {
   }
 
-  private static RPC_CLIENT = new rpc.RPCClient(environment.testNetUrl);
   private static HASH160_ZERO = '0000000000000000000000000000000000000000';
 
   private static processBase64Hash160(base64: string): string {
@@ -58,11 +56,11 @@ export class WcaService {
   }
 
   private rpcRequest(method: string, params: any[]): Observable<any> {
-    return from(WcaService.RPC_CLIENT.invokeFunction(environment.wcaContractHash, method, params))
+    return from(getRpcNode().invokeFunction(getWcaContractAddress(), method, params))
       .pipe(map(resp => resp.stack[0]?.value as string));
   }
 
-  public filterWCA(req: AdvanceQueryReqBody): Observable<WCA[]> {
+  public filterProjects(req: AdvanceQueryReqBody): Observable<Project[]> {
     const params = [
       sc.ContractParam.hash160(req.creator ?? WcaService.HASH160_ZERO),
       sc.ContractParam.hash160(req.buyer ?? WcaService.HASH160_ZERO),
@@ -71,17 +69,17 @@ export class WcaService {
     ];
     return this.rpcRequest('advanceQuery', params).pipe(
       map(res => JSON.parse(atob(res))),
-      map(res => res.map(v => this.mapToWCA(v))));
+      map(res => res.map(v => this.mapToProject(v))));
   }
 
-  public queryWCA(identifier: string): Observable<WCA> {
+  public queryProject(identifier: string): Observable<Project> {
     const params = [
       sc.ContractParam.string(identifier)
     ];
-    return this.rpcRequest('queryWCA', params)
+    return this.rpcRequest('queryProject', params)
       .pipe(
         map(res => JSON.parse(atob(res))),
-        map(resp => this.mapToWCA(resp))
+        map(resp => this.mapToProject(resp))
       );
   }
 
@@ -93,11 +91,11 @@ export class WcaService {
     return this.rpcRequest('queryPurchase', params);
   }
 
-  public createWCA(info: CreateWcaRequestBody): Observable<InvokeWriteResult> {
+  public declareProject(info: DeclareProjectRequestBody): Observable<InvokeWriteResult> {
     const owner: TypedValue = {type: 'Address', value: info.ownerAddress};
     const stakePer100Token: TypedValue = {type: 'Integer', value: info.stakePer100Token.toString()};
     const maxTokenSoldCount: TypedValue = {type: 'Integer', value: info.maxTokenSoldCount.toString()};
-    const wcaDesc: TypedValue = {type: 'String', value: info.wcaDescription};
+    const projectDesc: TypedValue = {type: 'String', value: info.projectDescription};
     const msDescs: TypedValue = {type: 'Array', value: info.msDescriptions.map(ms => ({type: 'String', value: ms}))};
     const msTitles: TypedValue = {type: 'Array', value: info.msTitles.map(ms => ({type: 'String', value: ms}))};
     const endTimestamps: TypedValue = {type: 'Array', value: info.endTimestamps.map(ms => ({type: 'Integer', value: ms}))};
@@ -106,13 +104,13 @@ export class WcaService {
     const identifier: TypedValue = {type: 'String', value: info.identifier};
     const isPublic: TypedValue = {type: 'Boolean', value: info.isPublic};
     const parameters = [
-      owner, wcaDesc, stakePer100Token, maxTokenSoldCount, msTitles, msDescs,
+      owner, projectDesc, stakePer100Token, maxTokenSoldCount, msTitles, msDescs,
       endTimestamps, thresholdIndex, coolDownInterval, isPublic, identifier];
 
     return from(
       this.neoline.invoke({
-        scriptHash: environment.wcaContractHash,
-        operation: 'createWCA',
+        scriptHash: getWcaContractAddress(),
+        operation: 'declareProject',
         args: parameters
       })
         .then(r => ({
@@ -128,14 +126,14 @@ export class WcaService {
 
   public transferCatToken(fromAccount: string, amount: number, identifier: string): Observable<InvokeWriteResult> {
     const fromParam: TypedValue = {type: 'Address', value: fromAccount};
-    const toParam: TypedValue = {type: 'Hash160', value: environment.wcaContractHash};
+    const toParam: TypedValue = {type: 'Hash160', value: getWcaContractAddress()};
     const amountParam: TypedValue = {type: 'Integer', value: amount.toString()};
     const identifierParam: TypedValue = {type: 'String', value: identifier};
     const parameters = [fromParam, toParam, amountParam, identifierParam];
 
     return from(
       this.neoline.invoke({
-        scriptHash: environment.catTokenHash,
+        scriptHash: getCatContractAddress(),
         operation: 'transfer',
         args: parameters
       })
@@ -158,7 +156,7 @@ export class WcaService {
 
     return from(
       this.neoline.invoke({
-        scriptHash: environment.wcaContractHash,
+        scriptHash: getWcaContractAddress(),
         operation: 'finishMilestone',
         args: parameters
       })
@@ -176,14 +174,35 @@ export class WcaService {
     );
   }
 
-  public finishWCA(identifier: string): Observable<InvokeWriteResult> {
+  public finishProject(identifier: string): Observable<InvokeWriteResult> {
     const identifierParam: TypedValue = {type: 'String', value: identifier};
     const parameters = [identifierParam];
 
     return from(
       this.neoline.invoke({
-        scriptHash: environment.wcaContractHash,
-        operation: 'finishWCA',
+        scriptHash: getWcaContractAddress(),
+        operation: 'finishProject',
+        args: parameters
+      })
+        .then(r => ({
+          txId: r.txid,
+          error: null
+        }))
+        .catch((error) => ({
+          txId: null,
+          error: this.neoline.handleError(error)
+        }))
+    );
+  }
+
+  public cancelProject(identifier: string): Observable<InvokeWriteResult> {
+    const identifierParam: TypedValue = {type: 'String', value: identifier};
+    const parameters = [identifierParam];
+
+    return from(
+      this.neoline.invoke({
+        scriptHash: getWcaContractAddress(),
+        operation: 'cancelProject',
         args: parameters
       })
         .then(r => ({
@@ -204,7 +223,7 @@ export class WcaService {
 
     return from(
       this.neoline.invoke({
-        scriptHash: environment.wcaContractHash,
+        scriptHash: getWcaContractAddress(),
         operation: 'refund',
         args: parameters
       })
@@ -219,7 +238,7 @@ export class WcaService {
     );
   }
 
-  private mapToWCA(resp: any): WCA {
+  private mapToProject(resp: any): Project {
     return {
       identifier: resp[0],
       description: resp[1],

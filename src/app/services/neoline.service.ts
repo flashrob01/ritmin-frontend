@@ -17,8 +17,10 @@ export class NeolineService {
     }
   }
 
+  private static neoline: any = undefined;
   private static neolineN3: any = undefined;
   public static isLoading = false;
+  public static isMainNet = false;
   public static currentAddress$: BehaviorSubject<string> = new BehaviorSubject(null);
   public static currentScriptHash$: BehaviorSubject<string> = new BehaviorSubject(null);
 
@@ -28,6 +30,9 @@ export class NeolineService {
   public static connectedSubject = new Subject<NeoAccount>();
   public static disconnectedSubject = new Subject<void>();
 
+  // triggered on account change, network change, connect, disconnect
+  public static onChangeSubject = new Subject<void>();
+
   private static readyListener = () => {
     // init the neoline on ready event
     NeolineService.initNeoline();
@@ -36,11 +41,13 @@ export class NeolineService {
     // update latest account info on account changed event
     NeolineService.refreshCurrentAccount(result.detail.address);
     NeolineService.accountChangedSubject.next(result.detail);
+    NeolineService.onChangeSubject.next();
   };
   private static networkChangedListener = (result: any) => {
     // push event on network changed event
-    console.log(result);
+    NeolineService.isMainNet = result.detail.chainId === 3;
     NeolineService.networkChangedSubject.next(result.detail);
+    NeolineService.onChangeSubject.next();
   };
   private static txConfirmedListener = (result: any) => {
     // push the tx info confirmed in the event
@@ -52,9 +59,11 @@ export class NeolineService {
   };
   private static connectedListener = (result: any) => {
     NeolineService.connectedSubject.next(result.detail);
+    NeolineService.onChangeSubject.next();
   };
   private static disconnectedListener = () => {
     NeolineService.disconnectedSubject.next();
+    NeolineService.onChangeSubject.next();
   };
 
   private static registerListeners(): void {
@@ -79,8 +88,21 @@ export class NeolineService {
     }
     try {
       this.isLoading = true;
+      this.neoline = new (window as any).NEOLine.Init();
       this.neolineN3 = new (window as any).NEOLineN3.Init();
-      this.neolineN3.getAccount()
+      // fetch network into
+      this.neoline.getNetworks()
+        .then(result => {
+          this.isMainNet = result.chainId === 3;
+          this.onChangeSubject.next();
+        })
+        .catch((error) => {
+          this.neolineN3 = undefined;
+          // rethrow the error
+          throw error;
+        });
+      // fetch account info
+      this.neoline.getAccount()
         .then((account: NeoAccount) => {
           if (NeolineService.currentAddress$.getValue() == null) {
             this.refreshCurrentAccount(account.address);

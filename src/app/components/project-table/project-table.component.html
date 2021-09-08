@@ -1,8 +1,8 @@
 <p-panel header="Browse">
   <div>
-    <p-table [value]="wcas" styleClass="p-datatable-sm p-datatable-responsive-demo" [autoLayout]="true"
+    <p-table [value]="projects" styleClass="p-datatable-sm p-datatable-responsive-demo" [autoLayout]="true"
              [loading]="isLoading" [paginator]="true"
-             [rows]="20" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,20,50]" [totalRecords]="wcas.length"
+             [rows]="20" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,20,50]" [totalRecords]="projects.length"
              sortField="creationTimestamp" [sortOrder]="-1"
              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" stateStorage="session"
              stateKey="pennycapstable-session"
@@ -36,30 +36,30 @@
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-wca>
+      <ng-template pTemplate="body" let-project>
         <tr>
-          <td>{{wca.identifier}}</td>
-          <td>{{wca.description | truncate: [60, '...']}}</td>
+          <td>{{project.identifier}}</td>
+          <td>{{project.description | truncate: [60, '...']}}</td>
           <td>
-            {{wca.maxTokenSoldCount | number}}
+            {{project.maxTokenSoldCount | number}}
           <td>
-            {{wca.stakePer100Token}}
+            {{project.stakePer100Token}}
           </td>
           <td>
-            <p-tag [value]="wca.status === 'ONGOING' ? wca.stage : wca.status"
-                   [severity]="getStatusTag(wca.status === 'ONGOING' ? wca.stage : wca.status)"></p-tag>
+            <p-tag [value]="project.status === 'ONGOING' ? project.stage : project.status"
+                   [severity]="getStatusTag(project.status === 'ONGOING' ? project.stage : project.status)"></p-tag>
           </td>
           <td>
-            <p-progressBar [value]="getProgress(wca)"></p-progressBar>
+            <p-progressBar [value]="getProgress(project)"></p-progressBar>
           </td>
-          <td>{{wca.creationTimestamp | timeAgo}}</td>
+          <td>{{project.creationTimestamp | timeAgo}}</td>
           <td>
-            {{wca.buyerCount}}
+            {{project.buyerCount}}
           </td>
           <td>
             <button pButton type="button" label="Details"
                     icon="pi pi-search" class="p-button-outlined"
-                    [routerLink]="['/wcas' , wca.identifier]"
+                    [routerLink]="['/projects' , project.identifier]"
             ></button>
           </td>
         </tr>

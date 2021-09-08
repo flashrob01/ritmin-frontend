@@ -31,7 +31,7 @@ export class BasicInfoComponent implements OnInit {
     }
   }
 
-  onNext() {
+  onNext(): void {
     if (this.form.get('stakePerToken').value < 0.01) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Stake/Token must be a value greater than 0.01'});
       return;

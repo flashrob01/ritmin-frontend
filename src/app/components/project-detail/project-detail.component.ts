@@ -1,21 +1,21 @@
 import {Component, OnInit} from '@angular/core';
-import {WCA} from '../../models/wca';
+import {Project} from '../../models/project-models';
 import {WcaService} from '../../services/wca.service';
 import {ActivatedRoute} from '@angular/router';
 import {wallet} from '@cityofzion/neon-js';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {getStatusTag} from 'src/app/utils';
-import {Milestone} from 'src/app/models/milestone';
+import {Milestone} from 'src/app/models/project-models';
 import {NeolineService} from '../../services/neoline.service';
 
 @Component({
-  selector: 'app-wca-detail',
-  templateUrl: './wca-detail.component.html',
-  styleUrls: ['./wca-detail.component.scss'],
+  selector: 'app-project-detail',
+  templateUrl: './project-detail.component.html',
+  styleUrls: ['./project-detail.component.scss'],
   providers: [ConfirmationService]
 })
-export class WcaDetailComponent implements OnInit {
-  wca: WCA | null = null;
+export class ProjectDetailComponent implements OnInit {
+  project: Project | null = null;
   purchasedAmount = 0;
   isOwner = false;
   now = new Date();
@@ -35,20 +35,27 @@ export class WcaDetailComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {
+    NeolineService.onChangeSubject.subscribe(() => {
+      this.refresh();
+    });
   }
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  refresh(): void {
     this.route.params.subscribe((param) => {
       const identifier = param.id;
-      this.wcaService.queryWCA(identifier).subscribe((result) => {
-        this.wca = result;
-        this.updatableMilestones = this.wca.milestones
+      this.wcaService.queryProject(identifier).subscribe((result) => {
+        this.project = result;
+        this.updatableMilestones = this.project.milestones
           .map((ms, i) => ({
             index: i,
             title: ms.title,
             endTime: ms.endTimestamp
           }))
-          .filter((it) => it.index >= this.wca.nextMilestone)
+          .filter((it) => it.index >= this.project.nextMilestone)
           .filter((it) => it.endTime > new Date());
         this.selectedMilestone = this.updatableMilestones[0];
         if (this.walletService.getAddress$().getValue() == null) {
@@ -63,31 +70,31 @@ export class WcaDetailComponent implements OnInit {
   }
 
   refreshAddress(address: string): void {
-    if (this.wca != null) {
-      this.isOwner = this.wca.creator === address;
+    if (this.project != null) {
+      this.isOwner = this.project.creator === address;
       if (address != null && !this.isOwner) {
-        this.wcaService.queryPurchase(this.wca.identifier, wallet.getScriptHashFromAddress(address))
+        this.wcaService.queryPurchase(this.project.identifier, wallet.getScriptHashFromAddress(address))
           .subscribe((amount) => this.purchasedAmount = amount / 100);
       }
     }
   }
 
   getIndex(timestamp: Date): number {
-    return this.wca.milestones.indexOf(this.wca.milestones.filter(m => m.endTimestamp === timestamp)[0]);
+    return this.project.milestones.indexOf(this.project.milestones.filter(m => m.endTimestamp === timestamp)[0]);
   }
 
   getStatusTagForMs(ms: Milestone): string {
-    const index = this.wca.nextMilestone;
-    if (this.wca.milestones[index] === ms) {
+    const index = this.project.nextMilestone;
+    if (this.project.milestones[index] === ms) {
       return 'success';
     }
-    if (this.wca.milestones.indexOf(ms) < index && !ms.linkToResult) {
+    if (this.project.milestones.indexOf(ms) < index && !ms.linkToResult) {
       return 'warning';
     }
     if (ms.linkToResult != null) {
       return 'danger';
     }
-    if (ms.endTimestamp < this.wca.milestones[index].endTimestamp) {
+    if (ms.endTimestamp < this.project.milestones[index].endTimestamp) {
       return 'warning';
     } else {
       return 'info';
@@ -95,17 +102,17 @@ export class WcaDetailComponent implements OnInit {
   }
 
   getStatusTextForMs(ms: Milestone): string {
-    const index = this.wca.nextMilestone;
-    if (this.wca.milestones[index] === ms) {
+    const index = this.project.nextMilestone;
+    if (this.project.milestones[index] === ms) {
       return 'ACTIVE';
     }
-    if (this.wca.milestones.indexOf(ms) < index && !ms.linkToResult) {
+    if (this.project.milestones.indexOf(ms) < index && !ms.linkToResult) {
       return 'SKIPPED';
     }
     if (ms.linkToResult != null) {
       return 'FINISHED';
     }
-    if (ms.endTimestamp < this.wca.milestones[index].endTimestamp) {
+    if (ms.endTimestamp < this.project.milestones[index].endTimestamp) {
       return 'EXPIRED';
     } else {
       return 'TODO';
@@ -113,21 +120,21 @@ export class WcaDetailComponent implements OnInit {
   }
 
   getMilestoneRowClass(ms: Milestone): string {
-    const index = this.wca.thresholdMilestoneIndex;
-    return this.wca.milestones[index] === ms ? 'highlight' : '';
+    const index = this.project.thresholdMilestoneIndex;
+    return this.project.milestones[index] === ms ? 'highlight' : '';
   }
 
   payStake(): void {
     this.confirmationService.confirm({
-      message: 'Please confirm that you want to stake ' + this.wca.stakePer100Token * this.wca.maxTokenSoldCount + ' tokens',
+      message: 'Please confirm that you want to stake ' + this.project.stakePer100Token * this.project.maxTokenSoldCount + ' tokens',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.displayPendingRequest = true;
         this.wcaService.transferCatToken(
           this.walletService.getAddress$().getValue(),
-          this.wca.stakePer100Token * this.wca.maxTokenSoldCount * 100,
-          this.wca.identifier
+          this.project.stakePer100Token * this.project.maxTokenSoldCount * 100,
+          this.project.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
           if (r.error) {
@@ -152,7 +159,7 @@ export class WcaDetailComponent implements OnInit {
         this.wcaService.transferCatToken(
           this.walletService.getAddress$().getValue(),
           this.purchaseAmount * 100,
-          this.wca.identifier
+          this.project.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
           if (r.error) {
@@ -175,7 +182,7 @@ export class WcaDetailComponent implements OnInit {
       accept: () => {
         this.displayPendingRequest = true;
         this.wcaService.refund(
-          this.wca.identifier,
+          this.project.identifier,
           this.walletService.getAddress$().getValue()
         ).subscribe((r) => {
           this.displayPendingRequest = false;
@@ -193,25 +200,46 @@ export class WcaDetailComponent implements OnInit {
 
   requestFinish(): void {
     this.confirmationService.confirm({
-      message: 'Please confirm that you want to finish this WCA',
+      message: 'Please confirm that you want to finish this project',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.displayPendingRequest = true;
-        this.wcaService.finishWCA(
-          this.wca.identifier
+        this.wcaService.finishProject(
+          this.project.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
           if (r.error) {
             const message = r.error;
-            this.messageService.add({severity: 'error', summary: 'Error: Finish WCA', detail: message});
+            this.messageService.add({severity: 'error', summary: 'Error: Finish project', detail: message});
           } else {
-            this.messageService.add({severity: 'success', summary: 'Success: Finish WCA', detail: 'The WCA has been finished'});
+            this.messageService.add({severity: 'success', summary: 'Success: Finish project', detail: 'The project has been finished'});
           }
         });
       }
     });
+  }
 
+  requestCancel(): void {
+    this.confirmationService.confirm({
+      message: 'Please confirm that you want to cancel this project',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.displayPendingRequest = true;
+        this.wcaService.cancelProject(
+          this.project.identifier
+        ).subscribe((r) => {
+          this.displayPendingRequest = false;
+          if (r.error) {
+            const message = r.error;
+            this.messageService.add({severity: 'error', summary: 'Error: Cancel project', detail: message});
+          } else {
+            this.messageService.add({severity: 'success', summary: 'Success: Cancel project', detail: 'The project has been canceled'});
+          }
+        });
+      }
+    });
   }
 
   update(): void {
@@ -222,7 +250,7 @@ export class WcaDetailComponent implements OnInit {
       accept: () => {
         this.displayPendingRequest = true;
         this.wcaService.finishMilestone(
-          this.wca.identifier,
+          this.project.identifier,
           this.selectedMilestone.index,
           this.proofLink
         ).subscribe((r) => {

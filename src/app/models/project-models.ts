@@ -1,6 +1,4 @@
-import {Milestone} from './milestone';
-
-export interface WCA {
+export interface Project {
   identifier: string;
   description: string;
   creator: string;
@@ -18,4 +16,11 @@ export interface WCA {
   status: string;
   stage: string;
   isPublic?: boolean;
+}
+
+export interface Milestone {
+  title: string;
+  description: string;
+  endTimestamp: Date;
+  linkToResult?: string;
 }

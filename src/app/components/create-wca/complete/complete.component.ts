@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {MessageService} from 'primeng/api';
 import {finalize} from 'rxjs/operators';
-import {Milestone} from 'src/app/models/milestone';
+import {Milestone} from 'src/app/models/project-models';
 import {WcaService} from 'src/app/services/wca.service';
 import {NeolineService} from '../../../services/neoline.service';
 
@@ -30,19 +30,19 @@ export class CompleteComponent implements OnInit {
     if (!this.basicInfo || !this.milestones) {
       this.router.navigate(['']);
     }
-    const thresholdIndex = this.milestones.indexOf(this.milestones.filter(m => m['isThreshold'] === true)[0]);
-    this.basicInfo.thresholdMilestoneIndex = thresholdIndex;
+    // tslint:disable-next-line:no-string-literal
+    this.basicInfo.thresholdMilestoneIndex = this.milestones.indexOf(this.milestones.filter(m => m['isThreshold'] === true)[0]);
   }
 
   ngOnInit(): void {
   }
 
-  onComplete() {
+  onComplete(): void {
     this.isLoading = true;
-    this.wcaService.createWCA(
+    this.wcaService.declareProject(
       {
         ownerAddress: this.wallet.getAddress$().getValue(),
-        wcaDescription: this.basicInfo.description,
+        projectDescription: this.basicInfo.description,
         coolDownInterval: this.basicInfo.cooldownInterval,
         msTitles: this.milestones.map(m => m.title),
         msDescriptions: this.milestones.map(m => m.description),
@@ -59,12 +59,12 @@ export class CompleteComponent implements OnInit {
         this.messageService.add({severity: 'error', summary: 'Error', detail: message});
       } else {
         this.created = true;
-        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your WCA has been created!'});
+        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Your project has been created!'});
       }
     });
   }
 
-  onBefore() {
+  onBefore(): void {
     this.router.navigate(['new/milestones'], {state: {basicInformation: this.basicInfo, ms: this.milestones}});
   }
 

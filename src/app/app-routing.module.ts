@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {CreateWcaComponent} from './components/create-wca/create-wca.component';
+import {DeclareProjectComponent} from './components/create-wca/declare-project.component';
 import {HomeComponent} from './components/home/home.component';
-import {WcaDetailComponent} from './components/wca-detail/wca-detail.component';
+import {ProjectDetailComponent} from './components/project-detail/project-detail.component';
 import {AboutComponent} from './components/about/about.component';
 import {BasicInfoComponent} from './components/create-wca/basic-info/basic-info.component';
 import {MsInfoComponent} from './components/create-wca/ms-info/ms-info.component';
@@ -16,8 +16,8 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'wcas/:id',
-    component: WcaDetailComponent
+    path: 'projects/:id',
+    component: ProjectDetailComponent
   },
   {
     path: 'about',
@@ -30,9 +30,9 @@ const routes: Routes = [
   },
   {
     path: 'new',
-    component: CreateWcaComponent,
+    component: DeclareProjectComponent,
     children: [
-      {path: 'wca', component: BasicInfoComponent},
+      {path: 'project', component: BasicInfoComponent},
       {path: 'milestones', component: MsInfoComponent},
       {path: 'complete', component: CompleteComponent},
     ],

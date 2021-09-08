@@ -1,19 +1,19 @@
 type NeoType = 'Boolean' | 'Integer' | 'Array' | 'ByteArray' | 'String' | 'Address' | 'Hash160' | 'Hash256';
 
-type TypedValue = { type: NeoType; value: string | boolean | any[] };
+export type TypedValue = { type: NeoType; value: string | boolean | any[] };
 
-type InvokeReadArgs = {
+export type InvokeReadArgs = {
   scriptHash: string;
   operation: string;
   args: TypedValue[];
 };
 
-type InvokeWriteArgs = {
+export type InvokeWriteArgs = {
   fee?: string;
   broadcastOverride?: boolean;
 };
 
-type NeoAccount = {
+export type NeoAccount = {
   address: string;
   label: string;
 };
@@ -23,28 +23,23 @@ type NeoAccount = {
 //  2 - Legacy TestNet
 //  3 - N3 MainNet
 //  4 - N3 TestNet
-type NeoNetwork = {
+export type NeoNetwork = {
   networks: string[];
   chainId: 1 | 2 | 3 | 4;
   defaultNetwork: string
 };
 
-type TxConfirmedInfo = {
+export type TxConfirmedInfo = {
   txId: string;
   blockHeight: number;
   blockTime: number;
 };
 
-type Signers = {
+export type Signers = {
   signers: Signer[];
 };
 
-type Signer = {
+export type Signer = {
   account: string;
   scopes: number
-};
-
-export type {
-  InvokeReadArgs, InvokeWriteArgs, NeoAccount, NeoNetwork, Signers, Signer, TypedValue,
-  TxConfirmedInfo,
 };

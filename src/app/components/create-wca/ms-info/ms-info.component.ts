@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {MessageService} from 'primeng/api';
-import {Milestone} from 'src/app/models/milestone';
+import {Milestone} from 'src/app/models/project-models';
 
 @Component({
   selector: 'app-ms-info',
@@ -42,7 +42,7 @@ export class MsInfoComponent implements OnInit {
   onAdd(): void {
     const ms = this.form.getRawValue();
     if (this.milestones.filter(m => m.endTimestamp === ms.endTimestamp)[0]) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Another miletone already ends on this date'});
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Another milestone already ends on this date'});
       return;
     }
     if (this.form.get('title').value.length > 30) {
@@ -68,7 +68,7 @@ export class MsInfoComponent implements OnInit {
   }
 
   onBefore(): void {
-    this.router.navigate(['new/wca'], {state: {basicInformation: this.lastForm}});
+    this.router.navigate(['new/project'], {state: {basicInformation: this.lastForm}});
   }
 
   getIndex(timestamp: Date): number {

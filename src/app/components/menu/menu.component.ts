@@ -19,7 +19,7 @@ export class MenuComponent implements OnInit {
       if (a != null) {
         this.items = [
           {icon: 'pi pi-search', label: 'Browse', routerLink: '/'},
-          {icon: 'pi pi-plus', label: 'Create', routerLink: '/new/wca'},
+          {icon: 'pi pi-plus', label: 'Create', routerLink: '/new/project'},
           {icon: 'pi pi-list', label: 'Inventory', routerLink: '/inventory'},
           {icon: 'pi pi-question', label: 'How it works', routerLink: '/about'}
         ];

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {WCA} from 'src/app/models/wca';
+import {Project} from 'src/app/models/project-models';
 import {AdvanceQueryReqBody, WcaService} from 'src/app/services/wca.service';
 import {getStatusTag} from 'src/app/utils';
 import {NeolineService} from '../../services/neoline.service';
@@ -11,8 +11,8 @@ import {NeolineService} from '../../services/neoline.service';
 })
 export class InventoryComponent implements OnInit {
 
-  boughtWCAs: WCA[] = [];
-  createdWCAs: WCA[] = [];
+  boughtProjects: Project[] = [];
+  createdProjects: Project[] = [];
   getStatusTag = getStatusTag;
 
   constructor(
@@ -22,25 +22,25 @@ export class InventoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const createdWCAQuery: AdvanceQueryReqBody = {
+    const createdProjectQuery: AdvanceQueryReqBody = {
       creator: this.wallet.getAddress$().getValue(),
       buyer: null,
       page: 1,
       size: 100,
     };
-    this.wcaService.filterWCA(createdWCAQuery).subscribe(res => {
-      this.createdWCAs = res;
+    this.wcaService.filterProjects(createdProjectQuery).subscribe(res => {
+      this.createdProjects = res;
 
     });
 
-    const boughtWCAQuery: AdvanceQueryReqBody = {
+    const boughtProjectQuery: AdvanceQueryReqBody = {
       creator: null,
       buyer: this.wallet.getAddress$().getValue(),
       page: 1,
       size: 100,
     };
-    this.wcaService.filterWCA(boughtWCAQuery).subscribe(res => {
-      this.boughtWCAs = res;
+    this.wcaService.filterProjects(boughtProjectQuery).subscribe(res => {
+      this.boughtProjects = res;
 
     });
 

@@ -1,5 +1,5 @@
 <ng-container *ngIf="!created; else successCreate">
-  <h4>WCA</h4>
+  <h4>Project</h4>
   <p-table [value]="[1]">
     <ng-template pTemplate="body">
       <tr>
@@ -57,18 +57,18 @@
 
 </ng-container>
 
-<app-pending-request header="Create WCA" [display]="isLoading"></app-pending-request>
+<app-pending-request header="Create Project" [display]="isLoading"></app-pending-request>
 
 <ng-template #successCreate>
   <div class="p-d-flex p-jc-center p-ai-center p-flex-column">
-    <h1>Your WCA has been created!</h1>
+    <h1>Your project has been created!</h1>
     <button pButton label="Browse" icon="pi pi-search" routerLink=""></button>
     <div class="p-mt-5 p-d-flex p-flex-column p-jc-center p-ai-center">
       <div class="p-mb-2">
-        Share your WCA:
+        Share your project:
       </div>
       <!-- TODO special char escape?-->
-      <p>https://wca.nekohit.com/wcas/{{basicInfo.identifier}}</p>
+      <p>https://wca.nekohit.com/projects/{{basicInfo.identifier}}</p>
     </div>
   </div>
 </ng-template>
