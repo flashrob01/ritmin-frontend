@@ -1,0 +1,64 @@
+.hero {
+  min-height: 600px;
+  background-color: #2196f3;
+  clip-path: circle(80% at 70% 40%);
+}
+
+.hero-wrap {
+  filter: drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5));
+}
+
+.award-section {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  background-color: rgb(58, 58, 58);
+  height: 120px;
+
+  .award-title {
+    color: #00e599;
+  }
+}
+
+.award {
+  height: 80px;
+}
+
+.cat-img {
+  width: 600px;
+  margin-bottom: -500px;
+  margin-left: -50px;
+}
+
+.custom-marker {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  font-size: 150%;
+  align-items: center;
+  justify-content: center;
+  color: #2196f3;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+@media screen and (max-width: 960px) {
+  ::ng-deep {
+    .customized-timeline {
+      .p-timeline-event:nth-child(even) {
+        flex-direction: row !important;
+
+        .p-timeline-event-content {
+          text-align: left !important;
+        }
+      }
+
+      .p-timeline-event-opposite {
+        flex: 0;
+      }
+
+      .p-card {
+        margin-top: 1rem;
+      }
+    }
+  }
+}

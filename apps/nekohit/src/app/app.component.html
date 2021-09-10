@@ -1,137 +1,14 @@
 <ritmin-menu></ritmin-menu>
-
+<router-outlet></router-outlet>
 <div *ngIf="showPromotion" class="promotion bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
   <div class="font-bold mr-8">🔥 Token Airdrop </div>
   <div class="align-items-center hidden lg:flex">
       <span class="line-height-3">Don't miss the upcoming CAT token airdrop!</span>
   </div>
   <a class="flex align-items-center ml-2 mr-8">
-      <span class="underline font-bold cursor-pointer" (click)="openTwitter()">Learn More</span>
+      <span class="underline font-bold cursor-pointer" (click)="linkService.openTwitter()">Learn More</span>
   </a>
   <a class="flex align-items-center no-underline justify-content-center border-circle text-100 hover:bg-bluegray-700 cursor-pointer transition-colors transition-duration-150" style="width:2rem; height: 2rem">
       <i class="pi pi-times" (click)="showPromotion = false"></i>
   </a>
 </div>
-
-
-<div class="grid grid-nogutter surface-section text-800">
-  <div class="col-12 md:col-6 p-6 text-center md:text-left flex align-items-center">
-      <section>
-          <span class="mt-6 block text-6xl font-bold mb-1">Join the first and fully decentralized </span>
-          <div class="text-6xl text-primary font-bold mb-3">crowdfunding platform for content creators on the blockchain</div>
-          <p class="mt-0 mb-4 text-700 line-height-3">Get started now and create your own Project on NekoHit</p>
-
-          <button pButton pRipple label="White Paper" type="button" class="mr-3 p-button-raised"></button>
-          <button pButton pRipple label="Browse" type="button" class="p-button-outlined"></button>
-      </section>
-  </div>
-  <div class="col-12 md:col-6 overflow-hidden hero-wrap">
-    <div class="flex justify-content-center align-items-center hero">
-      <img src="assets/images/cat-light2.png" class="cat-img" alt="NekoHit">
-    </div>
-  </div>
-</div>
-
-<div class="award-section flex justify-content-left align-items-center">
-  <img class="fadeinleft animation-duration-2000  award ml-3" src="assets/images/award.png">
-  <div class="fadeinright animation-duration-2000  flex flex-column ml-5">
-    <span class="award-title text-4xl font-bold">NEO FRONTIER LAUNCHPAD</span>
-    <span class="award-subtitle text-white text-xl">Excellence Award Winner Project</span>
-  </div>
-</div>
-
-<div class="mt-6 mb-6 flex flex-column justify-content-center align-items-center">
-  <div class="text-center text-2xl" style="max-width: 800px;">
-    <h1 class="text-blue-600">What is NekoHit?</h1>
-    <p class="text-2xl">
-      NekoHit offers the first fully decentralized crowdfunding solution running on the NEO blockchain
-      and allows content creators to work on what they love at their own pace.  We encourage creators to finish work on time and provide
-      a
-    </p>
-  </div>
-</div>
-
-<br>
-
-<div class="mt-6 mb-6 flex flex-column justify-content-center align-items-center">
-  <div class="text-center text-2xl">
-    <h1 class="text-blue-600">How it works</h1>
-    <div class="card">
-      <p-timeline [value]="events" align="alternate" styleClass="customized-timeline">
-        <ng-template pTemplate="marker" let-event>
-          <span class="custom-marker p-shadow-2">
-              <i class="text-2xl" [ngClass]="event.icon"></i>
-          </span>
-        </ng-template>
-        <ng-template pTemplate="content" let-event>
-          <p-card [header]="event.status">
-            <p class="text-xl">{{event.description}}</p>
-            <button pButton label="Read more" class="p-button-text"></button>
-          </p-card>
-        </ng-template>
-      </p-timeline>
-    </div>
-  </div>
-</div>
-
-
-<br><br>
-<div class="mt-6 mb-6 surface-0 text-center">
-  <div class="mb-6 font-bold text-2xl">
-      <h1>One Product, </h1>
-      <p class="text-blue-600">Many Solutions</p>
-  </div>
-  <div class="grid mt-6" style="width: 100%;">
-      <div class="col-12 md:col-4 mb-4 px-5">
-          <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-              <i class="pi pi-desktop text-4xl text-blue-500"></i>
-          </span>
-          <div class="text-900 mb-3 font-medium">Built for Developers</div>
-          <span class="text-700 text-sm line-height-3">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</span>
-      </div>
-      <div class="col-12 md:col-4 mb-4 px-5">
-          <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-              <i class="pi pi-lock text-4xl text-blue-500"></i>
-          </span>
-          <div class="text-900 mb-3 font-medium">End-to-End Encryption</div>
-          <span class="text-700 text-sm line-height-3">Risus nec feugiat in fermentum posuere urna nec. Posuere sollicitudin aliquam ultrices sagittis.</span>
-      </div>
-      <div class="col-12 md:col-4 mb-4 px-5">
-          <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-              <i class="pi pi-check-circle text-4xl text-blue-500"></i>
-          </span>
-          <div class="text-900 mb-3 font-medium">Easy to Use</div>
-          <span class="text-700 text-sm line-height-3">Ornare suspendisse sed nisi lacus sed viverra tellus. Neque volutpat ac tincidunt vitae semper.</span>
-      </div>
-      <div class="col-12 md:col-4 mb-4 px-5">
-          <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-              <i class="pi pi-globe text-4xl text-blue-500"></i>
-          </span>
-          <div class="text-900 mb-3 font-medium">Fast & Global Support</div>
-          <span class="text-700 text-sm line-height-3">Fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus.</span>
-      </div>
-      <div class="col-12 md:col-4 mb-4 px-5">
-          <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-              <i class="pi pi-github text-4xl text-blue-500"></i>
-          </span>
-          <div class="text-900 mb-3 font-medium">Open Source</div>
-          <span class="text-700 text-sm line-height-3">Nec tincidunt praesent semper feugiat. Sed adipiscing diam donec adipiscing tristique risus nec feugiat. </span>
-      </div>
-      <div class="col-12 md:col-4 md:mb-4 mb-0 px-3">
-          <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-              <i class="pi pi-shield text-4xl text-blue-500"></i>
-          </span>
-          <div class="text-900 mb-3 font-medium">Trusted Securitty</div>
-          <span class="text-700 text-sm line-height-3">Mattis rhoncus urna neque viverra justo nec ultrices. Id cursus metus aliquam eleifend.</span>
-      </div>
-  </div>
-</div>
-
-<br><br>
-<div class="mt-6 mb-6 surface-0 text-700 text-center">
-  <div class="text-blue-600 font-bold text-5xl mb-3">Join Our Community</div>
-  <div class="text-700 text-2xl mb-5">Get in touch with other creators, your sponsors or just come and have a chat with the NekoHit team</div>
-  <button pButton pRipple label="Join Now" (click)="openDiscord()" icon="pi pi-discord" class="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap"></button>
-</div>
-
-<br><br>

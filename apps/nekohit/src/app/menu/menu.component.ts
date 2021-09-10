@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MenuItem, SelectItem } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { LinkService } from '../core/services/link.service';
 
 @Component({
   selector: 'ritmin-menu',
@@ -14,7 +15,7 @@ export class MenuComponent implements OnInit {
   walletOptions: SelectItem[] = [];
   selectedWallet: SelectItem = { label: '', value: '' };
 
-  constructor(translate: TranslateService) {
+  constructor(translate: TranslateService, private linkService: LinkService) {
     translate.setDefaultLang('en');
     translate.use('en');
   }
@@ -38,13 +39,14 @@ export class MenuComponent implements OnInit {
       {
         label: 'White Paper',
         icon: 'pi pi-file-o',
-        command: () => this.openWhitepaper()
-      }
+        command: () => this.linkService.openWhitepaper()
+      },
+      {
+        label: 'Blog',
+        icon: 'pi pi-book',
+        command: () => this.linkService.openBlog()
+      },
     ];
-  }
-
-  private openWhitepaper(): void {
-    window.open('https://github.com/NekoHitDev/whitepaper/tags', '_blank');
   }
 
 }

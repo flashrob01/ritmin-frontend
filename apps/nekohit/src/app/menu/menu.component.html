@@ -1,11 +1,14 @@
 <p-menubar [model]="items" styleClass="nekohit-menu">
   <ng-template pTemplate="start">
-    <div class="logo ml-2 mr-3 mt-1">
-      <img src="assets/images/cat-dark.png" height="50">
+
+    <div class="logo ml-2 mr-3 mt-1 cursor-pointer" routerLinkActive="active">
+      <a [routerLink]="['/']">
+        <img src="assets/images/cat-dark.png" height="50">
+      </a>
     </div>
   </ng-template>
   <ng-template pTemplate="end">
-    <p-dropdown [options]="walletOptions" optionLabel="label" [(ngModel)]="selectedWallet" placeholder="Connect Wallet">
+    <p-dropdown styleClass="walletDropdown" [options]="walletOptions" optionLabel="label" [(ngModel)]="selectedWallet" placeholder="Connect Wallet">
       <ng-template pTemplate="selectedItem">
           <div *ngIf="selectedWallet" class="flex align-items-center">
               <img height="20" [src]="'assets/images/' + selectedWallet.value + '.png'" />

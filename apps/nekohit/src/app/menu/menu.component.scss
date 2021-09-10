@@ -7,6 +7,11 @@
     top: 0;
     width: 100%;
     z-index: 100;
-    margin-right: 10px;
+  }
+}
+
+.walletDropdown {
+  &.p-dropdown {
+    width: 190px;
   }
 }
