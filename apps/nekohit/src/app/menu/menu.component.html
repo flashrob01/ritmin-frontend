@@ -8,11 +8,12 @@
     </div>
   </ng-template>
   <ng-template pTemplate="end">
-    <p-dropdown styleClass="walletDropdown" [options]="walletOptions" optionLabel="label" [(ngModel)]="selectedWallet" placeholder="Connect Wallet">
+    <p-dropdown styleClass="walletDropdown" [options]="walletOptions" optionLabel="label" [(ngModel)]="selectedWallet"
+      [placeholder]="translate.instant('MENU.CONNECT')">
       <ng-template pTemplate="selectedItem">
           <div *ngIf="selectedWallet" class="flex align-items-center">
-              <img height="20" [src]="'assets/images/' + selectedWallet.value + '.png'" />
-              <div class="ml-2">{{selectedWallet.label}}</div>
+            <img height="20" [src]="'assets/images/' + selectedWallet.value + '.png'" />
+            <div class="ml-2">{{selectedWallet.label}}</div>
           </div>
       </ng-template>
       <ng-template let-wallet pTemplate="item">

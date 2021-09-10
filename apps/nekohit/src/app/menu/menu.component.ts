@@ -15,9 +15,26 @@ export class MenuComponent implements OnInit {
   walletOptions: SelectItem[] = [];
   selectedWallet: SelectItem = { label: '', value: '' };
 
-  constructor(translate: TranslateService, private linkService: LinkService) {
-    translate.setDefaultLang('en');
-    translate.use('en');
+  constructor(public translate: TranslateService, private linkService: LinkService) {
+    this.translate.onLangChange.subscribe((v) => {
+      localStorage.setItem('lang', v.lang);
+      this.items = [
+        {
+          label: this.translate.instant('MENU.BROWSE'),
+          icon: 'pi pi-search'
+        },
+        {
+          label: this.translate.instant('MENU.WHITEPAPER'),
+          icon: 'pi pi-file-o',
+          command: () => this.linkService.openWhitepaper()
+        },
+        {
+          label: this.translate.instant('MENU.BLOG'),
+          icon: 'pi pi-book',
+          command: () => this.linkService.openBlog()
+        },
+      ];
+    });
   }
 
   ngOnInit() {
@@ -30,22 +47,6 @@ export class MenuComponent implements OnInit {
         value: 'neoline',
         label: 'Neoline'
       }
-    ];
-    this.items = [
-      {
-        label: 'Browse',
-        icon: 'pi pi-search'
-      },
-      {
-        label: 'White Paper',
-        icon: 'pi pi-file-o',
-        command: () => this.linkService.openWhitepaper()
-      },
-      {
-        label: 'Blog',
-        icon: 'pi pi-book',
-        command: () => this.linkService.openBlog()
-      },
     ];
   }
 
