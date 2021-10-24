@@ -19,6 +19,7 @@ import { CarouselModule } from 'primeng/carousel';
 import { SharedModule } from './shared/shared.module';
 import { FeaturedProjectService } from './home/featured-project/featured-project.service';
 import { FeaturedProjectComponent } from './home/featured-project/featured-project.component';
+import { RxState } from '@rx-angular/state';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -52,7 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CoreModule,
     AppRoutingModule,
   ],
-  providers: [FeaturedProjectService],
+  providers: [FeaturedProjectService, RxState],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

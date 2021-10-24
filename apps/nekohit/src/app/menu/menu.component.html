@@ -1,27 +1,37 @@
-<p-menubar [model]="items" styleClass="nekohit-menu">
-  <ng-template pTemplate="start">
-
-    <div class="logo ml-2 mr-3 mt-1 cursor-pointer" routerLinkActive="active">
-      <a [routerLink]="['/']">
-        <img src="assets/images/cat-dark.png" height="50">
-      </a>
-    </div>
-  </ng-template>
-  <ng-template pTemplate="end">
-    <p-dropdown styleClass="walletDropdown" [options]="walletOptions" optionLabel="label" [(ngModel)]="selectedWallet"
-      [placeholder]="translate.instant('MENU.CONNECT')">
-      <ng-template pTemplate="selectedItem">
-          <div *ngIf="selectedWallet" class="flex align-items-center">
-            <img height="20" [src]="'assets/images/' + selectedWallet.value + '.png'" />
-            <div class="ml-2">{{selectedWallet.label}}</div>
+<ng-container *ngIf="state$ | async as s">
+  <p-menubar [model]="s.menuItems" styleClass="nekohit-menu">
+    <ng-template pTemplate="start">
+      <div class="logo ml-2 mr-3 mt-1 cursor-pointer" routerLinkActive="active">
+        <a [routerLink]="['/']">
+          <img src="assets/images/cat-dark.png" height="50" />
+        </a>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <p-dropdown
+        styleClass="walletDropdown"
+        [options]="s.walletOptions"
+        optionLabel="label"
+        [(ngModel)]="s.selectedWallet"
+        [placeholder]="translate.instant('MENU.CONNECT')"
+        (onChange)="clickWalletOption$.next(s.selectedWallet)"
+      >
+        <ng-template pTemplate="selectedItem">
+          <div *ngIf="s.selectedWallet" class="flex align-items-center">
+            <img
+              height="20"
+              [src]="'assets/images/' + s.selectedWallet.value + '.png'"
+            />
+            <div class="ml-2">{{ s.selectedWallet.label }}</div>
           </div>
-      </ng-template>
-      <ng-template let-wallet pTemplate="item">
+        </ng-template>
+        <ng-template let-wallet pTemplate="item">
           <div class="flex align-items-center">
             <img height="30" [src]="'assets/images/' + wallet.value + '.png'" />
-            <div class="ml-2 text-lg">{{wallet.label}}</div>
+            <div class="ml-2 text-lg">{{ wallet.label }}</div>
           </div>
-      </ng-template>
-    </p-dropdown>
-  </ng-template>
-</p-menubar>
+        </ng-template>
+      </p-dropdown>
+    </ng-template>
+  </p-menubar>
+</ng-container>

@@ -1,7 +1,15 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-type NeoType = 'Boolean' | 'Integer' | 'Array' | 'ByteArray' | 'String' | 'Address' | 'Hash160' | 'Hash256';
+type NeoType =
+  | 'Boolean'
+  | 'Integer'
+  | 'Array'
+  | 'ByteArray'
+  | 'String'
+  | 'Address'
+  | 'Hash160'
+  | 'Hash256';
 
 export type TypedValue = { type: NeoType; value: string | boolean | any[] };
 
@@ -29,7 +37,7 @@ export type NeoAccount = {
 export type NeoNetwork = {
   networks: string[];
   chainId: 1 | 2 | 3 | 4;
-  defaultNetwork: string
+  defaultNetwork: string;
 };
 
 export type TxConfirmedInfo = {
@@ -44,18 +52,22 @@ export type Signers = {
 
 export type Signer = {
   account: string;
-  scopes: number
+  scopes: number;
 };
-
-const NEOLINE_N3_READY_EVENT = "NEOLine.N3.EVENT.READY";
 
 @Injectable()
 export class NeolineService {
   constructor() {
+    // remove old listener
     NeolineService.removeListeners();
+    // add new listener
     NeolineService.registerListeners();
     if (!NeolineService.initNeoline()) {
-      window.addEventListener(NEOLINE_N3_READY_EVENT, NeolineService.readyListener);
+      // subscribe to this ready event
+      window.addEventListener(
+        'NEOLine.N3.EVENT.READY',
+        NeolineService.readyListener
+      );
     }
   }
 
@@ -63,8 +75,13 @@ export class NeolineService {
   private static neolineN3: any = undefined;
   public static isLoading = false;
   public static isMainNet = false;
-  public static currentAddress$: BehaviorSubject<string> = new BehaviorSubject("");
-  public static currentScriptHash$: BehaviorSubject<string> = new BehaviorSubject("");
+  public static currentAddress$: BehaviorSubject<string> = new BehaviorSubject(
+    ''
+  );
+
+  public static currentScriptHash$: BehaviorSubject<string> =
+    new BehaviorSubject('');
+
   public static accountChangedSubject = new Subject<NeoAccount>();
   public static networkChangedSubject = new Subject<NeoNetwork>();
   public static txConfirmedSubject = new Subject<TxConfirmedInfo>();
@@ -75,6 +92,7 @@ export class NeolineService {
   public static onChangeSubject = new Subject<void>();
 
   private static readyListener = () => {
+    // init the neoline on ready event
     NeolineService.initNeoline();
   };
   private static accountChangedListener = (result: any) => {
@@ -107,19 +125,49 @@ export class NeolineService {
   };
 
   private static registerListeners(): void {
-    window.addEventListener('NEOLine.NEO.EVENT.ACCOUNT_CHANGED', this.accountChangedListener);
-    window.addEventListener('NEOLine.NEO.EVENT.NETWORK_CHANGED', this.networkChangedListener);
-    window.addEventListener('NEOLine.NEO.EVENT.TRANSACTION_CONFIRMED', this.txConfirmedListener);
-    window.addEventListener('NEOLine.NEO.EVENT.CONNECTED', this.connectedListener);
-    window.addEventListener('NEOLine.NEO.EVENT.DISCONNECTED', this.disconnectedListener);
+    window.addEventListener(
+      'NEOLine.NEO.EVENT.ACCOUNT_CHANGED',
+      this.accountChangedListener
+    );
+    window.addEventListener(
+      'NEOLine.NEO.EVENT.NETWORK_CHANGED',
+      this.networkChangedListener
+    );
+    window.addEventListener(
+      'NEOLine.NEO.EVENT.TRANSACTION_CONFIRMED',
+      this.txConfirmedListener
+    );
+    window.addEventListener(
+      'NEOLine.NEO.EVENT.CONNECTED',
+      this.connectedListener
+    );
+    window.addEventListener(
+      'NEOLine.NEO.EVENT.DISCONNECTED',
+      this.disconnectedListener
+    );
   }
 
   private static removeListeners(): void {
-    window.removeEventListener('NEOLine.NEO.EVENT.ACCOUNT_CHANGED', this.accountChangedListener);
-    window.removeEventListener('NEOLine.NEO.EVENT.NETWORK_CHANGED', this.networkChangedListener);
-    window.removeEventListener('NEOLine.NEO.EVENT.TRANSACTION_CONFIRMED', this.txConfirmedListener);
-    window.removeEventListener('NEOLine.NEO.EVENT.CONNECTED', this.connectedListener);
-    window.removeEventListener('NEOLine.NEO.EVENT.DISCONNECTED', this.disconnectedListener);
+    window.removeEventListener(
+      'NEOLine.NEO.EVENT.ACCOUNT_CHANGED',
+      this.accountChangedListener
+    );
+    window.removeEventListener(
+      'NEOLine.NEO.EVENT.NETWORK_CHANGED',
+      this.networkChangedListener
+    );
+    window.removeEventListener(
+      'NEOLine.NEO.EVENT.TRANSACTION_CONFIRMED',
+      this.txConfirmedListener
+    );
+    window.removeEventListener(
+      'NEOLine.NEO.EVENT.CONNECTED',
+      this.connectedListener
+    );
+    window.removeEventListener(
+      'NEOLine.NEO.EVENT.DISCONNECTED',
+      this.disconnectedListener
+    );
   }
 
   public static initNeoline(): boolean {
@@ -131,7 +179,8 @@ export class NeolineService {
       this.neoline = new (window as any).NEOLine.Init();
       this.neolineN3 = new (window as any).NEOLineN3.Init();
       // fetch network into
-      this.neoline.getNetworks()
+      this.neoline
+        .getNetworks()
         .then((result: any) => {
           this.isMainNet = result.chainId === 3;
           this.onChangeSubject.next();
@@ -142,7 +191,8 @@ export class NeolineService {
           throw error;
         });
       // fetch account info
-      this.neoline.getAccount()
+      this.neoline
+        .getAccount()
         .then((account: NeoAccount) => {
           if (NeolineService.currentAddress$.getValue() == null) {
             this.refreshCurrentAccount(account.address);
@@ -169,59 +219,56 @@ export class NeolineService {
       return;
     }
     this.currentAddress$.next(address);
-    this.neolineN3.AddressToScriptHash({address})
+    this.neolineN3
+      .AddressToScriptHash({ address })
       .then((result: any) => {
-        const {scriptHash} = result;
+        const { scriptHash } = result;
         this.currentScriptHash$.next(scriptHash);
       })
       .catch((error: any) => {
         // flush if failed to get script hash
-        this.currentAddress$.next("");
+        this.currentAddress$.next('');
         console.error(error);
       });
   }
 
-  public invoke(params: InvokeReadArgs): Promise<{ txid: string, nodeUrl: string }> {
+  public invoke(
+    params: InvokeReadArgs
+  ): Promise<{ txid: string; nodeUrl: string }> {
     // Reject if neoline is not found or cannot be init
     if (!NeolineService.initNeoline()) {
       return Promise.reject('Neoline not found');
     }
     // do invokeRead first, check status is halt
-    return this.invokeRead(params)
-      .then(result => {
-        console.log(result);
-        // TODO, handle this error on caller
-        if (result.state !== 'HALT') {
-          throw new Error(result.exception);
-        }
-        // everything is ok, do the write invoke
-        return NeolineService.neolineN3.invoke(
-          // concat addition fields to params
-          Object.assign(
-            params,
+    return this.invokeRead(params).then((result) => {
+      console.log(result);
+      // TODO, handle this error on caller
+      if (result.state !== 'HALT') {
+        throw new Error(result.exception);
+      }
+      // everything is ok, do the write invoke
+      return NeolineService.neolineN3.invoke(
+        // concat addition fields to params
+        Object.assign(params, {
+          fee: '0.000001',
+          broadcastOverride: false,
+          signers: [
             {
-              fee: '0.000001',
-              broadcastOverride: false,
-              signers: [
-                {
-                  account: NeolineService.currentScriptHash$.getValue(),
-                  scopes: 1 // CallByEntity
-                }
-              ]
-            }
-          )
-        );
-      });
+              account: NeolineService.currentScriptHash$.getValue(),
+              scopes: 1, // CallByEntity
+            },
+          ],
+        })
+      );
+    });
   }
 
-  public invokeRead(
-    params: InvokeReadArgs
-  ): Promise<{
+  public invokeRead(params: InvokeReadArgs): Promise<{
     exception: string;
     gasconsumed: string;
     script: string;
     stack: TypedValue[];
-    state: string
+    state: string;
   }> {
     // Reject if neoline is not found or cannot be init
     if (!NeolineService.initNeoline()) {
@@ -229,30 +276,28 @@ export class NeolineService {
     }
     // do the read invoke
     return NeolineService.neolineN3.invokeRead(
-      Object.assign(
-        params,
-        {
-          signers: [
-            {
-              account: NeolineService.currentScriptHash$.getValue(),
-              scopes: 1 // CallByEntity
-            }
-          ]
-        }
-      )
+      Object.assign(params, {
+        signers: [
+          {
+            account: NeolineService.currentScriptHash$.getValue(),
+            scopes: 1, // CallByEntity
+          },
+        ],
+      })
     );
   }
 
   public handleError(error: any): string {
     console.error(error);
-    const {type, description} = error;
+    const { type, description } = error;
     let msg: string;
     switch (type) {
       case 'NO_PROVIDER':
         msg = 'No provider available.';
         break;
       case 'RPC_ERROR':
-        msg = 'There was an error when broadcasting this transaction to the network.';
+        msg =
+          'There was an error when broadcasting this transaction to the network.';
         break;
       case 'CANCELED':
         msg = 'Transaction canceled';
@@ -264,8 +309,8 @@ export class NeolineService {
     return msg;
   }
 
-  public getAddress$(): BehaviorSubject<string> {
-    return NeolineService.currentAddress$;
+  public getAddress$(): Observable<string> {
+    return NeolineService.currentAddress$.asObservable();
   }
 
   public isLoading(): boolean {

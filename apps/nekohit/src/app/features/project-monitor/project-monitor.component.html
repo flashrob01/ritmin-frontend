@@ -1,18 +1,72 @@
 <p-table
   [value]="projects"
   responsiveLayout="scroll"
-  styleClass="project-table"
+  styleClass="project-table p-datatable-striped p-datatable-gridlines"
 >
+  <ng-template pTemplate="header">
+    <tr class="project-header-row">
+      <th rowspan="2"><span class="emoji">📝</span> Description</th>
+      <th rowspan="2"><span class="emoji">⌛</span> Status</th>
+      <th colspan="2"><span class="emoji">⏱️</span> Duration</th>
+      <th colspan="2"><span class="emoji">💰</span> Staking</th>
+    </tr>
+    <tr class="project-header-row">
+      <th>Started</th>
+      <th>Deadline</th>
+      <th>Funding</th>
+      <th>Security</th>
+    </tr>
+  </ng-template>
   <ng-template pTemplate="body" let-project>
-    <tr class="project-row">
-      <div class="project-row-content flex align-items-center">
-        <td class="project-id">
-          {{ project.id }}
-        </td>
-        <td class="project-desc">
-          {{ project.description }}
-        </td>
-      </div>
+    <tr class="project-row-content">
+      <td>
+        <p>
+          <b>{{ project.identifier }}</b>
+        </p>
+        {{ project.description | truncate: [80] }}
+      </td>
+      <td>
+        <p-tag [value]="project.status"></p-tag>
+      </td>
+
+      <td>
+        {{ project.creationTimestamp | date: 'longDate' }}
+      </td>
+      <td>
+        {{
+          project.milestones[project.milestones.length - 1].endTimestamp
+            | date: 'longDate'
+        }}
+      </td>
+      <td>
+        <p>
+          {{ project.maxTokenSoldCount - project.remainTokenCount | number }} /
+          {{ project.maxTokenSoldCount | number }} CAT
+        </p>
+        <div
+          class="progress text-center text-md font-bold"
+          [ngStyle]="{
+            width:
+              ((project.maxTokenSoldCount - project.remainTokenCount) /
+                project.maxTokenSoldCount) *
+                100 +
+              '%'
+          }"
+        >
+          {{
+            ((project.maxTokenSoldCount - project.remainTokenCount) /
+              project.maxTokenSoldCount) *
+              100 | number
+          }}
+          %
+        </div>
+      </td>
+      <td>
+        {{
+          (project.stakePer100Token / 100) * project.maxTokenSoldCount | number
+        }}
+        CAT
+      </td>
     </tr>
   </ng-template>
 </p-table>

@@ -7,9 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TruncatePipe } from './pipes/truncate.pipe';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
-  declarations: [],
+  declarations: [TruncatePipe],
   imports: [
     CommonModule,
     TableModule,
@@ -20,6 +22,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputTextModule,
     CardModule,
     ProgressBarModule,
+    CommonModule,
+    TagModule,
   ],
   exports: [
     ButtonModule,
@@ -29,6 +33,9 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputTextModule,
     CardModule,
     ProgressBarModule,
+    TruncatePipe,
+    CommonModule,
+    TagModule,
   ],
 })
 export class SharedModule {}
