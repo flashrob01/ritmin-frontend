@@ -4,16 +4,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 
-import { ButtonModule } from 'primeng/button';
 import { MenuComponent } from './menu/menu.component';
 import { MenubarModule } from 'primeng/menubar';
-import { DropdownModule } from 'primeng/dropdown';
-import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { InputTextModule } from 'primeng/inputtext';
 import { TimelineModule } from 'primeng/timeline';
-import { CardModule } from 'primeng/card';
 import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
@@ -21,14 +16,22 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { FooterComponent } from './footer/footer.component';
 import { CarouselModule } from 'primeng/carousel';
-import { SharedModule } from 'primeng/api';
+import { SharedModule } from './shared/shared.module';
+import { FeaturedProjectService } from './home/featured-project/featured-project.service';
+import { FeaturedProjectComponent } from './home/featured-project/featured-project.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
 }
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent, HomeComponent, FooterComponent],
+  declarations: [
+    AppComponent,
+    MenuComponent,
+    HomeComponent,
+    FooterComponent,
+    FeaturedProjectComponent,
+  ],
   imports: [
     HttpClientModule,
     BrowserModule,
@@ -43,13 +46,13 @@ export function HttpLoaderFactory(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
+        deps: [HttpClient],
+      },
     }),
     CoreModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
-  providers: [],
+  providers: [FeaturedProjectService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

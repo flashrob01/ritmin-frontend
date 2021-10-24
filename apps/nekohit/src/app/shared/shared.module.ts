@@ -6,6 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [],
@@ -18,6 +19,7 @@ import { CardModule } from 'primeng/card';
     ReactiveFormsModule,
     InputTextModule,
     CardModule,
+    ProgressBarModule,
   ],
   exports: [
     ButtonModule,
@@ -25,7 +27,8 @@ import { CardModule } from 'primeng/card';
     FormsModule,
     ReactiveFormsModule,
     InputTextModule,
-    CardModule
-  ]
+    CardModule,
+    ProgressBarModule,
+  ],
 })
-export class ProjectMonitorModule { }
+export class SharedModule {}
