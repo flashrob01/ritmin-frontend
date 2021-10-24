@@ -20,6 +20,8 @@ import { HomeComponent } from './home/home.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { FooterComponent } from './footer/footer.component';
+import { CarouselModule } from 'primeng/carousel';
+import { SharedModule } from 'primeng/api';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -31,14 +33,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
-    ButtonModule,
+    SharedModule,
     MenubarModule,
-    DropdownModule,
-    FormsModule,
     ChartModule,
-    InputTextModule,
     TimelineModule,
-    CardModule,
+    CarouselModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {

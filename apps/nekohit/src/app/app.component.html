@@ -1,15 +1,18 @@
 <ritmin-menu></ritmin-menu>
-<router-outlet></router-outlet>
-<div *ngIf="showPromotion" class="promotion bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
-  <div class="font-bold mr-8">🔥 {{'LANDING.BANNER.TITLE' | translate}} </div>
-  <div class="align-items-center hidden lg:flex">
-      <span class="line-height-3">{{'LANDING.BANNER.TEXT' | translate}}</span>
+<div class="content">
+  <router-outlet></router-outlet>
+  <div *ngIf="showPromotion" class="promotion bg-bluegray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap">
+    <div class="font-bold mr-8">🔥 {{'LANDING.BANNER.TITLE' | translate}} </div>
+    <div class="align-items-center hidden lg:flex">
+        <span class="line-height-3">{{'LANDING.BANNER.TEXT' | translate}}</span>
+    </div>
+    <a class="flex align-items-center ml-2 mr-8">
+        <span class="underline font-bold cursor-pointer" (click)="linkService.openTwitter()">{{'LANDING.BANNER.LINK' | translate}}</span>
+    </a>
+    <a class="flex align-items-center no-underline justify-content-center border-circle text-100 hover:bg-bluegray-700 cursor-pointer transition-colors transition-duration-150" style="width:2rem; height: 2rem">
+        <i class="pi pi-times" (click)="showPromotion = false"></i>
+    </a>
   </div>
-  <a class="flex align-items-center ml-2 mr-8">
-      <span class="underline font-bold cursor-pointer" (click)="linkService.openTwitter()">{{'LANDING.BANNER.LINK' | translate}}</span>
-  </a>
-  <a class="flex align-items-center no-underline justify-content-center border-circle text-100 hover:bg-bluegray-700 cursor-pointer transition-colors transition-duration-150" style="width:2rem; height: 2rem">
-      <i class="pi pi-times" (click)="showPromotion = false"></i>
-  </a>
 </div>
-<ritmin-footer></ritmin-footer>
+
+<!-- <ritmin-footer></ritmin-footer> -->

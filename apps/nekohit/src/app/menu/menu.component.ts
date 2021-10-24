@@ -21,7 +21,8 @@ export class MenuComponent implements OnInit {
       this.items = [
         {
           label: this.translate.instant('MENU.BROWSE'),
-          icon: 'pi pi-search'
+          icon: 'pi pi-search',
+          routerLink: 'browse'
         },
         {
           label: this.translate.instant('MENU.WHITEPAPER'),

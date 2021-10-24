@@ -1,9 +1,11 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { LinkService } from './services/link.service';
+import { NeolineService } from './services/neoline.service';
 
 @NgModule({
   providers: [
-    LinkService
+    LinkService,
+    NeolineService
   ]
 })
 export class CoreModule {
