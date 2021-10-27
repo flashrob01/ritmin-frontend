@@ -21,18 +21,21 @@
           pButton
           pRipple
           [label]="label"
+          icon="pi pi-file-o"
           (click)="linkService.openWhitepaper()"
           type="button"
           class="mr-3 p-button-raised"
         ></button>
       </ng-container>
       <ng-container
-        *ngIf="translate.get('LANDING.HERO.BUTTON-BROWSE') | async as label"
+        *ngIf="translate.get('LANDING.HERO.BUTTON-DEVELOPERS') | async as label"
       >
         <button
           pButton
+          icon="pi pi-github"
           pRipple
           [label]="label"
+          (click)="linkService.openGithub()"
           type="button"
           class="p-button-outlined"
         ></button>

@@ -9,6 +9,7 @@ import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [TruncatePipe],
@@ -24,6 +25,7 @@ import { TagModule } from 'primeng/tag';
     ProgressBarModule,
     CommonModule,
     TagModule,
+    TooltipModule,
   ],
   exports: [
     ButtonModule,
@@ -36,6 +38,7 @@ import { TagModule } from 'primeng/tag';
     TruncatePipe,
     CommonModule,
     TagModule,
+    TooltipModule,
   ],
 })
 export class SharedModule {}

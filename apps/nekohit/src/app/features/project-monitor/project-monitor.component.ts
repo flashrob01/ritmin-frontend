@@ -15,6 +15,7 @@ export class ProjectMonitorComponent implements OnInit {
       maxTokenSoldCount: 1_000_000,
       remainTokenCount: 450_000,
       stakePer100Token: 22,
+      buyerCount: 12112,
       creationTimestamp: new Date(),
       status: 'OPEN',
       milestones: [
@@ -38,6 +39,7 @@ export class ProjectMonitorComponent implements OnInit {
       stakePer100Token: 100,
       creationTimestamp: new Date(),
       status: 'OPEN',
+      buyerCount: 1,
       milestones: [
         {
           endTimestamp: new Date(2021, 11, 11),
@@ -58,6 +60,7 @@ export class ProjectMonitorComponent implements OnInit {
       remainTokenCount: 0,
       stakePer100Token: 100,
       creationTimestamp: new Date(),
+      buyerCount: 55,
       status: 'OPEN',
       milestones: [
         {
@@ -78,6 +81,7 @@ export class ProjectMonitorComponent implements OnInit {
       maxTokenSoldCount: 16_380_000,
       remainTokenCount: 150_000,
       stakePer100Token: 100,
+      buyerCount: 1211,
       creationTimestamp: new Date(),
       status: 'OPEN',
       milestones: [

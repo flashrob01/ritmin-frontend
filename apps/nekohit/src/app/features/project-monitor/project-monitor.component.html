@@ -1,9 +1,15 @@
 <p-table
   [value]="projects"
-  responsiveLayout="scroll"
+  [autoLayout]="true"
+  dataKey="identifier"
   styleClass="project-table p-datatable-striped p-datatable-gridlines"
 >
   <ng-template pTemplate="header">
+    <tr class="project-title-row">
+      <th colspan="6">
+        <h2>Browse Projects</h2>
+      </th>
+    </tr>
     <tr class="project-header-row">
       <th rowspan="2"><span class="emoji">📝</span> Description</th>
       <th rowspan="2"><span class="emoji">⌛</span> Status</th>
@@ -14,18 +20,58 @@
       <th>Started</th>
       <th>Deadline</th>
       <th>Funding</th>
-      <th>Security</th>
+      <th>
+        Security
+        <i
+          class="pi pi-question-circle text-xs"
+          pTooltip="The amount of tokens staked by the creator as a security"
+        ></i>
+      </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-project>
+  <ng-template pTemplate="body" let-project let-expanded="expanded">
     <tr class="project-row-content">
       <td>
-        <p>
-          <b>{{ project.identifier }}</b>
-        </p>
-        {{ project.description | truncate: [80] }}
+        <div class="mt-1 mb-1 flex justify-content-between align-items-center">
+          <div>
+            <div class="flex">
+              <div>
+                <button
+                  type="button"
+                  pButton
+                  pRipple
+                  [pRowToggler]="project"
+                  class="p-button-text p-button-rounded p-button-plain"
+                  [icon]="
+                    expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
+                  "
+                ></button>
+              </div>
+              <div class="flex flex-column ml-5">
+                <b
+                  ><a [routerLink]="['/project/' + project.identifier]">{{
+                    project.identifier
+                  }}</a></b
+                >
+                {{ project.description | truncate: [80] }}
+              </div>
+            </div>
+          </div>
+          <div
+            pTooltip="Supporters"
+            class="
+              buyers
+              flex flex-column
+              align-items-center
+              justify-content-center
+            "
+          >
+            <i class="pi pi-users"></i>
+            {{ project.buyerCount | number }}
+          </div>
+        </div>
       </td>
-      <td>
+      <td class="text-center">
         <p-tag [value]="project.status"></p-tag>
       </td>
 
@@ -44,7 +90,8 @@
           {{ project.maxTokenSoldCount | number }} CAT
         </p>
         <div
-          class="progress text-center text-md font-bold"
+          class="text-center text-md font-bold"
+          [ngClass]="project.remainTokenCount === 0 ? 'finished' : 'progress'"
           [ngStyle]="{
             width:
               ((project.maxTokenSoldCount - project.remainTokenCount) /
@@ -67,6 +114,11 @@
         }}
         CAT
       </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="rowexpansion" let-project>
+    <tr>
+      <td colspan="7">sevus</td>
     </tr>
   </ng-template>
 </p-table>
