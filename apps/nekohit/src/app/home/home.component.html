@@ -28,14 +28,16 @@
         ></button>
       </ng-container>
       <ng-container
-        *ngIf="translate.get('LANDING.HERO.BUTTON-DEVELOPERS') | async as label"
+        *ngIf="
+          translate.get('LANDING.HERO.BUTTON-DOCUMENTATION') | async as label
+        "
       >
         <button
           pButton
           icon="pi pi-github"
           pRipple
           [label]="label"
-          (click)="linkService.openGithub()"
+          (click)="linkService.openDevDocumentation()"
           type="button"
           class="p-button-outlined"
         ></button>

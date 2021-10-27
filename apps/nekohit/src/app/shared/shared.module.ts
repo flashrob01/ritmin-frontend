@@ -10,6 +10,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TimelineModule } from 'primeng/timeline';
 
 @NgModule({
   declarations: [TruncatePipe],
@@ -26,6 +28,8 @@ import { TooltipModule } from 'primeng/tooltip';
     CommonModule,
     TagModule,
     TooltipModule,
+    InputNumberModule,
+    TimelineModule,
   ],
   exports: [
     ButtonModule,
@@ -39,6 +43,8 @@ import { TooltipModule } from 'primeng/tooltip';
     CommonModule,
     TagModule,
     TooltipModule,
+    InputNumberModule,
+    TimelineModule,
   ],
 })
 export class SharedModule {}

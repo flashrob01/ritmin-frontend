@@ -1,8 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class LinkService {
-
   public openTwitter(): void {
     window.open('https://twitter.com/nekohitproject', '_blank');
   }
@@ -21,5 +20,9 @@ export class LinkService {
 
   public openBlog(): void {
     window.open('https://medium.com/nekohit', '_blank');
+  }
+
+  public openDevDocumentation(): void {
+    window.open('https://github.com/NekoHitDev/Ritmin/wiki', '_blank');
   }
 }

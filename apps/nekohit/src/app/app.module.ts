@@ -8,7 +8,6 @@ import { MenuComponent } from './menu/menu.component';
 import { MenubarModule } from 'primeng/menubar';
 import { ChartModule } from 'primeng/chart';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TimelineModule } from 'primeng/timeline';
 import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
@@ -40,7 +39,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SharedModule,
     MenubarModule,
     ChartModule,
-    TimelineModule,
     CarouselModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
