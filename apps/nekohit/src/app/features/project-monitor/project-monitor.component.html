@@ -113,7 +113,6 @@
           (project.stakePer100Token / 100) * project.maxTokenSoldCount | number
         }}
         CAT
-        <span> {{ getRiskLevelForProject(project).text }}</span>
       </td>
     </tr>
   </ng-template>
@@ -188,17 +187,35 @@
           </div>
           <!-- MILESTONE OVERVIEW -->
           <div class="ms-overview-panel">
-            <span class="font-semibold text-lg mr-2">🔥 Milestones</span>
+            <span class="font-semibold text-lg mr-2">🔥 Milestones </span>
+
             <p-timeline
               [value]="getProjectTimeline(project)"
               layout="horizontal"
               styleClass="milestone-timeline"
               align="bottom"
             >
+              <ng-template pTemplate="marker" let-event>
+                <div
+                  [ngClass]="event.class"
+                  [style.backgroundColor]="event.color"
+                  [style.borderColor]="event.borderColor"
+                ></div>
+              </ng-template>
               <ng-template pTemplate="content" let-milestone>
-                <div class="flex flex-column justify-content-evenly text-sm">
+                <div
+                  class="flex flex-column justify-content-evenly text-sm"
+                  style="height: 30px"
+                >
                   <span>{{ milestone.text }}</span>
-                  <span>{{ milestone.date | date }}</span>
+                  <small>{{ milestone.subtext }}</small>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="opposite" let-milestone>
+                <div class="flex flex-column justify-content-evenly text-sm">
+                  <span [hidden]="!milestone.showDate">{{
+                    milestone.date | date
+                  }}</span>
                 </div>
               </ng-template>
             </p-timeline>

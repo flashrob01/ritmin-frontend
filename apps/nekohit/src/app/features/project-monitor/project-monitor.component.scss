@@ -66,3 +66,11 @@
 ::ng-deep .milestone-timeline .p-timeline-event {
   width: 100%;
 }
+
+.timeline-event-marker {
+  border: 2px solid #2196f3;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  background-color: #ffffff;
+}
