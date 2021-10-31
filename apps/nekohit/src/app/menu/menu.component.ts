@@ -1,11 +1,12 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { MenuItem, SelectItem } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LinkService } from '../core/services/link.service';
-import { NeolineService } from '../core/services/neoline.service';
 import { Subject } from 'rxjs';
 import { RxState } from '@rx-angular/state';
 import { tap } from 'rxjs/operators';
+import { NeolineService } from '../core/services/neoline.service';
+import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 
 interface MenuState {
   menuItems: MenuItem[];
@@ -41,12 +42,15 @@ const initState: MenuState = {
 export class MenuComponent {
   clickWalletOption$: Subject<SelectItem> = new Subject();
 
-  state$ = this.state.select();
+  readonly state$ = this.state.select();
+  readonly address$ = this.globalState.select('address');
 
   constructor(
     public translate: TranslateService,
     private linkService: LinkService,
-    private state: RxState<MenuState>
+    private state: RxState<MenuState>,
+    @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
+    public neoline: NeolineService
   ) {
     this.state.hold(this.translate.onLangChange, (v) => {
       localStorage.setItem('lang', v.lang);
@@ -77,7 +81,7 @@ export class MenuComponent {
   walletSelected$ = this.clickWalletOption$.pipe(
     tap((wallet) => {
       if (wallet == NeoLine) {
-        NeolineService.initNeoline();
+        this.neoline.init();
       } else if (wallet == WalletConnect) {
         //TODO: init walletconnect
       }

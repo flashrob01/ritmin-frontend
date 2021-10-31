@@ -1,319 +1,88 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { from, Observable, ReplaySubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import {
+  ACCOUNT_CHANGED,
+  CONNECTED,
+  N2,
+  NeoAccount,
+  NeoNetwork,
+  NeoPublicKeyData,
+  NETWORK_CHANGED,
+  READY,
+} from '../models/n2';
+import {
+  N3,
+  N3READY,
+  NeoInvokeReadResponse,
+  NeoSigner,
+  NeoTypedValue,
+} from '../models/n3';
 
-type NeoType =
-  | 'Boolean'
-  | 'Integer'
-  | 'Array'
-  | 'ByteArray'
-  | 'String'
-  | 'Address'
-  | 'Hash160'
-  | 'Hash256';
-
-export type TypedValue = { type: NeoType; value: string | boolean | any[] };
-
-export type InvokeReadArgs = {
-  scriptHash: string;
-  operation: string;
-  args: TypedValue[];
-};
-
-export type InvokeWriteArgs = {
-  fee?: string;
-  broadcastOverride?: boolean;
-};
-
-export type NeoAccount = {
-  address: string;
-  label: string;
-};
-
-// chainId:
-//  1 - Legacy MainNet
-//  2 - Legacy TestNet
-//  3 - N3 MainNet
-//  4 - N3 TestNet
-export type NeoNetwork = {
-  networks: string[];
-  chainId: 1 | 2 | 3 | 4;
-  defaultNetwork: string;
-};
-
-export type TxConfirmedInfo = {
-  txId: string;
-  blockHeight: number;
-  blockTime: number;
-};
-
-export type Signers = {
-  signers: Signer[];
-};
-
-export type Signer = {
-  account: string;
-  scopes: number;
-};
+export interface NeoErrorResponse {
+  type: string;
+  description: string;
+  data: string;
+}
 
 @Injectable()
 export class NeolineService {
+  private readonly N3_READY_EVENT = new ReplaySubject<void>(1);
+  private readonly N2_READY_EVENT = new ReplaySubject<void>(1);
+  private readonly N3_NEOLINE = new ReplaySubject<N3>(1);
+  private readonly N2_NEOLINE = new ReplaySubject<N2>(1);
+
   constructor() {
-    // remove old listener
-    NeolineService.removeListeners();
-    // add new listener
-    NeolineService.registerListeners();
-    if (!NeolineService.initNeoline()) {
-      // subscribe to this ready event
-      window.addEventListener(
-        'NEOLine.N3.EVENT.READY',
-        NeolineService.readyListener
-      );
-    }
+    this.registerListeners();
   }
 
-  private static neoline: any = undefined;
-  private static neolineN3: any = undefined;
-  public static isLoading = false;
-  public static isMainNet = false;
-  public static currentAddress$: BehaviorSubject<string> = new BehaviorSubject(
-    ''
-  );
-
-  public static currentScriptHash$: BehaviorSubject<string> =
-    new BehaviorSubject('');
-
-  public static accountChangedSubject = new Subject<NeoAccount>();
-  public static networkChangedSubject = new Subject<NeoNetwork>();
-  public static txConfirmedSubject = new Subject<TxConfirmedInfo>();
-  public static connectedSubject = new Subject<NeoAccount>();
-  public static disconnectedSubject = new Subject<void>();
-
-  // triggered on account change, network change, connect, disconnect
-  public static onChangeSubject = new Subject<void>();
-
-  private static readyListener = () => {
-    // init the neoline on ready event
-    NeolineService.initNeoline();
-  };
-  private static accountChangedListener = (result: any) => {
-    // update latest account info on account changed event
-    NeolineService.refreshCurrentAccount(result.detail.address);
-    NeolineService.accountChangedSubject.next(result.detail);
-    NeolineService.onChangeSubject.next();
-  };
-  private static networkChangedListener = (result: any) => {
-    // push event on network changed event
-    NeolineService.isMainNet = result.detail.chainId === 3;
-    NeolineService.networkChangedSubject.next(result.detail);
-    NeolineService.onChangeSubject.next();
-  };
-  private static txConfirmedListener = (result: any) => {
-    // push the tx info confirmed in the event
-    NeolineService.txConfirmedSubject.next({
-      txId: result.detail.txid,
-      blockHeight: result.detail.blockHeight,
-      blockTime: result.detail.blockTime,
+  private registerListeners(): void {
+    window.addEventListener(N3READY, () => {
+      this.N3_READY_EVENT.next();
     });
-  };
-  private static connectedListener = (result: any) => {
-    NeolineService.connectedSubject.next(result.detail);
-    NeolineService.onChangeSubject.next();
-  };
-  private static disconnectedListener = () => {
-    NeolineService.disconnectedSubject.next();
-    NeolineService.onChangeSubject.next();
-  };
-
-  private static registerListeners(): void {
-    window.addEventListener(
-      'NEOLine.NEO.EVENT.ACCOUNT_CHANGED',
-      this.accountChangedListener
+    window.addEventListener(READY, () => this.N2_READY_EVENT.next());
+    window.addEventListener(CONNECTED, (response) =>
+      console.log('CONNECTED', response)
     );
-    window.addEventListener(
-      'NEOLine.NEO.EVENT.NETWORK_CHANGED',
-      this.networkChangedListener
+    window.addEventListener(ACCOUNT_CHANGED, (response) =>
+      console.log('ACCOUNT_CHANGED', response)
     );
-    window.addEventListener(
-      'NEOLine.NEO.EVENT.TRANSACTION_CONFIRMED',
-      this.txConfirmedListener
-    );
-    window.addEventListener(
-      'NEOLine.NEO.EVENT.CONNECTED',
-      this.connectedListener
-    );
-    window.addEventListener(
-      'NEOLine.NEO.EVENT.DISCONNECTED',
-      this.disconnectedListener
+    window.addEventListener(NETWORK_CHANGED, (response) =>
+      console.log('NETWORK_CHANGED', response)
     );
   }
 
-  private static removeListeners(): void {
-    window.removeEventListener(
-      'NEOLine.NEO.EVENT.ACCOUNT_CHANGED',
-      this.accountChangedListener
-    );
-    window.removeEventListener(
-      'NEOLine.NEO.EVENT.NETWORK_CHANGED',
-      this.networkChangedListener
-    );
-    window.removeEventListener(
-      'NEOLine.NEO.EVENT.TRANSACTION_CONFIRMED',
-      this.txConfirmedListener
-    );
-    window.removeEventListener(
-      'NEOLine.NEO.EVENT.CONNECTED',
-      this.connectedListener
-    );
-    window.removeEventListener(
-      'NEOLine.NEO.EVENT.DISCONNECTED',
-      this.disconnectedListener
-    );
-  }
-
-  public static initNeoline(): boolean {
-    if (this.neolineN3) {
-      return true;
-    }
-    try {
-      this.isLoading = true;
-      this.neoline = new (window as any).NEOLine.Init();
-      this.neolineN3 = new (window as any).NEOLineN3.Init();
-      // fetch network into
-      this.neoline
-        .getNetworks()
-        .then((result: any) => {
-          this.isMainNet = result.chainId === 3;
-          this.onChangeSubject.next();
-        })
-        .catch((error: any) => {
-          this.neolineN3 = undefined;
-          // rethrow the error
-          throw error;
-        });
-      // fetch account info
-      this.neoline
-        .getAccount()
-        .then((account: NeoAccount) => {
-          if (NeolineService.currentAddress$.getValue() == null) {
-            this.refreshCurrentAccount(account.address);
-          }
-        })
-        .catch((error: any) => {
-          this.neolineN3 = undefined;
-          // rethrow the error
-          throw error;
-        });
-      console.log('Neoline found!');
-      return true;
-    } catch (err) {
-      console.error(err);
-      console.warn('Neoline not found!');
-      return false;
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  private static refreshCurrentAccount(address: string): void {
-    if (!this.neolineN3 || this.currentAddress$.getValue() === address) {
-      return;
-    }
-    this.currentAddress$.next(address);
-    this.neolineN3
-      .AddressToScriptHash({ address })
-      .then((result: any) => {
-        const { scriptHash } = result;
-        this.currentScriptHash$.next(scriptHash);
-      })
-      .catch((error: any) => {
-        // flush if failed to get script hash
-        this.currentAddress$.next('');
-        console.error(error);
-      });
-  }
-
-  public invoke(
-    params: InvokeReadArgs
-  ): Promise<{ txid: string; nodeUrl: string }> {
-    // Reject if neoline is not found or cannot be init
-    if (!NeolineService.initNeoline()) {
-      return Promise.reject('Neoline not found');
-    }
-    // do invokeRead first, check status is halt
-    return this.invokeRead(params).then((result) => {
-      console.log(result);
-      // TODO, handle this error on caller
-      if (result.state !== 'HALT') {
-        throw new Error(result.exception);
-      }
-      // everything is ok, do the write invoke
-      return NeolineService.neolineN3.invoke(
-        // concat addition fields to params
-        Object.assign(params, {
-          fee: '0.000001',
-          broadcastOverride: false,
-          signers: [
-            {
-              account: NeolineService.currentScriptHash$.getValue(),
-              scopes: 1, // CallByEntity
-            },
-          ],
-        })
-      );
+  public init(): void {
+    this.N2_READY_EVENT.subscribe(() => {
+      this.N2_NEOLINE.next(new (window as any).NEOLine.Init());
+    });
+    this.N3_READY_EVENT.subscribe(() => {
+      this.N3_NEOLINE.next(new (window as any).NEOLineN3.Init());
     });
   }
 
-  public invokeRead(params: InvokeReadArgs): Promise<{
-    exception: string;
-    gasconsumed: string;
-    script: string;
-    stack: TypedValue[];
-    state: string;
-  }> {
-    // Reject if neoline is not found or cannot be init
-    if (!NeolineService.initNeoline()) {
-      return Promise.reject('Neoline not found');
-    }
-    // do the read invoke
-    return NeolineService.neolineN3.invokeRead(
-      Object.assign(params, {
-        signers: [
-          {
-            account: NeolineService.currentScriptHash$.getValue(),
-            scopes: 1, // CallByEntity
-          },
-        ],
-      })
+  public getNetworks(): Observable<NeoNetwork> {
+    return this.N2_NEOLINE.pipe(switchMap((n2) => from(n2?.getNetworks())));
+  }
+
+  public getAccount(): Observable<NeoAccount> {
+    return this.N2_NEOLINE.pipe(switchMap((n2) => from(n2?.getAccount())));
+  }
+
+  public getPublicKey(): Observable<NeoPublicKeyData> {
+    return this.N2_NEOLINE.pipe(switchMap((n2) => from(n2?.getPublicKey())));
+  }
+
+  public invokeRead(
+    scriptHash: string,
+    operation: string,
+    args: NeoTypedValue[],
+    signers: NeoSigner[]
+  ): Observable<NeoInvokeReadResponse> {
+    return this.N3_NEOLINE.pipe(
+      switchMap((n3) =>
+        from(n3?.invokeRead(scriptHash, operation, args, signers))
+      )
     );
-  }
-
-  public handleError(error: any): string {
-    console.error(error);
-    const { type, description } = error;
-    let msg: string;
-    switch (type) {
-      case 'NO_PROVIDER':
-        msg = 'No provider available.';
-        break;
-      case 'RPC_ERROR':
-        msg =
-          'There was an error when broadcasting this transaction to the network.';
-        break;
-      case 'CANCELED':
-        msg = 'Transaction canceled';
-        break;
-      default:
-        msg = 'Unknown error: ' + description;
-        break;
-    }
-    return msg;
-  }
-
-  public getAddress$(): Observable<string> {
-    return NeolineService.currentAddress$.asObservable();
-  }
-
-  public isLoading(): boolean {
-    return NeolineService.isLoading;
   }
 }

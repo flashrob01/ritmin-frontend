@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TimelineModule } from 'primeng/timeline';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @NgModule({
   declarations: [TruncatePipe],
@@ -30,6 +31,7 @@ import { TimelineModule } from 'primeng/timeline';
     TooltipModule,
     InputNumberModule,
     TimelineModule,
+    SkeletonModule,
   ],
   exports: [
     ButtonModule,
@@ -45,6 +47,7 @@ import { TimelineModule } from 'primeng/timeline';
     TooltipModule,
     InputNumberModule,
     TimelineModule,
+    SkeletonModule,
   ],
 })
 export class SharedModule {}

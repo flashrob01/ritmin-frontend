@@ -1,227 +1,296 @@
-<p-table
-  [value]="projects"
-  [autoLayout]="true"
-  dataKey="identifier"
-  styleClass="project-table p-datatable-striped p-datatable-gridlines"
->
-  <ng-template pTemplate="header">
-    <tr class="project-title-row">
-      <th colspan="6">
-        <h2>Browse Projects</h2>
-      </th>
-    </tr>
-    <tr class="project-header-row">
-      <th rowspan="2"><span class="emoji">📝</span> Description</th>
-      <th rowspan="2"><span class="emoji">⌛</span> Status</th>
-      <th colspan="2"><span class="emoji">⏱️</span> Duration</th>
-      <th colspan="2"><span class="emoji">💰</span> Staking</th>
-    </tr>
-    <tr class="project-header-row">
-      <th>Created</th>
-      <th>Deadline</th>
-      <th>Funding</th>
-      <th>
-        Security
-        <i
-          class="pi pi-question-circle text-xs"
-          pTooltip="The amount of tokens staked by the creator as a security"
-        ></i>
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-project let-expanded="expanded">
-    <tr class="project-row-content">
-      <td>
-        <div class="mt-1 mb-1 flex justify-content-between align-items-center">
-          <div>
-            <div class="flex">
-              <div>
-                <button
-                  type="button"
-                  pButton
-                  pRipple
-                  [pRowToggler]="project"
-                  class="p-button-text p-button-rounded p-button-plain"
-                  [icon]="
-                    expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
-                  "
-                ></button>
-              </div>
-              <div class="flex flex-column ml-5">
-                <b
-                  ><a [routerLink]="['/project/' + project.identifier]">{{
-                    project.identifier
-                  }}</a></b
-                >
-                {{ project.description | truncate: [80] }}
-              </div>
-            </div>
-          </div>
+<ng-container *ngIf="state$ | async as s; else loading">
+  <p-table
+    [value]="s.projects"
+    [autoLayout]="true"
+    dataKey="identifier"
+    styleClass="project-table p-datatable-striped p-datatable-gridlines"
+  >
+    <ng-template pTemplate="header">
+      <tr class="project-title-row">
+        <th colspan="6">
+          <h2>Browse Projects</h2>
+        </th>
+      </tr>
+      <tr class="project-header-row">
+        <th rowspan="2"><span class="emoji">📝</span> Description</th>
+        <th rowspan="2"><span class="emoji">⌛</span> Status</th>
+        <th colspan="2"><span class="emoji">⏱️</span> Duration</th>
+        <th colspan="2"><span class="emoji">💰</span> Staking</th>
+      </tr>
+      <tr class="project-header-row">
+        <th>Created</th>
+        <th>Deadline</th>
+        <th>Funding</th>
+        <th>
+          Security / RSI
+          <i
+            class="pi pi-question-circle text-xs"
+            tooltipPosition="left"
+            pTooltip="The amount of tokens staked by the creator and the Refund Strength Index"
+          ></i>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-project let-expanded="expanded">
+      <tr class="project-row-content">
+        <td>
           <div
-            pTooltip="Supporters"
-            class="
-              buyers
-              flex flex-column
-              align-items-center
-              justify-content-center
-            "
+            class="mt-1 mb-1 flex justify-content-between align-items-center"
           >
-            <i class="pi pi-users"></i>
-            {{ project.buyerCount | number }}
-          </div>
-        </div>
-      </td>
-      <td class="text-center">
-        <p-tag [value]="project.status"></p-tag>
-      </td>
-
-      <td>
-        {{ project.creationTimestamp | date: 'longDate' }}
-      </td>
-      <td>
-        {{
-          project.milestones[project.milestones.length - 1].endTimestamp
-            | date: 'longDate'
-        }}
-      </td>
-      <td>
-        <p>
-          {{ project.maxTokenSoldCount - project.remainTokenCount | number }} /
-          {{ project.maxTokenSoldCount | number }} CAT
-        </p>
-        <div
-          class="text-center text-md font-bold"
-          [ngClass]="project.remainTokenCount === 0 ? 'finished' : 'progress'"
-          [ngStyle]="{
-            width:
-              ((project.maxTokenSoldCount - project.remainTokenCount) /
-                project.maxTokenSoldCount) *
-                100 +
-              '%'
-          }"
-        >
-          {{
-            ((project.maxTokenSoldCount - project.remainTokenCount) /
-              project.maxTokenSoldCount) *
-              100 | number
-          }}
-          %
-        </div>
-      </td>
-      <td>
-        {{
-          (project.stakePer100Token / 100) * project.maxTokenSoldCount | number
-        }}
-        CAT
-      </td>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="rowexpansion" let-project>
-    <tr>
-      <td colspan="6">
-        <div class="flex">
-          <!-- SUPPORT PROJECT ACTION -->
-          <div class="flex flex-column" class="support-project-panel p-fluid">
-            <div class="mb-4">
-              <span class="font-semibold text-lg mr-2"
-                >🔥 Fund this project</span
-              >
-
-              <small
-                ><i class="mr-1 text-xs pi pi-question-circle"></i
-                ><a href="">How does it work?</a></small
-              >
-            </div>
-
-            <div class="flex justify-content-between m-4">
-              <span>25%</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>75%</span>
-              <span>|</span>
-              <span>100%</span>
-            </div>
-            <span class="p-float-label">
-              <p-inputNumber
-                #stakeInput
-                [showButtons]="true"
-                inputId="stacked"
-                id="supportInput"
-                [min]="0"
-                [max]="project.remainTokenCount"
-                suffix=" CAT"
-              ></p-inputNumber>
-              <label for="supportInput">Choose an amount</label>
-            </span>
-            <div class="flex flex-column mt-3 text-sm">
-              <div class="flex justify-content-between mb-1">
-                <span>Funding Goal: </span>
-                <span>{{ project.maxTokenSoldCount | number }} CAT</span>
-              </div>
-              <div class="flex justify-content-between mb-1">
-                <span>Remaining: </span
-                ><span>{{ project.remainTokenCount | number }} CAT</span>
-              </div>
-
-              <div
-                class="flex justify-content-between"
-                *ngIf="stakeInput.value"
-              >
-                <span>Your contribution:</span
-                ><span
-                  >{{ stakeInput.value | number }} CAT ({{
-                    (stakeInput.value / project.maxTokenSoldCount) * 100
-                      | number
-                  }}%)</span
-                >
+            <div>
+              <div class="flex">
+                <div>
+                  <button
+                    type="button"
+                    pButton
+                    pRipple
+                    [pRowToggler]="project"
+                    class="p-button-text p-button-rounded p-button-plain"
+                    [icon]="
+                      expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
+                    "
+                  ></button>
+                </div>
+                <div class="flex flex-column ml-5">
+                  <div>
+                    <b
+                      ><a [routerLink]="['/project/' + project.identifier]">{{
+                        project.identifier
+                      }}</a></b
+                    >
+                    <p-tag
+                      *ngIf="project.stage === 'Open'"
+                      class="ml-2"
+                      value="OPEN FOR FUNDING"
+                      severity="warning"
+                    ></p-tag>
+                  </div>
+                  {{ project.description | truncate: [80] }}
+                </div>
               </div>
             </div>
-            <button
-              pButton
-              label="Stake"
-              class="p-button-warning mt-3"
-              type="button"
-              [disabled]="!stakeInput.value"
-            ></button>
-          </div>
-          <!-- MILESTONE OVERVIEW -->
-          <div class="ms-overview-panel">
-            <span class="font-semibold text-lg mr-2">🔥 Milestones </span>
-
-            <p-timeline
-              [value]="getProjectTimeline(project)"
-              layout="horizontal"
-              styleClass="milestone-timeline"
-              align="bottom"
+            <div
+              pTooltip="Supporters"
+              class="
+                buyers
+                flex flex-column
+                align-items-center
+                justify-content-center
+              "
             >
-              <ng-template pTemplate="marker" let-event>
-                <div
-                  [ngClass]="event.class"
-                  [style.backgroundColor]="event.color"
-                  [style.borderColor]="event.borderColor"
-                ></div>
-              </ng-template>
-              <ng-template pTemplate="content" let-milestone>
-                <div
-                  class="flex flex-column justify-content-evenly text-sm"
-                  style="height: 30px"
-                >
-                  <span>{{ milestone.text }}</span>
-                  <small>{{ milestone.subtext }}</small>
-                </div>
-              </ng-template>
-              <ng-template pTemplate="opposite" let-milestone>
-                <div class="flex flex-column justify-content-evenly text-sm">
-                  <span [hidden]="!milestone.showDate">{{
-                    milestone.date | date
-                  }}</span>
-                </div>
-              </ng-template>
-            </p-timeline>
+              <i class="pi pi-users"></i>
+              {{ project.buyerCount | number }}
+            </div>
           </div>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+        </td>
+        <td class="text-center">
+          <p-tag
+            [value]="project.status"
+            [severity]="project.status === 'FINISHED' ? 'success' : 'info'"
+          ></p-tag>
+        </td>
+
+        <td>
+          {{ project.creationTimestamp | date: 'longDate' }}
+        </td>
+        <td>
+          {{
+            project.milestones[project.milestonesCount - 1].endTimestamp
+              | date: 'longDate'
+          }}
+        </td>
+        <td>
+          <p>
+            {{ project.maxTokenSoldCount - project.remainTokenCount | number }}
+            / {{ project.maxTokenSoldCount | number }} CAT
+          </p>
+          <div
+            class="text-center text-md font-bold"
+            [ngClass]="project.remainTokenCount === 0 ? 'finished' : 'progress'"
+            [ngStyle]="{
+              width:
+                ((project.maxTokenSoldCount - project.remainTokenCount) /
+                  project.maxTokenSoldCount) *
+                  100 +
+                '%'
+            }"
+          >
+            <span class="white-space-nowrap">
+              {{
+                ((project.maxTokenSoldCount - project.remainTokenCount) /
+                  project.maxTokenSoldCount) *
+                  100 | number
+              }}
+              %
+            </span>
+          </div>
+        </td>
+        <td>
+          {{
+            (project.stakePer100Token / 100) * project.maxTokenSoldCount
+              | number
+          }}
+          CAT /
+          {{
+            (project.thresholdMilestoneIndex / (project.milestonesCount - 1)
+              | number) || 0
+          }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-project>
+      <tr>
+        <td colspan="6">
+          <div class="flex">
+            <!-- SUPPORT PROJECT ACTION -->
+            <div class="flex flex-column" class="support-project-panel p-fluid">
+              <div class="mb-4">
+                <span class="font-semibold text-lg mr-2"
+                  >🔥 Fund this project</span
+                >
+
+                <small
+                  ><i class="mr-1 text-xs pi pi-question-circle"></i
+                  ><a href="">How does it work?</a></small
+                >
+              </div>
+
+              <div class="flex justify-content-between m-4">
+                <span>25%</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>75%</span>
+                <span>|</span>
+                <span>100%</span>
+              </div>
+              <span class="p-float-label">
+                <p-inputNumber
+                  #stakeInput
+                  [showButtons]="true"
+                  inputId="stacked"
+                  id="supportInput"
+                  [min]="0"
+                  [max]="project.remainTokenCount"
+                  suffix=" CAT"
+                ></p-inputNumber>
+                <label for="supportInput">Choose an amount</label>
+              </span>
+              <div class="flex flex-column mt-3 text-sm">
+                <div class="flex justify-content-between mb-1">
+                  <span>Funding Goal: </span>
+                  <span>{{ project.maxTokenSoldCount | number }} CAT</span>
+                </div>
+                <div class="flex justify-content-between mb-1">
+                  <span>Remaining: </span
+                  ><span>{{ project.remainTokenCount | number }} CAT</span>
+                </div>
+
+                <div
+                  class="flex justify-content-between"
+                  *ngIf="stakeInput.value"
+                >
+                  <span>Your contribution:</span
+                  ><span
+                    >{{ stakeInput.value | number }} CAT ({{
+                      (stakeInput.value / project.maxTokenSoldCount) * 100
+                        | number
+                    }}%)</span
+                  >
+                </div>
+              </div>
+              <button
+                pButton
+                label="Stake"
+                class="p-button-warning mt-3"
+                type="button"
+                [disabled]="!stakeInput.value"
+              ></button>
+            </div>
+            <!-- MILESTONE OVERVIEW -->
+            <div class="ms-overview-panel">
+              <span class="font-semibold text-lg mr-2">🔥 Milestones </span>
+
+              <p-timeline
+                [value]="getProjectTimeline(project)"
+                layout="horizontal"
+                styleClass="milestone-timeline"
+                align="bottom"
+              >
+                <ng-template pTemplate="marker" let-event>
+                  <div
+                    [ngClass]="event.class"
+                    [style.backgroundColor]="event.color"
+                    [style.borderColor]="event.borderColor"
+                  ></div>
+                </ng-template>
+                <ng-template pTemplate="content" let-milestone>
+                  <div
+                    class="flex flex-column justify-content-evenly text-sm"
+                    style="height: 30px"
+                  >
+                    <span>{{ milestone.text }}</span>
+                    <small>{{ milestone.subtext }}</small>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="opposite" let-milestone>
+                  <div class="flex flex-column justify-content-evenly text-sm">
+                    <span [hidden]="!milestone.showDate">{{
+                      milestone.date | date
+                    }}</span>
+                  </div>
+                </ng-template>
+              </p-timeline>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
+
+<ng-template #loading>
+  <p-table
+    [value]="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]"
+    [autoLayout]="true"
+    dataKey="identifier"
+    styleClass="project-table p-datatable-striped p-datatable-gridlines"
+  >
+    <ng-template pTemplate="header">
+      <tr class="project-title-row">
+        <th colspan="6">
+          <h2>Browse Projects</h2>
+        </th>
+      </tr>
+      <tr class="project-header-row">
+        <th rowspan="2"><span class="emoji">📝</span> Description</th>
+        <th rowspan="2"><span class="emoji">⌛</span> Status</th>
+        <th colspan="2"><span class="emoji">⏱️</span> Duration</th>
+        <th colspan="2"><span class="emoji">💰</span> Staking</th>
+      </tr>
+      <tr class="project-header-row">
+        <th>Created</th>
+        <th>Deadline</th>
+        <th>Funding</th>
+        <th>
+          Security / RSI
+          <i
+            class="pi pi-question-circle text-xs"
+            tooltipPosition="left"
+            pTooltip="The amount of tokens staked by the creator and the Refund Strength Index"
+          ></i>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-project>
+      <tr>
+        <td><p-skeleton></p-skeleton></td>
+        <td><p-skeleton></p-skeleton></td>
+        <td><p-skeleton></p-skeleton></td>
+        <td><p-skeleton></p-skeleton></td>
+        <td><p-skeleton></p-skeleton></td>
+        <td><p-skeleton></p-skeleton></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-template>

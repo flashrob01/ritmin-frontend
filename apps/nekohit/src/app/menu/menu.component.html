@@ -9,6 +9,7 @@
     </ng-template>
     <ng-template pTemplate="end">
       <p-dropdown
+        *ngIf="(address$ | async) === null"
         styleClass="walletDropdown"
         [options]="s.walletOptions"
         optionLabel="label"
@@ -32,6 +33,9 @@
           </div>
         </ng-template>
       </p-dropdown>
+      <ng-container *ngIf="address$ | async as address">
+        {{ address }}
+      </ng-container>
     </ng-template>
   </p-menubar>
 </ng-container>

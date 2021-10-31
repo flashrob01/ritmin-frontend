@@ -1,3 +1,6 @@
+export type ProjectStatus = 'PENDING' | 'ONGOING' | 'FINISHED' | 'UNKNOWN';
+export type ProjectStage = null | 'Ready-To-Finish' | 'Active' | 'Open';
+
 export interface NekoHitProject {
   identifier: string;
   description: string;
@@ -13,8 +16,8 @@ export interface NekoHitProject {
   nextMilestone: number;
   remainTokenCount: number;
   buyerCount: number;
-  status: string;
-  stage: string;
+  status: ProjectStatus;
+  stage: ProjectStage;
   isPublic: boolean;
 }
 

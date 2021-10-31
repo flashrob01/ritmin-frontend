@@ -19,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
 import { FeaturedProjectService } from './home/featured-project/featured-project.service';
 import { FeaturedProjectComponent } from './home/featured-project/featured-project.component';
 import { RxState } from '@rx-angular/state';
+import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -51,7 +52,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     CoreModule,
     AppRoutingModule,
   ],
-  providers: [FeaturedProjectService, RxState],
+  providers: [
+    FeaturedProjectService,
+    RxState,
+    {
+      provide: GLOBAL_RX_STATE,
+      useFactory: () => new RxState<GlobalState>(),
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
