@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { RxState } from '@rx-angular/state';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { NekohitProjectService } from '../../core/services/project.service';
-import {
-  NekoHitProject,
-  ProjectStatus,
-} from '../../shared/models/project.model';
+import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
+import { NekoHitProject } from '../../shared/models/project.model';
 
 interface ProjectTimeline {
   date: Date;
@@ -29,6 +27,8 @@ interface ProjectMonitorState {
 })
 export class ProjectMonitorComponent {
   state$ = this.state.select();
+  readonly address$ = this.globalState.select('address');
+  readonly catBalance$ = this.globalState.select('catBalance');
 
   // TODO: should be improved (more clean etc)
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {
@@ -112,7 +112,8 @@ export class ProjectMonitorComponent {
 
   constructor(
     private state: RxState<ProjectMonitorState>,
-    private projectService: NekohitProjectService
+    private projectService: NekohitProjectService,
+    @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {
     this.state.connect(
       'projects',
@@ -120,9 +121,37 @@ export class ProjectMonitorComponent {
         .getProjects()
         .pipe(
           map((p) =>
-            p.filter((p) => p.status !== 'PENDING' && p.status !== 'UNKNOWN')
+            p
+              .filter((p) => p.status !== 'PENDING' && p.status !== 'UNKNOWN')
+              .map((p) => this.mapChartDataToProject(p))
           )
         )
     );
+  }
+
+  public getStakeValue(project: NekoHitProject, multiplier: number): number {
+    const availableBalance = this.globalState.get('catBalance');
+    const stakeAmount = availableBalance * multiplier;
+    return stakeAmount > project.remainTokenCount
+      ? project.remainTokenCount
+      : stakeAmount;
+  }
+
+  private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
+    const data = {
+      labels: ['Remaining', 'Staked'],
+      datasets: [
+        {
+          data: [
+            project.remainTokenCount,
+            project.maxTokenSoldCount - project.remainTokenCount,
+          ],
+          backgroundColor: ['#ddd', '#2196f3'],
+          hoverBackgroundColor: ['#ddd', '#2196f3'],
+        },
+      ],
+    };
+    project.stakedTokensChartData = data;
+    return project;
   }
 }

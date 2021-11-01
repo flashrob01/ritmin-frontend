@@ -1,11 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RxState } from '@rx-angular/state';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { LinkService } from './core/services/link.service';
 import { NeolineService } from './core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 import { N3MainNet } from '../app/core/models/n2';
+import multiavatar from '@multiavatar/multiavatar';
 
 @Component({
   selector: 'ritmin-frontend-root',
@@ -16,6 +17,21 @@ export class AppComponent {
   title = 'nekohit';
   showPromotion = true;
 
+  readonly getCatBalance$ = this.globalState.select('address').pipe(
+    switchMap((address) =>
+      this.neoline.getBalance().pipe(
+        map((balances) => {
+          const res = balances[address]?.filter(
+            (balance) => balance.symbol === 'CAT'
+          );
+          if (!res || !res.length) {
+            return 0;
+          }
+          return +res[0].amount;
+        })
+      )
+    )
+  );
   constructor(
     @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>,
     private neoline: NeolineService,
@@ -24,18 +40,21 @@ export class AppComponent {
   ) {
     this.globalState.connect(
       'address',
-      this.neoline.getAccount().pipe(
-        tap((acc) => console.log('global-state, getAccount()', acc)),
-        map((acc) => acc.address)
-      )
+      this.neoline.getAccount().pipe(map((acc) => acc.address))
     );
     this.globalState.connect(
       'mainnet',
-      this.neoline.getNetworks().pipe(
-        tap((network) => console.log('global-state, getNetworks()', network)),
-        map((network) => network.chainId === N3MainNet)
-      )
+      this.neoline
+        .getNetworks()
+        .pipe(map((network) => network.chainId === N3MainNet))
     );
+    this.globalState.connect('catBalance', this.getCatBalance$);
+
+    this.globalState.connect(
+      'svgAvatar',
+      this.globalState.select('address').pipe(map((adr) => multiavatar(adr)))
+    );
+
     const lang = localStorage.getItem('lang');
     translate.langs = ['en', 'de', 'cn'];
     if (lang && translate.langs.includes(lang)) {

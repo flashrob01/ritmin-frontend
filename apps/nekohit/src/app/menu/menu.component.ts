@@ -1,35 +1,17 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
-import { MenuItem, SelectItem } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LinkService } from '../core/services/link.service';
-import { Subject } from 'rxjs';
 import { RxState } from '@rx-angular/state';
-import { tap } from 'rxjs/operators';
 import { NeolineService } from '../core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 
 interface MenuState {
   menuItems: MenuItem[];
-  walletOptions: SelectItem[];
-  selectedWallet: SelectItem;
 }
-
-const NeoLine: SelectItem = {
-  value: 'neoline',
-  label: 'NeoLine',
-  disabled: false,
-};
-
-const WalletConnect: SelectItem = {
-  value: 'walletconnect',
-  label: 'WalletConnect',
-  disabled: true,
-};
 
 const initState: MenuState = {
   menuItems: [],
-  walletOptions: [WalletConnect, NeoLine],
-  selectedWallet: { value: null },
 };
 
 @Component({
@@ -40,10 +22,10 @@ const initState: MenuState = {
   providers: [RxState],
 })
 export class MenuComponent {
-  clickWalletOption$: Subject<SelectItem> = new Subject();
-
   readonly state$ = this.state.select();
   readonly address$ = this.globalState.select('address');
+  readonly svgAvatar$ = this.globalState.select('svgAvatar');
+  readonly catBalance$ = this.globalState.select('catBalance');
 
   constructor(
     public translate: TranslateService,
@@ -73,18 +55,26 @@ export class MenuComponent {
         },
       ];
       this.state.set({ menuItems: items });
-      this.state.connect('selectedWallet', this.clickWalletOption$);
-      this.state.hold(this.walletSelected$);
+      this.state.hold(this.address$, () => {
+        const menuItems = this.state.get('menuItems');
+        menuItems.push({
+          label: this.translate.instant('MENU.PROFILE'),
+          icon: 'pi pi-user',
+          items: [
+            {
+              label: this.translate.instant('MENU.STAKINGS'),
+              icon: 'pi pi-wallet',
+              command: () => this.linkService.openWhitepaper(),
+            },
+            {
+              label: this.translate.instant('MENU.PROJECTS'),
+              icon: 'pi pi-list',
+              command: () => this.linkService.openWhitepaper(),
+            },
+          ],
+        });
+        this.state.set({ menuItems });
+      });
     });
   }
-
-  walletSelected$ = this.clickWalletOption$.pipe(
-    tap((wallet) => {
-      if (wallet == NeoLine) {
-        this.neoline.init();
-      } else if (wallet == WalletConnect) {
-        //TODO: init walletconnect
-      }
-    })
-  );
 }

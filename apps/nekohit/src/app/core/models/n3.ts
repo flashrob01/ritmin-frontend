@@ -51,6 +51,10 @@ export interface NeoBalance {
   contract: string;
 }
 
+export interface NeoGetBalanceResponse {
+  [address: string]: NeoBalance[];
+}
+
 export interface NeoInvokeReadResponse {
   script: string;
   state: string;
@@ -89,7 +93,7 @@ export interface NeoSignMessageResponse {
 
 export interface N3 {
   getProvider(): Promise<NeoProvider>;
-  getBalance(): Promise<NeoBalance[]>;
+  getBalance(): Promise<NeoGetBalanceResponse>;
   getStorage(scriptHash: string, key: string): Promise<string>;
   invokeRead(
     scriptHash: string,

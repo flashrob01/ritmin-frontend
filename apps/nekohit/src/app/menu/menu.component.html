@@ -8,34 +8,33 @@
       </div>
     </ng-template>
     <ng-template pTemplate="end">
-      <p-dropdown
+      <ritmin-connect-wallet
         *ngIf="(address$ | async) === null"
-        styleClass="walletDropdown"
-        [options]="s.walletOptions"
-        optionLabel="label"
-        [(ngModel)]="s.selectedWallet"
-        [placeholder]="translate.instant('MENU.CONNECT')"
-        (onChange)="clickWalletOption$.next(s.selectedWallet)"
-      >
-        <ng-template pTemplate="selectedItem">
-          <div *ngIf="s.selectedWallet" class="flex align-items-center">
-            <img
-              height="20"
-              [src]="'assets/images/' + s.selectedWallet.value + '.png'"
-            />
-            <div class="ml-2">{{ s.selectedWallet.label }}</div>
-          </div>
-        </ng-template>
-        <ng-template let-wallet pTemplate="item">
-          <div class="flex align-items-center">
-            <img height="30" [src]="'assets/images/' + wallet.value + '.png'" />
-            <div class="ml-2 text-lg">{{ wallet.label }}</div>
-          </div>
-        </ng-template>
-      </p-dropdown>
-      <ng-container *ngIf="address$ | async as address">
-        {{ address }}
-      </ng-container>
+        placeholder="Connect Wallet"
+      ></ritmin-connect-wallet>
+      <div class="flex">
+        <div
+          class="
+            mr-2
+            flex flex-column
+            text-sm
+            align-items-end
+            justify-content-center
+          "
+        >
+          <ng-container *ngIf="catBalance$ | async as cat">
+            Your CAT balance: {{ +cat | number: '1.2-2' }}
+          </ng-container>
+          <ng-container *ngIf="address$ | async as address">
+            <span [pTooltip]="address" tooltipPosition="left">{{
+              address | truncateAddress
+            }}</span>
+          </ng-container>
+        </div>
+        <ng-container *ngIf="svgAvatar$ | async as svg">
+          <ritmin-avatar [svg]="svg" [pxWidth]="55"></ritmin-avatar>
+        </ng-container>
+      </div>
     </ng-template>
   </p-menubar>
 </ng-container>

@@ -3,7 +3,10 @@
     "BROWSE": "Browse",
     "WHITEPAPER": "White Paper",
     "BLOG": "Blog",
-    "CONNECT": "Connect Wallet"
+    "CONNECT": "Connect Wallet",
+    "PROFILE": "My Profile",
+    "STAKINGS": "Stakings",
+    "PROJECTS": "Projects"
   },
   "LANDING": {
     "HERO": {

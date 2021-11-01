@@ -10,12 +10,12 @@ import { map, tap } from 'rxjs/operators';
 export class NekohitProjectService {
   constructor(private neoline: NeolineService) {}
 
-  private HASH160_ZERO = '0000000000000000000000000000000000000000';
+  public static HASH160_ZERO = '0000000000000000000000000000000000000000';
 
   public getProjects(): Observable<NekoHitProject[]> {
     const params = [
-      sc.ContractParam.hash160(this.HASH160_ZERO),
-      sc.ContractParam.hash160(this.HASH160_ZERO),
+      sc.ContractParam.hash160(NekohitProjectService.HASH160_ZERO),
+      sc.ContractParam.hash160(NekohitProjectService.HASH160_ZERO),
       sc.ContractParam.integer('1'),
       sc.ContractParam.integer('90'),
     ];

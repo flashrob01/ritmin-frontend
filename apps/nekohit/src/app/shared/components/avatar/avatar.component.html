@@ -1,0 +1,5 @@
+<ng-container *ngIf="state$ | async as s">
+  <div [style.width]="s.pxWidth + 'px'">
+    <div [innerHTML]="s.svg | sanitizedHtml"></div>
+  </div>
+</ng-container>

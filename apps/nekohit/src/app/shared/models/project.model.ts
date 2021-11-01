@@ -19,6 +19,7 @@ export interface NekoHitProject {
   status: ProjectStatus;
   stage: ProjectStage;
   isPublic: boolean;
+  stakedTokensChartData?: any;
 }
 
 export interface Milestone {

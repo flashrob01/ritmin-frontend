@@ -142,8 +142,25 @@
       <tr>
         <td colspan="6">
           <div class="flex">
+            <!-- PROJECT CLOSED FOR FUNDING STATISTICS -->
+            <div
+              *ngIf="project.stage !== 'Open'"
+              class="flex flex-column support-project-panel p-fluid"
+            >
+              <div class="mb-4">
+                <span class="font-semibold text-lg mr-2">🔥 Statistics </span>
+                <p-chart
+                  type="pie"
+                  [data]="project.stakedTokensChartData"
+                  [style]="{ width: '100%', height: '100px' }"
+                ></p-chart>
+              </div>
+            </div>
             <!-- SUPPORT PROJECT ACTION -->
-            <div class="flex flex-column" class="support-project-panel p-fluid">
+            <div
+              *ngIf="project.stage === 'Open'"
+              class="flex flex-column support-project-panel p-fluid"
+            >
               <div class="mb-4">
                 <span class="font-semibold text-lg mr-2"
                   >🔥 Fund this project</span
@@ -155,57 +172,97 @@
                 >
               </div>
 
-              <div class="flex justify-content-between m-4">
-                <span>25%</span>
-                <span>|</span>
-                <span>50%</span>
-                <span>|</span>
-                <span>75%</span>
-                <span>|</span>
-                <span>100%</span>
-              </div>
-              <span class="p-float-label">
-                <p-inputNumber
-                  #stakeInput
-                  [showButtons]="true"
-                  inputId="stacked"
-                  id="supportInput"
-                  [min]="0"
-                  [max]="project.remainTokenCount"
-                  suffix=" CAT"
-                ></p-inputNumber>
-                <label for="supportInput">Choose an amount</label>
-              </span>
-              <div class="flex flex-column mt-3 text-sm">
-                <div class="flex justify-content-between mb-1">
-                  <span>Funding Goal: </span>
-                  <span>{{ project.maxTokenSoldCount | number }} CAT</span>
+              <ng-container
+                *ngIf="(address$ | async) !== null; else connectWallet"
+              >
+                <div *ngIf="catBalance$ | async as cat" class="text-center">
+                  Available balance: {{ +cat | number: '1.2-2' }} CAT
                 </div>
-                <div class="flex justify-content-between mb-1">
-                  <span>Remaining: </span
-                  ><span>{{ project.remainTokenCount | number }} CAT</span>
-                </div>
-
-                <div
-                  class="flex justify-content-between"
-                  *ngIf="stakeInput.value"
-                >
-                  <span>Your contribution:</span
-                  ><span
-                    >{{ stakeInput.value | number }} CAT ({{
-                      (stakeInput.value / project.maxTokenSoldCount) * 100
-                        | number
-                    }}%)</span
+                <div class="flex justify-content-between m-4">
+                  <a
+                    href="javascript:void(0)"
+                    (click)="
+                      project['stakeInput'] = getStakeValue(project, 0.25)
+                    "
+                    >25%</a
+                  >
+                  <span>|</span>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="
+                      project['stakeInput'] = getStakeValue(project, 0.5)
+                    "
+                    >50%</a
+                  >
+                  <span>|</span>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="
+                      project['stakeInput'] = getStakeValue(project, 0.75)
+                    "
+                    >75%</a
+                  >
+                  <span>|</span>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="project['stakeInput'] = getStakeValue(project, 1)"
+                    >100%</a
                   >
                 </div>
-              </div>
-              <button
-                pButton
-                label="Stake"
-                class="p-button-warning mt-3"
-                type="button"
-                [disabled]="!stakeInput.value"
-              ></button>
+                <span class="p-float-label">
+                  <p-inputNumber
+                    mode="decimal"
+                    [(ngModel)]="project['stakeInput']"
+                    [minFractionDigits]="2"
+                    [maxFractionDigits]="2"
+                    #stakeInput
+                    [showButtons]="true"
+                    inputId="stacked"
+                    id="supportInput"
+                    [min]="0"
+                    [max]="project.remainTokenCount"
+                    suffix=" CAT"
+                  ></p-inputNumber>
+                  <label for="supportInput">Choose an amount</label>
+                </span>
+                <div class="flex flex-column mt-3 text-sm">
+                  <div class="flex justify-content-between mb-1">
+                    <span>Funding Goal: </span>
+                    <span>{{ project.maxTokenSoldCount | number }} CAT</span>
+                  </div>
+                  <div class="flex justify-content-between mb-1">
+                    <span>Remaining: </span
+                    ><span>{{ project.remainTokenCount | number }} CAT</span>
+                  </div>
+
+                  <div
+                    class="flex justify-content-between"
+                    *ngIf="stakeInput.value"
+                  >
+                    <span>Your contribution:</span
+                    ><span
+                      >{{ stakeInput.value | number }} CAT ({{
+                        (stakeInput.value / project.maxTokenSoldCount) * 100
+                          | number
+                      }}%)</span
+                    >
+                  </div>
+                </div>
+                <button
+                  pButton
+                  label="Stake CAT Tokens"
+                  class="p-button-warning mt-3"
+                  type="button"
+                  [disabled]="!stakeInput.value"
+                ></button>
+              </ng-container>
+              <ng-template #connectWallet>
+                <div class="p-fluid">
+                  <ritmin-connect-wallet
+                    placeholder="Connect Wallet"
+                  ></ritmin-connect-wallet>
+                </div>
+              </ng-template>
             </div>
             <!-- MILESTONE OVERVIEW -->
             <div class="ms-overview-panel">

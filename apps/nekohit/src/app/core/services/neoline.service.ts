@@ -14,6 +14,8 @@ import {
 import {
   N3,
   N3READY,
+  NeoBalance,
+  NeoGetBalanceResponse,
   NeoInvokeReadResponse,
   NeoSigner,
   NeoTypedValue,
@@ -84,5 +86,9 @@ export class NeolineService {
         from(n3?.invokeRead(scriptHash, operation, args, signers))
       )
     );
+  }
+
+  public getBalance(): Observable<NeoGetBalanceResponse> {
+    return this.N3_NEOLINE.pipe(switchMap((n3) => from(n3?.getBalance())));
   }
 }

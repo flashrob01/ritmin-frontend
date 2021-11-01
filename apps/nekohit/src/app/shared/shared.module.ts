@@ -13,9 +13,20 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TimelineModule } from 'primeng/timeline';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TruncateAddressPipe } from './pipes/truncateAddress.pipe';
+import { SanitizedHtmlPipe } from './pipes/sanitized-html.pipe';
+import { AvatarComponent } from './components/avatar/avatar.component';
+import { ConnectWalletComponent } from './components/connect-wallet/connect-wallet.component';
+import { ChartModule } from 'primeng/chart';
 
 @NgModule({
-  declarations: [TruncatePipe],
+  declarations: [
+    TruncatePipe,
+    TruncateAddressPipe,
+    SanitizedHtmlPipe,
+    AvatarComponent,
+    ConnectWalletComponent,
+  ],
   imports: [
     CommonModule,
     TableModule,
@@ -32,6 +43,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     InputNumberModule,
     TimelineModule,
     SkeletonModule,
+    ChartModule,
   ],
   exports: [
     ButtonModule,
@@ -48,6 +60,11 @@ import { SkeletonModule } from 'primeng/skeleton';
     InputNumberModule,
     TimelineModule,
     SkeletonModule,
+    TruncateAddressPipe,
+    SanitizedHtmlPipe,
+    AvatarComponent,
+    ConnectWalletComponent,
+    ChartModule,
   ],
 })
 export class SharedModule {}

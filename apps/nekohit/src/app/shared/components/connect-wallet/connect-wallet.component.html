@@ -1,0 +1,26 @@
+<ng-container *ngIf="state$ | async as s"
+  ><p-dropdown
+    styleClass="walletDropdown"
+    [options]="s.walletOptions"
+    optionLabel="label"
+    [(ngModel)]="s.selectedWallet"
+    [placeholder]="s.placeholder"
+    (onChange)="clickWalletOption$.next(s.selectedWallet)"
+  >
+    <ng-template pTemplate="selectedItem">
+      <div *ngIf="s.selectedWallet" class="flex align-items-center">
+        <img
+          height="20"
+          [src]="'assets/images/' + s.selectedWallet.value + '.png'"
+        />
+        <div class="ml-2">{{ s.selectedWallet.label }}</div>
+      </div>
+    </ng-template>
+    <ng-template let-wallet pTemplate="item">
+      <div class="flex align-items-center">
+        <img height="30" [src]="'assets/images/' + wallet.value + '.png'" />
+        <div class="ml-2 text-lg">{{ wallet.label }}</div>
+      </div>
+    </ng-template>
+  </p-dropdown></ng-container
+>
