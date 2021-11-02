@@ -10,6 +10,7 @@ export const environment = {
   mainNetCatTokenHash: '', // TODO
   testNetNodeUrl: 'https://neo3-testnet.neoline.vip:443',
   mainNetNodeUrl: 'https://neo3-mainnet.neoline.vip:443',
+  mainNetIsDefault: false,
 };
 
 /*

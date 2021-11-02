@@ -7,6 +7,7 @@ import { NeolineService } from './core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 import { N3MainNet } from '../app/core/models/n2';
 import multiavatar from '@multiavatar/multiavatar';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'ritmin-frontend-root',
@@ -38,6 +39,7 @@ export class AppComponent {
     public linkService: LinkService,
     translate: TranslateService
   ) {
+    this.globalState.set({ mainnet: environment.mainNetIsDefault });
     this.globalState.connect(
       'address',
       this.neoline.getAccount().pipe(map((acc) => acc.address))

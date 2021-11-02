@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, ReplaySubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { from, Observable, ReplaySubject, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_CHANGED,
   CONNECTED,
@@ -14,9 +14,9 @@ import {
 import {
   N3,
   N3READY,
-  NeoBalance,
   NeoGetBalanceResponse,
-  NeoInvokeReadResponse,
+  NeoInvokeWriteResponse,
+  NeoPickAddressResponse,
   NeoSigner,
   NeoTypedValue,
 } from '../models/n3';
@@ -33,6 +33,38 @@ export class NeolineService {
   private readonly N2_READY_EVENT = new ReplaySubject<void>(1);
   private readonly N3_NEOLINE = new ReplaySubject<N3>(1);
   private readonly N2_NEOLINE = new ReplaySubject<N2>(1);
+
+  public static bool(value: boolean): NeoTypedValue {
+    return { type: 'Boolean', value };
+  }
+
+  public static int(value: number): NeoTypedValue {
+    return { type: 'Integer', value: value.toString() };
+  }
+
+  public static array(value: any[]): NeoTypedValue {
+    return { type: 'Array', value };
+  }
+
+  public static byteArray(value: string[]): NeoTypedValue {
+    return { type: 'ByteArray', value };
+  }
+
+  public static string(value: string): NeoTypedValue {
+    return { type: 'String', value };
+  }
+
+  public static address(value: string): NeoTypedValue {
+    return { type: 'Address', value };
+  }
+
+  public static hash160(value: string): NeoTypedValue {
+    return { type: 'Hash160', value };
+  }
+
+  public static hash256(value: string): NeoTypedValue {
+    return { type: 'Hash256', value };
+  }
 
   constructor() {
     this.registerListeners();
@@ -55,11 +87,23 @@ export class NeolineService {
   }
 
   public init(): void {
+    let n2;
+    let n3;
     this.N2_READY_EVENT.subscribe(() => {
-      this.N2_NEOLINE.next(new (window as any).NEOLine.Init());
+      n2 = new (window as any).NEOLine.Init();
+      if (!n2) {
+        console.error('common dAPI method failed to load');
+      } else {
+        this.N2_NEOLINE.next(n2);
+      }
     });
     this.N3_READY_EVENT.subscribe(() => {
-      this.N3_NEOLINE.next(new (window as any).NEOLineN3.Init());
+      n3 = new (window as any).NEOLineN3.Init();
+      if (!n3) {
+        console.error('N3 dAPI method failed to load');
+      } else {
+        this.N3_NEOLINE.next(n3);
+      }
     });
   }
 
@@ -79,13 +123,44 @@ export class NeolineService {
     scriptHash: string,
     operation: string,
     args: NeoTypedValue[],
-    signers: NeoSigner[]
-  ): Observable<NeoInvokeReadResponse> {
+    signers: NeoSigner[],
+    fee?: string,
+    extraSystemFee?: string,
+    broadcastOverride?: boolean
+  ): Observable<NeoInvokeWriteResponse> {
     return this.N3_NEOLINE.pipe(
       switchMap((n3) =>
-        from(n3?.invokeRead(scriptHash, operation, args, signers))
+        from(
+          n3?.invokeRead({
+            scriptHash,
+            operation,
+            args,
+            signers,
+          })
+        ).pipe(
+          tap((res) => {
+            if (res.state === 'FAULT') {
+              throwError(res.exception);
+            }
+          }),
+          switchMap(() =>
+            n3?.invoke({
+              scriptHash,
+              operation,
+              args,
+              fee,
+              extraSystemFee,
+              broadcastOverride,
+              signers,
+            })
+          )
+        )
       )
     );
+  }
+
+  public pickAddress(): Observable<NeoPickAddressResponse> {
+    return this.N3_NEOLINE.pipe(switchMap((n3) => from(n3?.pickAddress())));
   }
 
   public getBalance(): Observable<NeoGetBalanceResponse> {

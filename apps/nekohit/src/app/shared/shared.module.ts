@@ -18,6 +18,7 @@ import { SanitizedHtmlPipe } from './pipes/sanitized-html.pipe';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { ConnectWalletComponent } from './components/connect-wallet/connect-wallet.component';
 import { ChartModule } from 'primeng/chart';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { ChartModule } from 'primeng/chart';
     TimelineModule,
     SkeletonModule,
     ChartModule,
+    DynamicDialogModule,
   ],
   exports: [
     ButtonModule,
@@ -65,6 +67,7 @@ import { ChartModule } from 'primeng/chart';
     AvatarComponent,
     ConnectWalletComponent,
     ChartModule,
+    DynamicDialogModule,
   ],
 })
 export class SharedModule {}

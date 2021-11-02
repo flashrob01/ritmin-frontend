@@ -1,50 +1,82 @@
-import { Injectable } from '@angular/core';
-import { environment } from 'apps/nekohit/src/environments/environment';
-import { from, Observable } from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
 import { Milestone, NekoHitProject } from '../../shared/models/project.model';
 import { NeolineService } from './neoline.service';
-import { rpc, sc } from '@cityofzion/neon-js';
-import { map, tap } from 'rxjs/operators';
+import { sc, wallet } from '@cityofzion/neon-js';
+import { catchError, map } from 'rxjs/operators';
+import { HASH160_ZERO, processBase64Hash160 } from './utils';
+import { NeonJSService } from './neonjs.service';
+import { NeoInvokeWriteResponse } from '../models/n3';
+import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
+import { RxState } from '@rx-angular/state';
+import { environment } from 'apps/nekohit/src/environments/environment';
 
 @Injectable()
 export class NekohitProjectService {
-  constructor(private neoline: NeolineService) {}
+  constructor(
+    private neoline: NeolineService,
+    private neonJS: NeonJSService,
+    @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>
+  ) {}
 
-  public static HASH160_ZERO = '0000000000000000000000000000000000000000';
-
-  public getProjects(): Observable<NekoHitProject[]> {
+  public getProjects(
+    creator?: string,
+    supporter?: string,
+    page?: number,
+    size?: number
+  ): Observable<NekoHitProject[]> {
     const params = [
-      sc.ContractParam.hash160(NekohitProjectService.HASH160_ZERO),
-      sc.ContractParam.hash160(NekohitProjectService.HASH160_ZERO),
-      sc.ContractParam.integer('1'),
-      sc.ContractParam.integer('90'),
+      sc.ContractParam.hash160(creator != null ? creator : HASH160_ZERO),
+      sc.ContractParam.hash160(supporter != null ? supporter : HASH160_ZERO),
+      sc.ContractParam.integer(page != null ? page : 1),
+      sc.ContractParam.integer(size != null ? size : 100),
     ];
-    return this.rpcRequest('advanceQuery', params).pipe(
+    const scriptHash = this.globalState.get('mainnet')
+      ? environment.mainNetWcaContractHash
+      : environment.testNetWcaContractHash;
+    return this.neonJS.rpcRequest('advanceQuery', params, scriptHash).pipe(
       map((res) => JSON.parse(atob(res))),
       map((res) => res.map((v: any) => this.mapToProject(v)))
     );
   }
 
-  private rpcRequest(method: string, params: any[]): Observable<any> {
-    const rpcClient = new rpc.RPCClient(environment.testNetNodeUrl);
-    return from(
-      rpcClient.invokeFunction(
-        environment.testNetWcaContractHash,
-        method,
-        params
+  public stakeTokens(
+    from: string,
+    amount: number,
+    identifier: string
+  ): Observable<NeoInvokeWriteResponse> {
+    const catContractHash = this.globalState.get('mainnet')
+      ? environment.mainNetCatTokenHash
+      : environment.testNetCatTokenHash;
+    const wcaContractHash = this.globalState.get('mainnet')
+      ? environment.mainNetWcaContractHash
+      : environment.testNetWcaContractHash;
+
+    return this.neoline
+      .invokeRead(
+        catContractHash,
+        'transfer',
+        [
+          NeolineService.address(from),
+          NeolineService.hash160(wcaContractHash),
+          NeolineService.int(amount),
+          NeolineService.string(identifier),
+        ],
+        [{ account: this.globalState.get('address'), scopes: 1 }]
       )
-    ).pipe(
-      tap((v) => console.log('rpc', v)),
-      map((resp) => resp.stack[0]?.value as string)
-    );
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return throwError(err);
+        })
+      );
   }
 
   private mapToProject(resp: any): NekoHitProject {
     return {
       identifier: resp[0],
       description: resp[1],
-      creator: '',
-      //creator: wallet.getAddressFromScriptHash(WcaService.processBase64Hash160(resp[2])),
+      creator: wallet.getAddressFromScriptHash(processBase64Hash160(resp[2])),
       creationTimestamp: new Date(resp[3]),
       stakePer100Token: resp[4] / 100,
       maxTokenSoldCount: resp[5] / 100,

@@ -19,7 +19,8 @@ export interface NekoHitProject {
   status: ProjectStatus;
   stage: ProjectStage;
   isPublic: boolean;
-  stakedTokensChartData?: any;
+  stakedTokensChartData?: any; // used to bind new attributes to the project
+  stakeInput?: number; // used to bind new attributes to the project
 }
 
 export interface Milestone {

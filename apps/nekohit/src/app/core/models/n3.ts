@@ -8,11 +8,11 @@ type NeoType =
   | 'Hash160'
   | 'Hash256';
 
-type NONE = 0;
-type CALLED_BY_ENTRY = 1;
-type CONTRACT = 16;
-type CONTRACTS_GROUP = 32;
-type GLOBAL = 128;
+export type NONE = 0;
+export type CALLED_BY_ENTRY = 1;
+export type CONTRACT = 16;
+export type CONTRACTS_GROUP = 32;
+export type GLOBAL = 128;
 
 export type NeoScope =
   | NONE
@@ -60,6 +60,7 @@ export interface NeoInvokeReadResponse {
   state: string;
   gas_consumed: string;
   stack: NeoTypedValue[];
+  exception?: string;
 }
 
 export interface NeoPickAddressResponse {
@@ -91,58 +92,99 @@ export interface NeoSignMessageResponse {
   message: string;
 }
 
+export interface NeoInvokeReadArgs {
+  scriptHash: string;
+  operation: string;
+  args: NeoTypedValue[];
+  signers: NeoSigner[];
+}
+
+export interface NeoInvokeReadMultiArgs {
+  scriptHash: string;
+  operation: string;
+  args: NeoTypedValue[];
+}
+
+export interface NeoGetStorageArgs {
+  scriptHash: string;
+  key: string;
+}
+
+export interface NeoVerifyMessageArgs {
+  message: string;
+  data: string;
+  publicKey: string;
+}
+
+export interface NeoGetBlockArgs {
+  blockHeight: number;
+}
+
+export interface NeoGetTransactionArgs {
+  txid: string;
+}
+
+export interface NeoGetApplicationLogArgs {
+  txid: string;
+}
+
+export interface NeoAddressToScriptHashArgs {
+  address: string;
+}
+
+export interface NeoScriptHashToAddressArgs {
+  address: string;
+}
+
+export interface NeoSendArgs {
+  fromAddress: string;
+  toAddress: string;
+  asset: string;
+  amount: string;
+  fee?: string;
+  broadcastOverride?: boolean;
+}
+
+export interface NeoInvokeArgs {
+  scriptHash: string;
+  operation: string;
+  args: NeoTypedValue[];
+  signers: NeoSigner[];
+  fee?: string;
+  extraSystemFee?: string;
+  broadcastOverride?: boolean;
+}
+
+export interface NeoInvokeMultipleArgs {
+  fee: string;
+  extraSystemFee: string;
+  signers: NeoSigner[];
+  invokeArgs?: NeoInvokeArgument[];
+  broadcastOverride?: boolean;
+}
+
+export interface NeoSignMessageArgs {
+  message: string;
+}
+
 export interface N3 {
   getProvider(): Promise<NeoProvider>;
   getBalance(): Promise<NeoGetBalanceResponse>;
-  getStorage(scriptHash: string, key: string): Promise<string>;
-  invokeRead(
-    scriptHash: string,
-    operation: string,
-    args: NeoTypedValue[],
-    signers: NeoSigner[]
-  ): Promise<NeoInvokeReadResponse>;
-  invokeReadMulti(
-    scriptHash: string,
-    operation: string,
-    args: NeoTypedValue[]
-  ): Promise<NeoInvokeReadResponse>;
-  verifyMessage(
-    message: string,
-    data: string,
-    publicKey: string
-  ): Promise<boolean>;
-  getBlock(blockHeight: number): Promise<any>;
-  getTransaction(txid: string): Promise<any>;
-  getApplicationLog(txid: string): Promise<any>;
+  getStorage(args: NeoGetStorageArgs): Promise<string>;
+  invokeRead(args: NeoInvokeReadArgs): Promise<NeoInvokeReadResponse>;
+  invokeReadMulti(args: NeoInvokeReadMultiArgs): Promise<NeoInvokeReadResponse>;
+  verifyMessage(args: NeoVerifyMessageArgs): Promise<boolean>;
+  getBlock(args: NeoGetBlockArgs): Promise<any>;
+  getTransaction(args: NeoGetTransactionArgs): Promise<any>;
+  getApplicationLog(args: NeoGetApplicationLogArgs): Promise<any>;
   pickAddress(): Promise<NeoPickAddressResponse>;
-  addressToScriptHash(address: string): Promise<string>;
-  scriptHashToAddress(scriptHash: string): Promise<string>;
+  addressToScriptHash(args: NeoAddressToScriptHashArgs): Promise<string>;
+  scriptHashToAddress(args: NeoScriptHashToAddressArgs): Promise<string>;
   // write
-  send(
-    fromAddress: string,
-    toAddress: string,
-    asset: string,
-    amount: string,
-    fee?: string,
-    broadcastOverride?: boolean
-  ): Promise<NeoSendResponse>;
-  invoke(
-    scriptHash: string,
-    operation: string,
-    args: NeoTypedValue[],
-    signers: NeoSigner[],
-    fee?: string,
-    extraSystemFee?: string,
-    broadcastOverrode?: boolean
-  ): Promise<NeoInvokeWriteResponse>;
-  invokeMultiple(
-    fee: string,
-    extraSystemFee: string,
-    signers: NeoSigner[],
-    invokeArgs?: NeoInvokeArgument[],
-    broadcastOverride?: boolean
-  ): Promise<NeoInvokeWriteResponse>;
-  signMessage(message: string): Promise<NeoSignMessageResponse>;
+  send(args: NeoSendArgs): Promise<NeoSendResponse>;
+  invoke(args: NeoInvokeArgs): Promise<NeoInvokeWriteResponse>;
+  invokeMultiple(args: NeoInvokeMultipleArgs): Promise<NeoInvokeWriteResponse>;
+  signMessage(args: NeoSignMessageArgs): Promise<NeoSignMessageResponse>;
 }
 
 export const N3READY = 'NEOLine.N3.EVENT.READY';

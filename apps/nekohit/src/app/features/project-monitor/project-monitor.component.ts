@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { RxState } from '@rx-angular/state';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NekohitProjectService } from '../../core/services/project.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
@@ -29,6 +30,7 @@ export class ProjectMonitorComponent {
   state$ = this.state.select();
   readonly address$ = this.globalState.select('address');
   readonly catBalance$ = this.globalState.select('catBalance');
+  readonly onStakeBtnClicked$ = new Subject<NekoHitProject>();
 
   // TODO: should be improved (more clean etc)
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {
@@ -127,6 +129,9 @@ export class ProjectMonitorComponent {
           )
         )
     );
+    this.state.hold(this.onStakeBtnClicked$, (project) =>
+      this.stakeTokens(project)
+    );
   }
 
   public getStakeValue(project: NekoHitProject, multiplier: number): number {
@@ -139,7 +144,7 @@ export class ProjectMonitorComponent {
 
   private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
     const data = {
-      labels: ['Remaining', 'Staked'],
+      labels: ['Remaining', 'Funded'],
       datasets: [
         {
           data: [
@@ -153,5 +158,12 @@ export class ProjectMonitorComponent {
     };
     project.stakedTokensChartData = data;
     return project;
+  }
+
+  private stakeTokens(project: NekoHitProject): void {
+    const from = this.globalState.get('address');
+    this.projectService
+      .stakeTokens(from, project.stakeInput || 0, project.identifier)
+      .subscribe((res) => console.log('res', res));
   }
 }

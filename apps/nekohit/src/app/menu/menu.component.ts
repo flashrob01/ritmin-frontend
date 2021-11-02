@@ -5,6 +5,8 @@ import { LinkService } from '../core/services/link.service';
 import { RxState } from '@rx-angular/state';
 import { NeolineService } from '../core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
+import { DialogService } from 'primeng/dynamicdialog';
+import { CreateProjectComponent } from '../create-project/create-project.component';
 
 interface MenuState {
   menuItems: MenuItem[];
@@ -19,7 +21,7 @@ const initState: MenuState = {
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [RxState],
+  providers: [RxState, DialogService],
 })
 export class MenuComponent {
   readonly state$ = this.state.select();
@@ -32,7 +34,8 @@ export class MenuComponent {
     private linkService: LinkService,
     private state: RxState<MenuState>,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
-    public neoline: NeolineService
+    public neoline: NeolineService,
+    private dialogService: DialogService
   ) {
     this.state.hold(this.translate.onLangChange, (v) => {
       localStorage.setItem('lang', v.lang);
@@ -57,22 +60,37 @@ export class MenuComponent {
       this.state.set({ menuItems: items });
       this.state.hold(this.address$, () => {
         const menuItems = this.state.get('menuItems');
-        menuItems.push({
-          label: this.translate.instant('MENU.PROFILE'),
-          icon: 'pi pi-user',
-          items: [
-            {
-              label: this.translate.instant('MENU.STAKINGS'),
-              icon: 'pi pi-wallet',
-              command: () => this.linkService.openWhitepaper(),
-            },
-            {
-              label: this.translate.instant('MENU.PROJECTS'),
-              icon: 'pi pi-list',
-              command: () => this.linkService.openWhitepaper(),
-            },
-          ],
-        });
+        menuItems.push(
+          {
+            label: this.translate.instant('MENU.CREATE'),
+            icon: 'pi pi-plus',
+            command: () =>
+              this.dialogService.open(CreateProjectComponent, {
+                header: 'Create a new project',
+                width: '80%',
+              }),
+            styleClass: 'loggedInMenuItem',
+          },
+          {
+            label: this.translate.instant('MENU.ACCOUNT'),
+            icon: 'pi pi-user',
+            styleClass: 'loggedInMenuItem',
+            items: [
+              {
+                label: this.translate.instant('MENU.STAKINGS'),
+                icon: 'pi pi-wallet',
+                command: () => this.linkService.openWhitepaper(),
+                styleClass: 'loggedInMenuItem',
+              },
+              {
+                label: this.translate.instant('MENU.PROJECTS'),
+                icon: 'pi pi-list',
+                command: () => this.linkService.openWhitepaper(),
+                styleClass: 'loggedInMenuItem',
+              },
+            ],
+          }
+        );
         this.state.set({ menuItems });
       });
     });

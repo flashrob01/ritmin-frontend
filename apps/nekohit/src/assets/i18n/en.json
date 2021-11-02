@@ -4,9 +4,10 @@
     "WHITEPAPER": "White Paper",
     "BLOG": "Blog",
     "CONNECT": "Connect Wallet",
-    "PROFILE": "My Profile",
+    "ACCOUNT": "My Account",
     "STAKINGS": "Stakings",
-    "PROJECTS": "Projects"
+    "PROJECTS": "Projects",
+    "CREATE": "Create"
   },
   "LANDING": {
     "HERO": {
@@ -33,7 +34,7 @@
       "STEP_1_TITLE": "Connect Wallet",
       "STEP_1_TEXT": "Connect with your wallet of choice. At the current stage, NekoHit supports NeoLine and WalletConnect. Once you are successfully connected, you can move on to creating a new project.",
       "STEP_2_TITLE": "Create a new Project",
-      "STEP_2_TEXT": "Click on \"Create Project\" in the menubar and fill out the required information. Please keep in mind that once your project is on the blockchain, any alteration will cause a small GAS fee. Therefore double-check every detail before submitting it.",
+      "STEP_2_TEXT": "Click on \"Create\" in the menubar and fill out the required information. Please keep in mind that once your project is on the blockchain, any alteration will cause a small GAS fee. Therefore double-check every detail before submitting it.",
       "STEP_3_TITLE": "Setup Milestones",
       "STEP_3_TEXT": "Defining the milestones is the most critical part of the creation of a new project. They show your audience how fast you will approach your work and when you plan to finish it. The milestones are the pillar of each project, and missing their deadline can result in a loss of staked tokens. It is crucial to understand how milestones work before you start your project. You will also have to mark one of the milestones as a threshold milestone. The chosen milestone will be an indication for your sponsors until when they can get a complete refund. Once the threshold is reached, your sponsors will only be able to refund parts of their initial investment.",
       "STEP_4_TITLE": "Stake Tokens",

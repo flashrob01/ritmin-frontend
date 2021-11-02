@@ -212,10 +212,9 @@
                 <span class="p-float-label">
                   <p-inputNumber
                     mode="decimal"
-                    [(ngModel)]="project['stakeInput']"
+                    [(ngModel)]="project.stakeInput"
                     [minFractionDigits]="2"
                     [maxFractionDigits]="2"
-                    #stakeInput
                     [showButtons]="true"
                     inputId="stacked"
                     id="supportInput"
@@ -237,12 +236,12 @@
 
                   <div
                     class="flex justify-content-between"
-                    *ngIf="stakeInput.value"
+                    *ngIf="project.stakeInput"
                   >
                     <span>Your contribution:</span
                     ><span
-                      >{{ stakeInput.value | number }} CAT ({{
-                        (stakeInput.value / project.maxTokenSoldCount) * 100
+                      >{{ project.stakeInput | number }} CAT ({{
+                        (project.stakeInput / project.maxTokenSoldCount) * 100
                           | number
                       }}%)</span
                     >
@@ -253,7 +252,8 @@
                   label="Stake CAT Tokens"
                   class="p-button-warning mt-3"
                   type="button"
-                  [disabled]="!stakeInput.value"
+                  [disabled]="!project.stakeInput"
+                  (click)="onStakeBtnClicked$.next(project)"
                 ></button>
               </ng-container>
               <ng-template #connectWallet>

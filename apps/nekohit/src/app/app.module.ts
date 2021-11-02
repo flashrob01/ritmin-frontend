@@ -20,6 +20,7 @@ import { FeaturedProjectService } from './home/featured-project/featured-project
 import { FeaturedProjectComponent } from './home/featured-project/featured-project.component';
 import { RxState } from '@rx-angular/state';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
+import { CreateProjectComponent } from './create-project/create-project.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -32,6 +33,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     HomeComponent,
     FooterComponent,
     FeaturedProjectComponent,
+    CreateProjectComponent,
   ],
   imports: [
     HttpClientModule,
