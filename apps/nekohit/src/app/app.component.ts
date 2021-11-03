@@ -58,11 +58,12 @@ export class AppComponent {
     );
 
     const lang = localStorage.getItem('lang');
-    translate.langs = ['en', 'de', 'cn'];
+    translate.langs = ['en'];
     if (lang && translate.langs.includes(lang)) {
       translate.use(lang).subscribe();
     } else {
-      translate.use(translate.getBrowserLang()).subscribe();
+      //translate.use(translate.getBrowserLang()).subscribe();
+      translate.use('en').subscribe();
     }
   }
 }

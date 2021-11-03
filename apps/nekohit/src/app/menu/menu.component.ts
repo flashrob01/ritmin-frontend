@@ -41,10 +41,15 @@ export class MenuComponent {
       localStorage.setItem('lang', v.lang);
       this.state.set(initState);
       const items = [
-        {
+        /* {
           label: this.translate.instant('MENU.BROWSE'),
           icon: 'pi pi-search',
           routerLink: 'browse',
+        }, */
+        {
+          label: this.translate.instant('MENU.PROTOTYPE'),
+          icon: 'pi pi-search',
+          command: () => this.linkService.openPrototype(),
         },
         {
           label: this.translate.instant('MENU.WHITEPAPER'),

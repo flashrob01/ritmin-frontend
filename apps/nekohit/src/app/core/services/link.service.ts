@@ -25,4 +25,8 @@ export class LinkService {
   public openDevDocumentation(): void {
     window.open('https://github.com/NekoHitDev/Ritmin/wiki', '_blank');
   }
+
+  public openPrototype(): void {
+    window.open('https://neoline.ritmin-frontend.pages.dev/', '_blank');
+  }
 }

@@ -67,7 +67,7 @@ export class NeolineService {
   }
 
   constructor() {
-    this.registerListeners();
+    // this.registerListeners();
   }
 
   private registerListeners(): void {

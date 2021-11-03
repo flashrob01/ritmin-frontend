@@ -3,15 +3,23 @@
     "BROWSE": "Browse",
     "WHITEPAPER": "White Paper",
     "BLOG": "Blog",
-    "CONNECT": "Connect Wallet"
+    "CONNECT": "Connect Wallet",
+    "ACCOUNT": "My Account",
+    "STAKINGS": "Stakings",
+    "PROJECTS": "Projects",
+    "CREATE": "Create",
+    "PROTOTYPE": "Prototype"
   },
   "LANDING": {
     "HERO": {
       "TITLE-ONE": "Join the first and fully decentralized",
       "TITLE-TWO": "crowdfunding platform for content creators on the blockchain",
-      "SUBTEXT": "Get started now and create your own Project on NekoHit",
+      "SUBTEXT": "Get started now, create your own Project on NekoHit and receive funding",
       "BUTTON-WHITEPAPER": "White Paper",
-      "BUTTON-BROWSE": "Browse"
+      "BUTTON-DOCUMENTATION": "Documentation"
+    },
+    "FEATURED": {
+      "TITLE": "Featured Projects"
     },
     "AWARD": {
       "TITLE": "NEO FRONTIER LAUNCHPAD",
@@ -27,7 +35,7 @@
       "STEP_1_TITLE": "Connect Wallet",
       "STEP_1_TEXT": "Connect with your wallet of choice. At the current stage, NekoHit supports NeoLine and WalletConnect. Once you are successfully connected, you can move on to creating a new project.",
       "STEP_2_TITLE": "Create a new Project",
-      "STEP_2_TEXT": "Click on \"Create Project\" in the menubar and fill out the required information. Please keep in mind that once your project is on the blockchain, any alteration will cause a small GAS fee. Therefore double-check every detail before submitting it.",
+      "STEP_2_TEXT": "Click on \"Create\" in the menubar and fill out the required information. Please keep in mind that once your project is on the blockchain, any alteration will cause a small GAS fee. Therefore double-check every detail before submitting it.",
       "STEP_3_TITLE": "Setup Milestones",
       "STEP_3_TEXT": "Defining the milestones is the most critical part of the creation of a new project. They show your audience how fast you will approach your work and when you plan to finish it. The milestones are the pillar of each project, and missing their deadline can result in a loss of staked tokens. It is crucial to understand how milestones work before you start your project. You will also have to mark one of the milestones as a threshold milestone. The chosen milestone will be an indication for your sponsors until when they can get a complete refund. Once the threshold is reached, your sponsors will only be able to refund parts of their initial investment.",
       "STEP_4_TITLE": "Stake Tokens",
@@ -38,16 +46,16 @@
       "STEP_6_TEXT": "You reached the last stage of your project. After the final milestone, the project will end. That means that the invested tokens from your sponsors will be unlocked and transferred to your wallet, and in case you missed at least one milestone, the sponsors will also receive their share."
     },
     "FEATURES": {
-      "TITLE":"NekoHit,",
-      "SUBTITLE": "a quick overview",
+      "TITLE": "NekoHit powered by NEO",
+      "SUBTITLE": "a transparent and fair crowdfunding solution",
       "FEAT_1_TITLE": "Work Completion Agreement",
       "FEAT_1_TEXT": "We developed a unique Work Completion Agreement (WCA) protocol, which is the core of the NekoHit project.",
       "FEAT_2_TITLE": "CAT Token",
-      "FEAT_2_TEXT": "The Completion Agreement Token is a governence NEP-17 token and required to interact with the WCA.",
+      "FEAT_2_TEXT": "The Completion Agreement Token is a NEP-17 token and required to interact with the WCA smart contract.",
       "FEAT_3_TITLE": "Community Driven",
       "FEAT_3_TEXT": "We want NekoHit to be a community project, inviting everyone to contribute to the project in any shape or form. For any contribution, you will receive CAT tokens.",
       "FEAT_4_TITLE": "DAO",
-      "FEAT_4_TEXT": "It will be possible to use the CAT tokens to vote for specific contract settings.",
+      "FEAT_4_TEXT": "In the future it will be possible to use a new governance token (Nekoin) to vote for specific contract settings.",
       "FEAT_5_TITLE": "Open Source",
       "FEAT_5_TEXT": "NekoHit is an open-source community project and can be run and tested by anyone.",
       "FEAT_6_TITLE": "Fully decentralized",
@@ -64,5 +72,4 @@
       "LINK": "Learn More"
     }
   }
-
 }
