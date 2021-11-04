@@ -39,7 +39,7 @@ export class AppComponent {
     public linkService: LinkService,
     translate: TranslateService
   ) {
-    this.globalState.set({ mainnet: environment.mainNetIsDefault });
+    this.globalState.set({ mainnet: environment.mainnetDefault });
     this.globalState.connect(
       'address',
       this.neoline.getAccount().pipe(map((acc) => acc.address))

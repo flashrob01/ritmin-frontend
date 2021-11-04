@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 import { rpc } from '@cityofzion/neon-js';
 import { environment } from 'apps/nekohit/src/environments/environment';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { RxState } from '@rx-angular/state';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 
@@ -18,11 +18,17 @@ export class NeonJSService {
   ): Observable<any> {
     const rpcClient = new rpc.RPCClient(
       this.globalState.get('mainnet')
-        ? environment.mainNetNodeUrl
-        : environment.testNetNodeUrl
+        ? environment.mainnet.nodeUrl
+        : environment.testnet.nodeUrl
     );
     return from(rpcClient.invokeFunction(scriptHash, method, params)).pipe(
-      map((resp) => resp.stack[0]?.value as string)
+      mergeMap((res) => {
+        if (res.state === 'FAULT') {
+          console.error(res);
+          return throwError(res.exception);
+        } else return of(res);
+      }),
+      map((res) => res.stack[0]?.value)
     );
   }
 }

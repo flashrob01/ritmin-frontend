@@ -19,6 +19,7 @@ import { AvatarComponent } from './components/avatar/avatar.component';
 import { ConnectWalletComponent } from './components/connect-wallet/connect-wallet.component';
 import { ChartModule } from 'primeng/chart';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     SkeletonModule,
     ChartModule,
     DynamicDialogModule,
+    ToastModule,
   ],
   exports: [
     ButtonModule,
@@ -68,6 +70,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     ConnectWalletComponent,
     ChartModule,
     DynamicDialogModule,
+    ToastModule,
   ],
 })
 export class SharedModule {}

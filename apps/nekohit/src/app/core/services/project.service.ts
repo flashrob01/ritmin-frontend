@@ -1,21 +1,23 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Milestone, NekoHitProject } from '../../shared/models/project.model';
 import { NeolineService } from './neoline.service';
 import { sc, wallet } from '@cityofzion/neon-js';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { HASH160_ZERO, processBase64Hash160 } from './utils';
 import { NeonJSService } from './neonjs.service';
-import { NeoInvokeWriteResponse } from '../models/n3';
+import { NeoInvokeReadResponse, NeoInvokeWriteResponse } from '../models/n3';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { RxState } from '@rx-angular/state';
 import { environment } from 'apps/nekohit/src/environments/environment';
+import { ErrorService } from './error.service';
 
 @Injectable()
 export class NekohitProjectService {
   constructor(
     private neoline: NeolineService,
     private neonJS: NeonJSService,
+    private errorService: ErrorService,
     @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>
   ) {}
 
@@ -32,9 +34,13 @@ export class NekohitProjectService {
       sc.ContractParam.integer(size != null ? size : 100),
     ];
     const scriptHash = this.globalState.get('mainnet')
-      ? environment.mainNetWcaContractHash
-      : environment.testNetWcaContractHash;
+      ? environment.mainnet.wcaContractHash
+      : environment.testnet.wcaContractHash;
     return this.neonJS.rpcRequest('advanceQuery', params, scriptHash).pipe(
+      catchError((err) => {
+        this.errorService.handleError(err);
+        return throwError(of([]));
+      }),
       map((res) => JSON.parse(atob(res))),
       map((res) => res.map((v: any) => this.mapToProject(v)))
     );
@@ -46,28 +52,47 @@ export class NekohitProjectService {
     identifier: string
   ): Observable<NeoInvokeWriteResponse> {
     const catContractHash = this.globalState.get('mainnet')
-      ? environment.mainNetCatTokenHash
-      : environment.testNetCatTokenHash;
+      ? environment.mainnet.catTokenHash
+      : environment.testnet.catTokenHash;
     const wcaContractHash = this.globalState.get('mainnet')
-      ? environment.mainNetWcaContractHash
-      : environment.testNetWcaContractHash;
+      ? environment.mainnet.wcaContractHash
+      : environment.testnet.wcaContractHash;
 
     return this.neoline
-      .invokeRead(
-        catContractHash,
-        'transfer',
-        [
-          NeolineService.address(from),
-          NeolineService.hash160(wcaContractHash),
-          NeolineService.int(amount),
-          NeolineService.string(identifier),
-        ],
-        [{ account: this.globalState.get('address'), scopes: 1 }]
-      )
+      .addressToScriptHash(this.globalState.get('address'))
       .pipe(
-        catchError((err) => {
-          console.error(err);
-          return throwError(err);
+        map((result) => result.scriptHash),
+        switchMap((address) => {
+          return this.neoline
+            .invokeRead(
+              catContractHash,
+              'transfer',
+              [
+                NeolineService.address(from),
+                NeolineService.hash160(wcaContractHash),
+                NeolineService.int(amount),
+                NeolineService.string(identifier),
+              ],
+              [{ account: address, scopes: 1 }]
+            )
+            .pipe(
+              catchError((err) => {
+                return this.errorService.handleError(err);
+              }),
+              switchMap(() => {
+                return this.neoline.invoke(
+                  catContractHash,
+                  'transfer',
+                  [
+                    NeolineService.address(from),
+                    NeolineService.hash160(wcaContractHash),
+                    NeolineService.int(amount),
+                    NeolineService.string(identifier),
+                  ],
+                  [{ account: address, scopes: 1 }]
+                );
+              })
+            );
         })
       );
   }

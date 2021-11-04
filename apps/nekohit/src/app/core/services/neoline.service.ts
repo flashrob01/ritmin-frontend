@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, ReplaySubject, throwError } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { from, Observable, of, ReplaySubject, throwError } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_CHANGED,
   CONNECTED,
@@ -14,9 +14,12 @@ import {
 import {
   N3,
   N3READY,
+  NeoAddressToScriptHashResponse,
   NeoGetBalanceResponse,
+  NeoInvokeReadResponse,
   NeoInvokeWriteResponse,
   NeoPickAddressResponse,
+  NeoScriptHashToAddressResponse,
   NeoSigner,
   NeoTypedValue,
 } from '../models/n3';
@@ -119,7 +122,8 @@ export class NeolineService {
     return this.N2_NEOLINE.pipe(switchMap((n2) => from(n2?.getPublicKey())));
   }
 
-  public invokeRead(
+  // TODO: add error handling
+  public invoke(
     scriptHash: string,
     operation: string,
     args: NeoTypedValue[],
@@ -130,40 +134,66 @@ export class NeolineService {
   ): Observable<NeoInvokeWriteResponse> {
     return this.N3_NEOLINE.pipe(
       switchMap((n3) =>
-        from(
-          n3?.invokeRead({
-            scriptHash,
-            operation,
-            args,
-            signers,
-          })
-        ).pipe(
-          tap((res) => {
-            if (res.state === 'FAULT') {
-              throwError(res.exception);
-            }
-          }),
-          switchMap(() =>
-            n3?.invoke({
-              scriptHash,
-              operation,
-              args,
-              fee,
-              extraSystemFee,
-              broadcastOverride,
-              signers,
-            })
-          )
-        )
+        n3?.invoke({
+          scriptHash,
+          operation,
+          args,
+          fee,
+          extraSystemFee,
+          broadcastOverride,
+          signers,
+        })
       )
     );
   }
 
+  public invokeRead(
+    scriptHash: string,
+    operation: string,
+    args: NeoTypedValue[],
+    signers: NeoSigner[]
+  ): Observable<NeoInvokeReadResponse> {
+    return this.N3_NEOLINE.pipe(
+      switchMap((n3) =>
+        n3?.invokeRead({
+          scriptHash,
+          operation,
+          args,
+          signers,
+        })
+      ),
+      mergeMap((res) => {
+        if (res.state === 'FAULT') {
+          console.error(res);
+          return throwError(new Error(res.exception));
+        } else {
+          return of(res);
+        }
+      })
+    );
+  }
+
   public pickAddress(): Observable<NeoPickAddressResponse> {
-    return this.N3_NEOLINE.pipe(switchMap((n3) => from(n3?.pickAddress())));
+    return this.N3_NEOLINE.pipe(switchMap((n3) => n3?.pickAddress()));
   }
 
   public getBalance(): Observable<NeoGetBalanceResponse> {
-    return this.N3_NEOLINE.pipe(switchMap((n3) => from(n3?.getBalance())));
+    return this.N3_NEOLINE.pipe(switchMap((n3) => n3?.getBalance()));
+  }
+
+  public addressToScriptHash(
+    address: string
+  ): Observable<NeoAddressToScriptHashResponse> {
+    return this.N3_NEOLINE.pipe(
+      switchMap((n3) => n3?.AddressToScriptHash({ address }))
+    );
+  }
+
+  public scriptHashToAddress(
+    address: string
+  ): Observable<NeoScriptHashToAddressResponse> {
+    return this.N3_NEOLINE.pipe(
+      switchMap((n3) => n3?.ScriptHashToAddress({ address }))
+    );
   }
 }

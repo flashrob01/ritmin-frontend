@@ -163,7 +163,7 @@ export class ProjectMonitorComponent {
   private stakeTokens(project: NekoHitProject): void {
     const from = this.globalState.get('address');
     this.projectService
-      .stakeTokens(from, project.stakeInput || 0, project.identifier)
+      .stakeTokens(from, (project.stakeInput || 0) * 100, project.identifier)
       .subscribe((res) => console.log('res', res));
   }
 }

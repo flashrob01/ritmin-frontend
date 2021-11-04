@@ -1,4 +1,6 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { ErrorService } from './services/error.service';
 import { LinkService } from './services/link.service';
 import { NeolineService } from './services/neoline.service';
 import { NeonJSService } from './services/neonjs.service';
@@ -10,6 +12,8 @@ import { NekohitProjectService } from './services/project.service';
     NeolineService,
     NekohitProjectService,
     NeonJSService,
+    ErrorService,
+    MessageService,
   ],
 })
 export class CoreModule {

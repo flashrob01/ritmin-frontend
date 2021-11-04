@@ -59,7 +59,7 @@
                       }}</a></b
                     >
                     <p-tag
-                      *ngIf="project.stage === 'Open'"
+                      *ngIf="project.status === 'ONGOING'"
                       class="ml-2"
                       value="OPEN FOR FUNDING"
                       severity="warning"
@@ -144,7 +144,7 @@
           <div class="flex">
             <!-- PROJECT CLOSED FOR FUNDING STATISTICS -->
             <div
-              *ngIf="project.stage !== 'Open'"
+              *ngIf="project.status !== 'ONGOING'"
               class="flex flex-column support-project-panel p-fluid"
             >
               <div class="mb-4">
@@ -158,7 +158,7 @@
             </div>
             <!-- SUPPORT PROJECT ACTION -->
             <div
-              *ngIf="project.stage === 'Open'"
+              *ngIf="project.status === 'ONGOING'"
               class="flex flex-column support-project-panel p-fluid"
             >
               <div class="mb-4">

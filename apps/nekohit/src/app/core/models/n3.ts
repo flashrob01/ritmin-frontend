@@ -77,6 +77,7 @@ export interface NeoInvokeWriteResponse {
   txid: string;
   nodeURL: string;
   signedTx?: string;
+  exception?: string;
 }
 
 export interface NeoInvokeArgument {
@@ -167,6 +168,14 @@ export interface NeoSignMessageArgs {
   message: string;
 }
 
+export interface NeoAddressToScriptHashResponse {
+  scriptHash: string;
+}
+
+export interface NeoScriptHashToAddressResponse {
+  address: string;
+}
+
 export interface N3 {
   getProvider(): Promise<NeoProvider>;
   getBalance(): Promise<NeoGetBalanceResponse>;
@@ -178,8 +187,12 @@ export interface N3 {
   getTransaction(args: NeoGetTransactionArgs): Promise<any>;
   getApplicationLog(args: NeoGetApplicationLogArgs): Promise<any>;
   pickAddress(): Promise<NeoPickAddressResponse>;
-  addressToScriptHash(args: NeoAddressToScriptHashArgs): Promise<string>;
-  scriptHashToAddress(args: NeoScriptHashToAddressArgs): Promise<string>;
+  AddressToScriptHash(
+    args: NeoAddressToScriptHashArgs
+  ): Promise<NeoAddressToScriptHashResponse>;
+  ScriptHashToAddress(
+    args: NeoScriptHashToAddressArgs
+  ): Promise<NeoScriptHashToAddressResponse>;
   // write
   send(args: NeoSendArgs): Promise<NeoSendResponse>;
   invoke(args: NeoInvokeArgs): Promise<NeoInvokeWriteResponse>;
