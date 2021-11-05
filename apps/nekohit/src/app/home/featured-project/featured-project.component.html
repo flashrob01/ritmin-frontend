@@ -1,14 +1,40 @@
 <ng-container *ngIf="state$ | async as s">
-  <p-card
-    [header]="s.title"
-    [subheader]="s.subtitle"
-    styleClass="p-card-shadow"
-  >
-    <ng-template pTemplate="header">
-      <img [alt]="s.title" [src]="s.image" />
+  <p-card class="cursor-pointer" styleClass="featuredProjectCard">
+    <div class="flex">
+      <div class="mr-2">
+        <ritmin-avatar [svg]="s.svg" [pxWidth]="45"></ritmin-avatar>
+      </div>
+      <div
+        class="flex flex-column flex-grow-1 justify-content-between text-left"
+      >
+        <div class="flex flex-row justify-content-between">
+          <span class="font-semibold">{{ s.project.identifier }}</span>
+
+          <small class="white-space-nowrap featuredProjectTokenOverview"
+            >{{
+              s.project.maxTokenSoldCount - s.project.remainTokenCount | number
+            }}/{{ s.project.maxTokenSoldCount | number }} CAT</small
+          >
+        </div>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="flex flex-column">
+        <div class="flex justify-content-between mb-2">
+          <span>In Progress</span>
+          <span class="font-bold"
+            >{{ s.project.nextMilestone }}/{{ s.project.milestonesCount }}</span
+          >
+        </div>
+        <div class="flex justify-content-between" style="width: 100%">
+          <div
+            *ngFor="let ms of s.project.milestones; let i = index"
+            [ngStyle]="{ width: 100 / s.project.milestonesCount - 0.9 + '%' }"
+            class="milestoneBar"
+            [ngClass]="i < s.project.nextMilestone ? 'finishedMs' : 'openMs'"
+          ></div>
+        </div>
+      </div>
     </ng-template>
-    <p>
-      {{ s.description }}
-    </p>
   </p-card>
 </ng-container>

@@ -16,7 +16,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { FooterComponent } from './footer/footer.component';
 import { CarouselModule } from 'primeng/carousel';
 import { SharedModule } from './shared/shared.module';
-import { FeaturedProjectService } from './home/featured-project/featured-project.service';
 import { FeaturedProjectComponent } from './home/featured-project/featured-project.component';
 import { RxState } from '@rx-angular/state';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
@@ -55,7 +54,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
   ],
   providers: [
-    FeaturedProjectService,
     RxState,
     {
       provide: GLOBAL_RX_STATE,

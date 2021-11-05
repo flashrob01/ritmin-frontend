@@ -72,21 +72,14 @@
   <div
     class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
   >
-    <div class="text-center text-2xl">
+    <div class="text-center text-2xl" style="width: 100%">
       <h1 class="text-blue-600">{{ 'LANDING.FEATURED.TITLE' | translate }}</h1>
-      <p-carousel
-        [value]="s.featuredProjects"
-        [numVisible]="4"
-        [circular]="true"
-        [responsiveOptions]="s.responsiveCarouselOptions"
-      >
-        <ng-template let-project pTemplate="item">
-          <div class="m-2">
-            <ritmin-featured-project [project]="project">
-            </ritmin-featured-project>
-          </div>
-        </ng-template>
-      </p-carousel>
+      <div class="flex justify-content-evenly flex-wrap">
+        <ritmin-featured-project
+          *ngFor="let project of s.featuredProjects"
+          [project]="project"
+        ></ritmin-featured-project>
+      </div>
     </div>
   </div>
 

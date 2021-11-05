@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { NotificationService } from '../../core/services/notification.service';
 import { NekohitProjectService } from '../../core/services/project.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { NekoHitProject } from '../../shared/models/project.model';
@@ -115,22 +116,27 @@ export class ProjectMonitorComponent {
   constructor(
     private state: RxState<ProjectMonitorState>,
     private projectService: NekohitProjectService,
+    private notification: NotificationService,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {
     this.state.connect(
       'projects',
-      this.projectService
-        .getProjects()
-        .pipe(
-          map((projects) =>
-            projects
-              .filter(
-                (project) =>
-                  project.status !== 'PENDING' && project.status !== 'UNKNOWN'
-              )
-              .map((project) => this.mapChartDataToProject(project))
-          )
+      this.projectService.getProjects().pipe(
+        map((projects) =>
+          projects
+            .filter(
+              (project) =>
+                project.status !== 'PENDING' && project.status !== 'UNKNOWN'
+            )
+            .sort((a, b) => {
+              return (
+                new Date(b.creationTimestamp).getTime() -
+                new Date(a.creationTimestamp).getTime()
+              );
+            })
+            .map((project) => this.mapChartDataToProject(project))
         )
+      )
     );
     this.state.hold(this.onStakeBtnClicked$, (project) =>
       this.stakeTokens(project)
@@ -167,6 +173,8 @@ export class ProjectMonitorComponent {
     const from = this.globalState.get('address');
     this.projectService
       .stakeTokens(from, (project.stakeInput || 0) * 100, project.identifier)
-      .subscribe((res) => console.log('res', res));
+      .subscribe((res) => {
+        this.notification.tx(res.txid);
+      });
   }
 }

@@ -3,3 +3,21 @@ p-card {
     cursor: pointer;
   }
 }
+
+::ng-deep .featuredProjectCard {
+  width: 400px;
+  /* height: 150px; */
+}
+
+.milestoneBar {
+  height: 10px;
+  border-radius: 4px;
+}
+
+.finishedMs {
+  background-color: #2196f3;
+}
+
+.openMs {
+  background-color: rgb(190, 190, 190);
+}

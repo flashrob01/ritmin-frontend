@@ -4,6 +4,12 @@
     [autoLayout]="true"
     dataKey="identifier"
     styleClass="project-table p-datatable-striped p-datatable-gridlines"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    responsiveLayout="scroll"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [rowsPerPageOptions]="[10, 25, 50]"
   >
     <ng-template pTemplate="header">
       <tr class="project-title-row">
@@ -144,7 +150,10 @@
           <div class="flex">
             <!-- PROJECT CLOSED FOR FUNDING STATISTICS -->
             <div
-              *ngIf="project.status !== 'ONGOING'"
+              *ngIf="
+                project.status !== 'ONGOING' ||
+                project.creator === globalState.get('address')
+              "
               class="flex flex-column support-project-panel p-fluid"
             >
               <div class="mb-4">
@@ -158,7 +167,10 @@
             </div>
             <!-- SUPPORT PROJECT ACTION -->
             <div
-              *ngIf="project.status === 'ONGOING'"
+              *ngIf="
+                project.status === 'ONGOING' &&
+                project.creator !== globalState.get('address')
+              "
               class="flex flex-column support-project-panel p-fluid"
             >
               <div class="mb-4">

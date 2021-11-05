@@ -3,16 +3,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { RxState } from '@rx-angular/state';
 import { PrimeIcons } from 'primeng/api';
 import { LinkService } from '../core/services/link.service';
-import {
-  FeaturedProject,
-  FeaturedProjectService,
-} from './featured-project/featured-project.service';
 import { map } from 'rxjs/operators';
+import { NekohitProjectService } from '../core/services/project.service';
+import { NekoHitProject } from '../shared/models/project.model';
 
 interface HomeComponentState {
   events: any[];
   responsiveCarouselOptions: any[];
-  featuredProjects: FeaturedProject[];
+  featuredProjects: NekoHitProject[];
 }
 
 const initState: HomeComponentState = {
@@ -49,13 +47,20 @@ export class HomeComponent {
   constructor(
     public linkService: LinkService,
     public translate: TranslateService,
-    private featuredProjectService: FeaturedProjectService,
+    projectService: NekohitProjectService,
     private state: RxState<HomeComponentState>
   ) {
     this.state.set(initState);
     this.state.connect(
       'featuredProjects',
-      featuredProjectService.getProjects()
+      projectService.getProjects().pipe(
+        map((projects) => {
+          return projects
+            .filter((project) => project.status === 'ONGOING')
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 4);
+        })
+      )
     );
     this.state.connect('events', this.$onLanguageChange);
   }
