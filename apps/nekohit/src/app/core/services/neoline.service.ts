@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, Observable, of, ReplaySubject, throwError } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_CHANGED,
   CONNECTED,
@@ -16,6 +16,9 @@ import {
   N3READY,
   NeoAddressToScriptHashResponse,
   NeoGetBalanceResponse,
+  NeoInvokeMultipleArgs,
+  NeoInvokeReadArgs,
+  NeoInvokeReadMultiArgs,
   NeoInvokeReadResponse,
   NeoInvokeWriteResponse,
   NeoPickAddressResponse,
@@ -67,6 +70,10 @@ export class NeolineService {
 
   public static hash256(value: string): NeoTypedValue {
     return { type: 'Hash256', value };
+  }
+
+  public static any(value: any): NeoTypedValue {
+    return { type: 'Any', value };
   }
 
   constructor() {
@@ -122,7 +129,6 @@ export class NeolineService {
     return this.N2_NEOLINE.pipe(switchMap((n2) => from(n2?.getPublicKey())));
   }
 
-  // TODO: add error handling
   public invoke(
     scriptHash: string,
     operation: string,
@@ -148,20 +154,10 @@ export class NeolineService {
   }
 
   public invokeRead(
-    scriptHash: string,
-    operation: string,
-    args: NeoTypedValue[],
-    signers: NeoSigner[]
+    args: NeoInvokeReadArgs
   ): Observable<NeoInvokeReadResponse> {
     return this.N3_NEOLINE.pipe(
-      switchMap((n3) =>
-        n3?.invokeRead({
-          scriptHash,
-          operation,
-          args,
-          signers,
-        })
-      ),
+      switchMap((n3) => n3?.invokeRead(args)),
       mergeMap((res) => {
         if (res.state === 'FAULT') {
           console.error(res);
@@ -171,6 +167,29 @@ export class NeolineService {
         }
       })
     );
+  }
+
+  public invokeReadMulti(
+    args: NeoInvokeReadMultiArgs
+  ): Observable<NeoInvokeReadResponse[]> {
+    return this.N3_NEOLINE.pipe(
+      switchMap((n3) => n3?.invokeReadMulti(args)),
+      mergeMap((res) => {
+        const faults = res.filter((r) => r.state === 'FAULT');
+        if (faults.length > 0) {
+          console.error(faults[0].exception);
+          return throwError(new Error(faults[0].exception));
+        } else {
+          return of(res);
+        }
+      })
+    );
+  }
+
+  public invokeMultiple(
+    args: NeoInvokeMultipleArgs
+  ): Observable<NeoInvokeWriteResponse> {
+    return this.N3_NEOLINE.pipe(switchMap((n3) => n3?.invokeMultiple(args)));
   }
 
   public pickAddress(): Observable<NeoPickAddressResponse> {

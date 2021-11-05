@@ -25,4 +25,8 @@ export class LinkService {
   public openDevDocumentation(): void {
     window.open('https://github.com/NekoHitDev/Ritmin/wiki', '_blank');
   }
+
+  public openTransaction(tx: string, baseUrl: string): void {
+    window.open(baseUrl + tx);
+  }
 }

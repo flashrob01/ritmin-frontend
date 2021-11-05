@@ -6,11 +6,12 @@ import { sc, wallet } from '@cityofzion/neon-js';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { HASH160_ZERO, processBase64Hash160 } from './utils';
 import { NeonJSService } from './neonjs.service';
-import { NeoInvokeReadResponse, NeoInvokeWriteResponse } from '../models/n3';
+import { NeoInvokeWriteResponse } from '../models/n3';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { RxState } from '@rx-angular/state';
 import { environment } from 'apps/nekohit/src/environments/environment';
 import { ErrorService } from './error.service';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class NekohitProjectService {
@@ -18,8 +19,12 @@ export class NekohitProjectService {
     private neoline: NeolineService,
     private neonJS: NeonJSService,
     private errorService: ErrorService,
+    private notification: NotificationService,
     @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>
   ) {}
+
+  // 0.01 GAS
+  fee = 1_000_000;
 
   public getProjects(
     creator?: string,
@@ -57,6 +62,32 @@ export class NekohitProjectService {
     const wcaContractHash = this.globalState.get('mainnet')
       ? environment.mainnet.wcaContractHash
       : environment.testnet.wcaContractHash;
+    const gasContractHash = this.globalState.get('mainnet')
+      ? environment.mainnet.gasContractHash
+      : environment.testnet.gasContractHash;
+    const devAddress = this.globalState.get('mainnet')
+      ? environment.mainnet.devAddress
+      : environment.testnet.devAddress;
+    const stakeTokens = {
+      scriptHash: catContractHash,
+      operation: 'transfer',
+      args: [
+        NeolineService.address(from),
+        NeolineService.hash160(wcaContractHash),
+        NeolineService.int(amount),
+        NeolineService.string(identifier),
+      ],
+    };
+    const payFee = {
+      scriptHash: gasContractHash,
+      operation: 'transfer',
+      args: [
+        NeolineService.address(from),
+        NeolineService.address(devAddress),
+        NeolineService.int(this.fee),
+        NeolineService.any(null),
+      ],
+    };
 
     return this.neoline
       .addressToScriptHash(this.globalState.get('address'))
@@ -64,17 +95,44 @@ export class NekohitProjectService {
         map((result) => result.scriptHash),
         switchMap((address) => {
           return this.neoline
-            .invokeRead(
-              catContractHash,
-              'transfer',
-              [
+            .invokeReadMulti({
+              invokeReadArgs: [stakeTokens, payFee],
+              signers: [{ account: address, scopes: 1 }],
+            })
+            .pipe(
+              catchError((err) => {
+                return this.errorService.handleError(err);
+              }),
+              switchMap(() => {
+                return this.neoline.invokeMultiple({
+                  signers: [{ account: address, scopes: 1 }],
+                  invokeArgs: [stakeTokens, payFee],
+                });
+              }),
+              tap((res) => {
+                this.notification.tx(res.txid);
+              })
+            );
+        })
+      );
+
+    /* return this.neoline
+      .addressToScriptHash(this.globalState.get('address'))
+      .pipe(
+        map((result) => result.scriptHash),
+        switchMap((address) => {
+          return this.neoline
+            .invokeRead({
+              scriptHash: catContractHash,
+              operation: 'transfer',
+              args: [
                 NeolineService.address(from),
                 NeolineService.hash160(wcaContractHash),
                 NeolineService.int(amount),
                 NeolineService.string(identifier),
               ],
-              [{ account: address, scopes: 1 }]
-            )
+              signers: [{ account: address, scopes: 1 }],
+            })
             .pipe(
               catchError((err) => {
                 return this.errorService.handleError(err);
@@ -94,7 +152,7 @@ export class NekohitProjectService {
               })
             );
         })
-      );
+      ); */
   }
 
   private mapToProject(resp: any): NekoHitProject {

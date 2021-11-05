@@ -6,7 +6,8 @@ type NeoType =
   | 'String'
   | 'Address'
   | 'Hash160'
-  | 'Hash256';
+  | 'Hash256'
+  | 'Any';
 
 export type NONE = 0;
 export type CALLED_BY_ENTRY = 1;
@@ -101,9 +102,12 @@ export interface NeoInvokeReadArgs {
 }
 
 export interface NeoInvokeReadMultiArgs {
-  scriptHash: string;
-  operation: string;
-  args: NeoTypedValue[];
+  invokeReadArgs: {
+    scriptHash: string;
+    operation: string;
+    args: NeoTypedValue[];
+  }[];
+  signers: NeoSigner[];
 }
 
 export interface NeoGetStorageArgs {
@@ -157,8 +161,8 @@ export interface NeoInvokeArgs {
 }
 
 export interface NeoInvokeMultipleArgs {
-  fee: string;
-  extraSystemFee: string;
+  fee?: string;
+  extraSystemFee?: string;
   signers: NeoSigner[];
   invokeArgs?: NeoInvokeArgument[];
   broadcastOverride?: boolean;
@@ -181,7 +185,9 @@ export interface N3 {
   getBalance(): Promise<NeoGetBalanceResponse>;
   getStorage(args: NeoGetStorageArgs): Promise<string>;
   invokeRead(args: NeoInvokeReadArgs): Promise<NeoInvokeReadResponse>;
-  invokeReadMulti(args: NeoInvokeReadMultiArgs): Promise<NeoInvokeReadResponse>;
+  invokeReadMulti(
+    args: NeoInvokeReadMultiArgs
+  ): Promise<NeoInvokeReadResponse[]>;
   verifyMessage(args: NeoVerifyMessageArgs): Promise<boolean>;
   getBlock(args: NeoGetBlockArgs): Promise<any>;
   getTransaction(args: NeoGetTransactionArgs): Promise<any>;

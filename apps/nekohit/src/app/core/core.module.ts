@@ -4,6 +4,7 @@ import { ErrorService } from './services/error.service';
 import { LinkService } from './services/link.service';
 import { NeolineService } from './services/neoline.service';
 import { NeonJSService } from './services/neonjs.service';
+import { NotificationService } from './services/notification.service';
 import { NekohitProjectService } from './services/project.service';
 
 @NgModule({
@@ -14,6 +15,7 @@ import { NekohitProjectService } from './services/project.service';
     NeonJSService,
     ErrorService,
     MessageService,
+    NotificationService,
   ],
 })
 export class CoreModule {

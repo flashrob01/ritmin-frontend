@@ -18,6 +18,7 @@ export class ErrorService {
       summary: 'Oops, there has been an error',
       detail: message,
       life: 10000,
+      key: 'error',
     });
     return throwError(error);
   }

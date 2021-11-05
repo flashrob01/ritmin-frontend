@@ -8,6 +8,8 @@ import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 import { N3MainNet } from '../app/core/models/n2';
 import multiavatar from '@multiavatar/multiavatar';
 import { environment } from '../environments/environment';
+import { NotificationService } from './core/services/notification.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'ritmin-frontend-root',
@@ -37,7 +39,9 @@ export class AppComponent {
     @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>,
     private neoline: NeolineService,
     public linkService: LinkService,
-    translate: TranslateService
+    translate: TranslateService,
+    public notification: NotificationService,
+    public messageService: MessageService
   ) {
     this.globalState.set({ mainnet: environment.mainnetDefault });
     this.globalState.connect(
@@ -64,5 +68,12 @@ export class AppComponent {
     } else {
       translate.use(translate.getBrowserLang()).subscribe();
     }
+  }
+
+  public onViewTransaction(tx: string): void {
+    const url = this.globalState.get('mainnet')
+      ? environment.mainnet.neotube
+      : environment.testnet.neotube;
+    this.linkService.openTransaction(tx, url);
   }
 }

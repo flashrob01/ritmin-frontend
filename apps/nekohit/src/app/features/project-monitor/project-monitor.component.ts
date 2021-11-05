@@ -122,10 +122,13 @@ export class ProjectMonitorComponent {
       this.projectService
         .getProjects()
         .pipe(
-          map((p) =>
-            p
-              .filter((p) => p.status !== 'PENDING' && p.status !== 'UNKNOWN')
-              .map((p) => this.mapChartDataToProject(p))
+          map((projects) =>
+            projects
+              .filter(
+                (project) =>
+                  project.status !== 'PENDING' && project.status !== 'UNKNOWN'
+              )
+              .map((project) => this.mapChartDataToProject(project))
           )
         )
     );

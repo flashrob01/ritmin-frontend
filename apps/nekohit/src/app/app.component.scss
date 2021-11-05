@@ -8,3 +8,20 @@
 .content {
   margin-top: 80px;
 }
+
+::ng-deep .success-toast {
+  width: 450px !important;
+  .p-toast-message-content {
+    color: rgba(50, 50, 0) !important;
+    padding: 0 !important;
+    background-color: white !important;
+  }
+
+  .p-toast-message {
+    border: 0 !important;
+  }
+
+  .p-toast-icon-close {
+    display: none;
+  }
+}
