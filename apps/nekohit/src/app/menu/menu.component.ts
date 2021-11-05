@@ -10,10 +10,12 @@ import { CreateProjectComponent } from '../create-project/create-project.compone
 
 interface MenuState {
   menuItems: MenuItem[];
+  baseMenuItems: MenuItem[];
 }
 
 const initState: MenuState = {
   menuItems: [],
+  baseMenuItems: [],
 };
 
 @Component({
@@ -58,9 +60,12 @@ export class MenuComponent {
         },
       ];
       this.state.set({ menuItems: items });
+      this.state.set({ baseMenuItems: items });
       this.state.hold(this.address$, () => {
-        const menuItems = this.state.get('menuItems');
-        menuItems.push(
+        const baseMenuItems = JSON.parse(
+          JSON.stringify(this.state.get('baseMenuItems'))
+        );
+        baseMenuItems.push(
           {
             label: this.translate.instant('MENU.CREATE'),
             icon: 'pi pi-plus',
@@ -91,7 +96,7 @@ export class MenuComponent {
             ],
           }
         );
-        this.state.set({ menuItems });
+        this.state.set({ menuItems: baseMenuItems });
       });
     });
   }

@@ -48,6 +48,8 @@ export class AppComponent {
       'address',
       this.neoline.getAccount().pipe(map((acc) => acc.address))
     );
+    this.globalState.connect('address', this.neoline.ACCOUNT_CHANGED_EVENT$);
+
     this.globalState.connect(
       'mainnet',
       this.neoline
