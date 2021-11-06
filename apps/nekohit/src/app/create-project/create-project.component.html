@@ -68,15 +68,16 @@
               [min]="0"
               [showButtons]="true"
             ></p-inputNumber>
-            <div class="m-2 text-italic font-semibold">
+            <div class="m-2 font-italic font-semibold">
               ≈ ${{ calculatePrice(fundingGoal, token) | number }}
             </div>
           </div>
         </div>
         <div class="field">
           <label for="description"
-            >How many tokens will you stake as a security?</label
-          >
+            >How many tokens will you stake as a security?
+            <i class="pi pi-question-circle" pTooltip="Lorem Ipsum"></i>
+          </label>
           <div class="">
             <p-inputNumber
               formControlName="securityStake"
@@ -88,41 +89,80 @@
               [min]="0"
               [showButtons]="true"
             ></p-inputNumber>
-            <div class="m-2 text-italic font-semibold">
+            <div class="m-2 font-italic font-semibold">
               ≈ ${{ calculatePrice(securityStake, token) | number }}
             </div>
           </div>
         </div>
       </div>
+
       <div class="field">
         <label for="milestones">Define your project milestones here</label>
         <p-tabView (onChange)="onTabChange$.next($event)" [scrollable]="true">
           <p-tabPanel
             id="milestones"
-            [leftIcon]="ms.icon"
-            [header]="ms.title"
             *ngFor="let ms of s.milestones; let i = index"
             [selected]="i === 0"
           >
+            <ng-template pTemplate="header">
+              <div
+                class="flex flex-column justify-content-center"
+                style="height: 20px"
+              >
+                <div>
+                  <i [ngClass]="ms.icon" class="mr-2"></i
+                  ><span>{{ ms.label }}</span>
+                </div>
+                <div class="text-sm">
+                  {{ ms.deadline | date: 'dd.MM.yyyy' }}
+                </div>
+              </div>
+            </ng-template>
             <ng-container *ngIf="i !== s.milestones.length - 1">
+              <button
+                *ngIf="i === s.milestones.length - 2 && i !== 0"
+                pButton
+                class="p-button-outlined p-button-danger mb-4"
+                type="button"
+                (click)="s.milestones.splice(i, 1)"
+                label="Delete"
+              ></button>
               <div class="field">
-                <label for="msName">Name</label>
+                <label for="msName">Give this milestone a clear name</label>
                 <input
                   pInputText
                   id="msName"
                   type="text"
                   class="inputfield w-full"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="s.milestones[i].title"
                 />
               </div>
               <div class="field">
-                <label for="msDescription">Description</label>
+                <label for="msDescription"
+                  >Describe which task(s) you are going to complete up to this
+                  milestone</label
+                >
                 <textarea
                   [rows]="5"
                   [cols]="30"
                   pInputTextarea
                   id="msDescription"
+                  [ngModelOptions]="{ standalone: true }"
                   class="inputfield w-full"
+                  [(ngModel)]="s.milestones[i].description"
                 ></textarea>
+              </div>
+              <div class="field">
+                <label for="msDeadline">Pick a deadline </label>
+                <p-calendar
+                  id="msDeadline"
+                  [showIcon]="true"
+                  [ngModelOptions]="{ standalone: true }"
+                  dateFormat="dd.mm.yy"
+                  [(ngModel)]="s.milestones[i].deadline"
+                  [minDate]="getMinDateForMs(i)"
+                ></p-calendar>
               </div>
             </ng-container>
           </p-tabPanel>

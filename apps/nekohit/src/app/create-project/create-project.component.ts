@@ -7,8 +7,12 @@ import { environment } from '../../environments/environment';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 
 interface MilestoneConfig {
-  title: string;
+  label: string;
   icon: string;
+  title?: string;
+  description?: string;
+  deadline?: Date;
+  isThreshold?: boolean;
 }
 
 interface CreateProjectState {
@@ -21,8 +25,14 @@ const initState: CreateProjectState = {
   tokens: [],
   form: new FormGroup({}),
   milestones: [
-    { title: 'Milestone 1', icon: 'pi pi-calendar' },
-    { title: 'Add', icon: 'pi pi-plus' },
+    {
+      label: 'Milestone 1',
+      icon: 'pi pi-calendar',
+    },
+    {
+      label: 'Add',
+      icon: 'pi pi-plus',
+    },
   ],
 };
 
@@ -68,7 +78,7 @@ export class CreateProjectComponent {
       const milestones = this.state.get('milestones');
       if (e.index === milestones.length - 1) {
         milestones.splice(milestones.length - 1, 0, {
-          title: 'Milestone ' + milestones.length,
+          label: 'Milestone ' + milestones.length,
           icon: 'pi pi-calendar',
         });
       }
@@ -106,5 +116,19 @@ export class CreateProjectComponent {
         ? this.globalState.get('catPrice')
         : this.globalState.get('gasPrice');
     return Math.round(price * amount * 100) / 100;
+  }
+
+  getMinDateForMs(index: number): Date {
+    const temp = new Date();
+    if (index == 0) {
+      temp.setDate(temp.getDate() + 1);
+      return temp;
+    } else {
+      const ms = this.state.get('milestones')[index - 1];
+      if (ms.deadline !== undefined) {
+        temp.setDate(ms.deadline.getDate() + 1);
+        return temp;
+      } else throw Error('previous milestone date should not be undefined');
+    }
   }
 }
