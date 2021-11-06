@@ -6,6 +6,8 @@ export interface GlobalState {
   mainnet: boolean;
   catBalance: number;
   svgAvatar: string;
+  catPrice: number;
+  gasPrice: number;
 }
 
 export const GLOBAL_RX_STATE = new InjectionToken<RxState<GlobalState>>(

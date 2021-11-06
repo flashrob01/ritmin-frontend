@@ -10,6 +10,7 @@ import multiavatar from '@multiavatar/multiavatar';
 import { environment } from '../environments/environment';
 import { NotificationService } from './core/services/notification.service';
 import { MessageService } from 'primeng/api';
+import { BinanceService } from './core/services/binance.service';
 
 @Component({
   selector: 'ritmin-frontend-root',
@@ -41,7 +42,8 @@ export class AppComponent {
     public linkService: LinkService,
     translate: TranslateService,
     public notification: NotificationService,
-    public messageService: MessageService
+    public messageService: MessageService,
+    private binance: BinanceService
   ) {
     this.globalState.set({ mainnet: environment.mainnetDefault });
     this.globalState.connect(
@@ -62,6 +64,8 @@ export class AppComponent {
       'svgAvatar',
       this.globalState.select('address').pipe(map((adr) => multiavatar(adr)))
     );
+    this.globalState.set({ catPrice: 0.5 });
+    this.globalState.connect('gasPrice', this.binance.getGasPrice());
 
     const lang = localStorage.getItem('lang');
     translate.langs = ['en', 'de', 'cn'];
