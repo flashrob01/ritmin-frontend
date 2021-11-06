@@ -1,6 +1,72 @@
 <div class="p-fluid">
   <form [formGroup]="form">
-    <input pInputText formControlName="name" />
-    <input pInputText formControlName="name" />
+    <div class="card">
+      <div class="field">
+        <label for="name">Name</label>
+        <input pInputText id="name" type="text" class="inputfield w-full" />
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea
+          [rows]="5"
+          [cols]="30"
+          pInputTextarea
+          id="description"
+          formControlName="description"
+          class="inputfield w-full"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="description">Funding Goal</label>
+        <div class="">
+          <p-inputNumber
+            formControlName="fundingGoal"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            suffix=" CAT"
+            [min]="0"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <p-divider layout="vertical">
+        <p-tag [severity]="getSecurityRateSeverity()"
+          ><span class="text-lg"
+            >{{ ((securityStake / fundingGoal) * 100 | number) || 0 }} %</span
+          ></p-tag
+        >
+      </p-divider>
+      <div class="field">
+        <label for="description">Security Stake</label>
+        <div class="">
+          <p-inputNumber
+            formControlName="securityStake"
+            mode="decimal"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            suffix=" CAT"
+            [max]="globalState.get('catBalance')"
+            [min]="0"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="milestones">Milestones</label>
+      <p-tabView (onChange)="onTabChange($event)" [scrollable]="true">
+        <p-tabPanel
+          id="milestones"
+          [leftIcon]="ms.icon"
+          [header]="ms.title"
+          *ngFor="let ms of milestones; let i = index"
+          [selected]="i === 0"
+        >
+        </p-tabPanel>
+      </p-tabView>
+    </div>
   </form>
 </div>

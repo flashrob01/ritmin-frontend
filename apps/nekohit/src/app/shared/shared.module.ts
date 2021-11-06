@@ -20,6 +20,9 @@ import { ConnectWalletComponent } from './components/connect-wallet/connect-wall
 import { ChartModule } from 'primeng/chart';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ToastModule } from 'primeng/toast';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DividerModule } from 'primeng/divider';
+import { TabViewModule } from 'primeng/tabview';
 
 @NgModule({
   declarations: [
@@ -48,6 +51,9 @@ import { ToastModule } from 'primeng/toast';
     ChartModule,
     DynamicDialogModule,
     ToastModule,
+    InputTextareaModule,
+    DividerModule,
+    TabViewModule,
   ],
   exports: [
     ButtonModule,
@@ -71,6 +77,9 @@ import { ToastModule } from 'primeng/toast';
     ChartModule,
     DynamicDialogModule,
     ToastModule,
+    InputTextareaModule,
+    DividerModule,
+    TabViewModule,
   ],
 })
 export class SharedModule {}
