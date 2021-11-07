@@ -60,9 +60,12 @@
                 <div class="flex flex-column ml-5">
                   <div>
                     <b
-                      ><a [routerLink]="['/project/' + project.identifier]">{{
-                        project.identifier
-                      }}</a></b
+                      ><a
+                        [routerLink]="[
+                          '/project/' + encode(project.identifier)
+                        ]"
+                        >{{ project.identifier }}</a
+                      ></b
                     >
                     <p-tag
                       *ngIf="project.status === 'ONGOING'"

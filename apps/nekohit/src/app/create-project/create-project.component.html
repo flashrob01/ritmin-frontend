@@ -1,216 +1,234 @@
 <p-confirmPopup></p-confirmPopup>
 <ng-container *ngIf="state$ | async as s">
-  <div class="p-fluid">
-    <form [formGroup]="s.form">
-      <div class="card">
-        <div class="field">
-          <label for="name">Give your project a title</label>
-          <input
-            formControlName="name"
-            pInputText
-            id="name"
-            type="text"
-            class="inputfield w-full"
-          />
-        </div>
-
-        <div class="field">
-          <label for="description"
-            >What is your project about? Describe your goals</label
-          >
-          <textarea
-            [rows]="5"
-            [cols]="30"
-            pInputTextarea
-            id="description"
-            formControlName="description"
-            class="inputfield w-full"
-          ></textarea>
-        </div>
-
-        <div class="field">
-          <label for="description">Select your token of choice</label>
-          <p-dropdown
-            [options]="s.tokens"
-            formControlName="token"
-            optionLabel="label"
-          >
-            <ng-template pTemplate="selectedItem">
-              <div *ngIf="token" class="flex align-items-center">
-                <img
-                  height="20"
-                  [src]="'assets/images/tokens/' + token.label + '.png'"
-                />
-                <div class="ml-2">
-                  {{ token.label }}
-                  <span class="font-italic">({{ token.value }})</span>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template let-token pTemplate="item">
-              <div class="flex align-items-center">
-                <img
-                  height="30"
-                  [src]="'assets/images/tokens/' + token.label + '.png'"
-                />
-                <div class="ml-2 text-lg">
-                  {{ token.label }}
-                  <span class="font-italic">({{ token.value }})</span>
-                </div>
-              </div>
-            </ng-template></p-dropdown
-          >
-        </div>
-
-        <div class="field">
-          <label for="description">Set a funding goal</label>
-          <div class="">
-            <p-inputNumber
-              formControlName="fundingGoal"
-              mode="decimal"
-              [minFractionDigits]="getTokenDecimals()"
-              [maxFractionDigits]="getTokenDecimals()"
-              [suffix]="getTokenSuffix()"
-              [min]="0"
-              [showButtons]="true"
-            ></p-inputNumber>
-            <div class="m-2 font-italic text-sm">
-              ≈ ${{ calculatePrice(fundingGoal, token) | number }}
+  <div class="grid">
+    <div class="col-12 md:col-12 lg:col-8">
+      <div class="p-fluid">
+        <form [formGroup]="s.form">
+          <div class="card">
+            <div class="field">
+              <label for="name">Give your project a title</label>
+              <input
+                maxlength="40"
+                formControlName="name"
+                pInputText
+                id="name"
+                type="text"
+                class="inputfield w-full"
+              />
             </div>
-          </div>
-        </div>
-        <div class="field">
-          <label for="description"
-            >How many tokens will you stake as a security?
-            <i class="pi pi-question-circle" pTooltip="Lorem Ipsum"></i>
-          </label>
-          <div class="">
-            <p-inputNumber
-              formControlName="securityStake"
-              mode="decimal"
-              [minFractionDigits]="getTokenDecimals()"
-              [maxFractionDigits]="getTokenDecimals()"
-              [suffix]="getTokenSuffix()"
-              [max]="globalState.get('catBalance')"
-              [min]="0"
-              [showButtons]="true"
-            ></p-inputNumber>
-            <div class="m-2 font-italic text-sm">
-              ≈ ${{ calculatePrice(securityStake, token) | number }}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="field">
-        <label for="milestones">Define your project milestones here</label>
-        <p-tabView (onChange)="onTabChange$.next($event)" [scrollable]="true">
-          <p-tabPanel
-            id="milestones"
-            *ngFor="let ms of s.milestones; let i = index"
-            [selected]="i === 0"
-            [disabled]="i !== 0 && !s.milestones[i - 1].deadline"
-          >
-            <ng-template pTemplate="header">
-              <div
-                class="flex flex-column justify-content-center"
-                style="height: 20px"
+            <div class="field">
+              <label for="description"
+                >What is your project about? Describe your goals</label
               >
-                <div>
-                  <i [ngClass]="ms.icon" class="mr-2"></i
-                  ><span>{{ ms.label }}</span>
-                </div>
-                <div class="text-sm">
-                  {{ ms.deadline | date: 'dd.MM.yyyy' }}
-                </div>
-              </div>
-            </ng-template>
-            <ng-container *ngIf="i !== s.milestones.length - 1">
-              <button
-                *ngIf="i === s.milestones.length - 2 && i !== 0"
-                pButton
-                class="p-button-outlined p-button-danger mb-4"
-                type="button"
-                (click)="s.milestones.splice(i, 1)"
-                label="Delete"
-              ></button>
-              <div class="field">
-                <label for="msName">Give this milestone a clear name</label>
-                <input
-                  pInputText
-                  id="msName"
-                  type="text"
-                  class="inputfield w-full"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="s.milestones[i].title"
-                />
-              </div>
-              <div class="field">
-                <label for="msDescription"
-                  >Describe which task(s) you are going to complete up to this
-                  milestone</label
-                >
-                <textarea
-                  [rows]="5"
-                  [cols]="30"
-                  pInputTextarea
-                  id="msDescription"
-                  [ngModelOptions]="{ standalone: true }"
-                  class="inputfield w-full"
-                  [(ngModel)]="s.milestones[i].description"
-                ></textarea>
-              </div>
-              <div class="field">
-                <label for="msDeadline">Pick a deadline </label>
-                <p-calendar
-                  id="msDeadline"
-                  [inline]="true"
-                  [showIcon]="true"
-                  [ngModelOptions]="{ standalone: true }"
-                  dateFormat="dd.mm.yy"
-                  [(ngModel)]="s.milestones[i].deadline"
-                  [minDate]="getMinDateForMs(i)"
-                ></p-calendar>
-              </div>
-            </ng-container>
-          </p-tabPanel>
-        </p-tabView>
-        <div class="field">
-          <label for="msThreshold"
-            >Pick the milestone until supporters can get a 100% refund</label
-          >
-          <p-dropdown
-            id="msThreshold"
-            optionValue="index"
-            [options]="getValidMilestoneOptions()"
-            formControlName="thresholdIndex"
-            optionLabel="title"
-          ></p-dropdown>
-        </div>
+              <textarea
+                [rows]="5"
+                [cols]="30"
+                maxlength="400"
+                pInputTextarea
+                id="description"
+                formControlName="description"
+                class="inputfield w-full"
+              ></textarea>
+            </div>
 
-        <div class="field">
-          <label for="cooldownInterval"
-            >Milestones can be sequentially completed at any time. To restrict
-            creators from finishing them too quickly you are forced to set a
-            cooldown time which is the time you have to wait before finishing
-            the next milestone</label
-          >
-          <p-inputNumber
-            id="cooldownInterval"
-            formControlName="cooldownInterval"
-            suffix=" hours"
-            [min]="1"
-            [max]="20"
-            [showButtons]="true"
-          ></p-inputNumber>
-        </div>
-        <button
-          pButton
-          label="Submit"
-          type="submit"
-          (click)="submitProject($event)"
-        ></button>
+            <div class="field">
+              <label for="description">Select your token of choice</label>
+              <p-dropdown
+                [options]="s.tokens"
+                formControlName="token"
+                optionLabel="label"
+              >
+                <ng-template pTemplate="selectedItem">
+                  <div *ngIf="token" class="flex align-items-center">
+                    <img
+                      height="20"
+                      [src]="'assets/images/tokens/' + token.label + '.png'"
+                    />
+                    <div class="ml-2">
+                      {{ token.label }}
+                      <span class="font-italic">({{ token.value }})</span>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template let-token pTemplate="item">
+                  <div class="flex align-items-center">
+                    <img
+                      height="30"
+                      [src]="'assets/images/tokens/' + token.label + '.png'"
+                    />
+                    <div class="ml-2 text-lg">
+                      {{ token.label }}
+                      <span class="font-italic">({{ token.value }})</span>
+                    </div>
+                  </div>
+                </ng-template></p-dropdown
+              >
+            </div>
+
+            <div class="field">
+              <label for="description">Set a funding goal</label>
+              <div class="">
+                <p-inputNumber
+                  formControlName="fundingGoal"
+                  mode="decimal"
+                  [minFractionDigits]="getTokenDecimals()"
+                  [maxFractionDigits]="getTokenDecimals()"
+                  [suffix]="getTokenSuffix()"
+                  [min]="0"
+                  [showButtons]="true"
+                ></p-inputNumber>
+                <div class="m-2 font-italic text-sm">
+                  ≈ ${{ calculatePrice(fundingGoal, token) | number }}
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="description"
+                >How many tokens will you stake as a security?
+              </label>
+              <div class="">
+                <p-inputNumber
+                  formControlName="securityStake"
+                  mode="decimal"
+                  [minFractionDigits]="getTokenDecimals()"
+                  [maxFractionDigits]="getTokenDecimals()"
+                  [suffix]="getTokenSuffix()"
+                  [max]="globalState.get('catBalance')"
+                  [min]="0"
+                  [showButtons]="true"
+                ></p-inputNumber>
+                <div class="m-2 font-italic text-sm">
+                  ≈ ${{ calculatePrice(securityStake, token) | number }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="milestones">Define your project milestones here</label>
+            <p-tabView
+              (onChange)="onTabChange$.next($event)"
+              [scrollable]="true"
+            >
+              <p-tabPanel
+                id="milestones"
+                *ngFor="let ms of s.milestones; let i = index"
+                [selected]="i === 0"
+                [disabled]="i !== 0 && !s.milestones[i - 1].deadline"
+              >
+                <ng-template pTemplate="header">
+                  <div
+                    class="flex flex-column justify-content-center"
+                    style="height: 20px"
+                  >
+                    <div>
+                      <i [ngClass]="ms.icon" class="mr-2"></i
+                      ><span>{{ ms.label }}</span>
+                    </div>
+                    <div class="text-sm">
+                      {{ ms.deadline | date: 'dd.MM.yyyy' }}
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-container *ngIf="i !== s.milestones.length - 1">
+                  <button
+                    *ngIf="i === s.milestones.length - 2 && i !== 0"
+                    pButton
+                    class="p-button-outlined p-button-danger mb-4"
+                    type="button"
+                    (click)="s.milestones.splice(i, 1)"
+                    label="Delete"
+                  ></button>
+                  <div class="field">
+                    <label for="msName">Give this milestone a clear name</label>
+                    <input
+                      pInputText
+                      id="msName"
+                      type="text"
+                      maxlength="30"
+                      class="inputfield w-full"
+                      [ngModelOptions]="{ standalone: true }"
+                      [(ngModel)]="s.milestones[i].title"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="msDescription"
+                      >Describe which task(s) you are going to complete up to
+                      this milestone</label
+                    >
+                    <textarea
+                      [rows]="5"
+                      [cols]="30"
+                      maxlength="200"
+                      pInputTextarea
+                      id="msDescription"
+                      [ngModelOptions]="{ standalone: true }"
+                      class="inputfield w-full"
+                      [(ngModel)]="s.milestones[i].description"
+                    ></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="msDeadline">Pick a deadline </label>
+                    <p-calendar
+                      id="msDeadline"
+                      [inline]="true"
+                      [showIcon]="true"
+                      [ngModelOptions]="{ standalone: true }"
+                      dateFormat="dd.mm.yy"
+                      [(ngModel)]="s.milestones[i].deadline"
+                      [minDate]="getMinDateForMs(i)"
+                    ></p-calendar>
+                  </div>
+                </ng-container>
+              </p-tabPanel>
+            </p-tabView>
+            <div class="field">
+              <label for="msThreshold"
+                >Pick the milestone until supporters can get a 100%
+                refund</label
+              >
+              <p-dropdown
+                id="msThreshold"
+                optionValue="index"
+                [options]="getValidMilestoneOptions()"
+                formControlName="thresholdIndex"
+                optionLabel="title"
+              ></p-dropdown>
+            </div>
+
+            <div class="field">
+              <label for="cooldownInterval"
+                >Milestones can be sequentially completed at any time. To
+                restrict creators from finishing them too quickly you are forced
+                to set a cooldown time which is the time you have to wait before
+                finishing the next milestone</label
+              >
+              <p-inputNumber
+                id="cooldownInterval"
+                formControlName="cooldownInterval"
+                suffix=" hours"
+                [min]="1"
+                [max]="20"
+                [showButtons]="true"
+              ></p-inputNumber>
+            </div>
+            <button
+              pButton
+              label="Submit"
+              type="submit"
+              (click)="submitProject($event)"
+            ></button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
+    <div class="col">
+      <div
+        style="border: 1px dashed lightgray; border-radius: 10px; padding: 15px"
+      >
+        <h2>Need help?</h2>
+      </div>
+    </div>
   </div>
 </ng-container>

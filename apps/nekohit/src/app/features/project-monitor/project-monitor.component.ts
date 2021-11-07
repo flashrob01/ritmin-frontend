@@ -32,6 +32,7 @@ export class ProjectMonitorComponent {
   readonly address$ = this.globalState.select('address');
   readonly catBalance$ = this.globalState.select('catBalance');
   readonly onStakeBtnClicked$ = new Subject<NekoHitProject>();
+  encode = encodeURIComponent;
 
   // TODO: should be improved (more clean etc)
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {

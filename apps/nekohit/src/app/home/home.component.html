@@ -75,10 +75,13 @@
     <div class="text-center text-2xl" style="width: 100%">
       <h1 class="text-blue-600">{{ 'LANDING.FEATURED.TITLE' | translate }}</h1>
       <div class="flex justify-content-evenly flex-wrap">
-        <ritmin-featured-project
+        <a
+          class="featuredProjectCard"
           *ngFor="let project of s.featuredProjects"
-          [project]="project"
-        ></ritmin-featured-project>
+          [routerLink]="['/project/' + encode(project.identifier)]"
+        >
+          <ritmin-featured-project [project]="project"></ritmin-featured-project
+        ></a>
       </div>
     </div>
   </div>

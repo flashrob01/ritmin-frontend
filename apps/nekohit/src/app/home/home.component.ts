@@ -43,6 +43,7 @@ const initState: HomeComponentState = {
 })
 export class HomeComponent {
   state$ = this.state.select();
+  encode = encodeURIComponent;
 
   constructor(
     public linkService: LinkService,
