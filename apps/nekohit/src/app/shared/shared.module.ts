@@ -89,6 +89,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
     CalendarModule,
     CheckboxModule,
     ConfirmPopupModule,
+    TableModule,
   ],
 })
 export class SharedModule {}
