@@ -8,8 +8,10 @@ import {
   CreateProjectArgs,
   NekohitProjectService,
 } from '../core/services/project.service';
+import { NotificationService } from '../core/services/notification.service';
 import { CAT_DECIMALS, GAS_DECIMALS } from '../core/services/utils';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 interface MilestoneConfig {
   label: string;
@@ -62,6 +64,8 @@ export class CreateProjectComponent {
     private fb: FormBuilder,
     private projectService: NekohitProjectService,
     private confirmationService: ConfirmationService,
+    private notification: NotificationService,
+    private dynamicDialog: DynamicDialogRef,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {
     const gasHash = this.globalState.get('mainnet')
@@ -202,7 +206,10 @@ export class CreateProjectComponent {
           stakePer100Token: (this.securityStake / this.fundingGoal) * 100,
           thresholdIndex: this.thresholdIndex,
         };
-        this.projectService.createProject(args).subscribe();
+        this.projectService.createProject(args).subscribe((res) => {
+          this.dynamicDialog.close();
+          this.notification.tx(res.txid);
+        });
       },
     });
   }
