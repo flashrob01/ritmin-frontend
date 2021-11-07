@@ -12,6 +12,20 @@ import { RxState } from '@rx-angular/state';
 import { environment } from 'apps/nekohit/src/environments/environment';
 import { ErrorService } from './error.service';
 
+export interface CreateProjectArgs {
+  creator: string;
+  stakePer100Token: number;
+  fundingGoal: number;
+  projectDescription: string;
+  projectTitle: string;
+  milestoneDescriptions: string[];
+  milestoneTitles: string[];
+  milestoneDeadlines: number[];
+  thresholdIndex: number;
+  cooldownInMs: number;
+  isPublic: boolean;
+}
+
 @Injectable()
 export class NekohitProjectService {
   constructor(
@@ -22,7 +36,9 @@ export class NekohitProjectService {
   ) {}
 
   // 0.01 GAS
-  fee = 1_000_000;
+  stakefee = 1_000_000;
+  // 0.02 GAS
+  createFee = 2_000_000;
 
   public getProjects(
     creator?: string,
@@ -82,7 +98,7 @@ export class NekohitProjectService {
       args: [
         NeolineService.address(from),
         NeolineService.address(devAddress),
-        NeolineService.int(this.fee),
+        NeolineService.int(this.stakefee),
         NeolineService.any(null),
       ],
     };
@@ -105,6 +121,79 @@ export class NekohitProjectService {
                 return this.neoline.invokeMultiple({
                   signers: [{ account: address, scopes: 1 }],
                   invokeArgs: [stakeTokens, payFee],
+                });
+              })
+            );
+        })
+      );
+  }
+
+  public createProject(
+    args: CreateProjectArgs
+  ): Observable<NeoInvokeWriteResponse> {
+    const parameters = [
+      NeolineService.address(args.creator),
+      NeolineService.string(args.projectDescription),
+      NeolineService.int(args.stakePer100Token),
+      NeolineService.int(args.fundingGoal),
+      NeolineService.array(
+        args.milestoneTitles.map((title) => NeolineService.string(title))
+      ),
+      NeolineService.array(
+        args.milestoneDescriptions.map((desc) => NeolineService.string(desc))
+      ),
+      NeolineService.array(
+        args.milestoneDeadlines.map((deadline) => NeolineService.int(deadline))
+      ),
+      NeolineService.int(args.thresholdIndex),
+      NeolineService.int(args.cooldownInMs),
+      NeolineService.bool(args.isPublic),
+      NeolineService.string(args.projectTitle),
+    ];
+    const wcaContractHash = this.globalState.get('mainnet')
+      ? environment.mainnet.wcaContractHash
+      : environment.testnet.wcaContractHash;
+    const gasContractHash = this.globalState.get('mainnet')
+      ? environment.mainnet.gasContractHash
+      : environment.testnet.gasContractHash;
+    const devAddress = this.globalState.get('mainnet')
+      ? environment.mainnet.devAddress
+      : environment.testnet.devAddress;
+
+    const createProject = {
+      scriptHash: wcaContractHash,
+      operation: 'declareProject',
+      args: parameters,
+    };
+    const payFee = {
+      scriptHash: gasContractHash,
+      operation: 'transfer',
+      args: [
+        NeolineService.address(args.creator),
+        NeolineService.address(devAddress),
+        NeolineService.int(this.stakefee),
+        NeolineService.any(null),
+      ],
+    };
+
+    return this.neoline
+      .addressToScriptHash(this.globalState.get('address'))
+      .pipe(
+        map((result) => result.scriptHash),
+        switchMap((address) => {
+          return this.neoline
+            .invokeReadMulti({
+              invokeReadArgs: [createProject, payFee],
+              signers: [{ account: address, scopes: 1 }],
+            })
+            .pipe(
+              catchError((err) => {
+                return this.errorService.handleError(err);
+              }),
+              switchMap(() => {
+                return this.neoline.invokeMultiple({
+                  signers: [{ account: address, scopes: 1 }],
+                  invokeArgs: [createProject, payFee],
                 });
               })
             );

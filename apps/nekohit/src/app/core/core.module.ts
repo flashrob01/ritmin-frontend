@@ -1,5 +1,5 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { BinanceService } from './services/binance.service';
 import { ErrorService } from './services/error.service';
 import { LinkService } from './services/link.service';
@@ -18,6 +18,7 @@ import { NekohitProjectService } from './services/project.service';
     MessageService,
     NotificationService,
     BinanceService,
+    ConfirmationService,
   ],
 })
 export class CoreModule {

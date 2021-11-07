@@ -73,7 +73,6 @@ export class MenuComponent {
               this.dialogService.open(CreateProjectComponent, {
                 header: 'Create a new project',
                 width: '80%',
-                baseZIndex: 9999,
               }),
             styleClass: 'loggedInMenuItem',
           },

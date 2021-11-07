@@ -1,10 +1,17 @@
+<p-confirmPopup></p-confirmPopup>
 <ng-container *ngIf="state$ | async as s">
   <div class="p-fluid">
     <form [formGroup]="s.form">
       <div class="card">
         <div class="field">
           <label for="name">Give your project a title</label>
-          <input pInputText id="name" type="text" class="inputfield w-full" />
+          <input
+            formControlName="name"
+            pInputText
+            id="name"
+            type="text"
+            class="inputfield w-full"
+          />
         </div>
 
         <div class="field">
@@ -27,7 +34,6 @@
             [options]="s.tokens"
             formControlName="token"
             optionLabel="label"
-            (onChange)="clickTokenOption$.next(token)"
           >
             <ng-template pTemplate="selectedItem">
               <div *ngIf="token" class="flex align-items-center">
@@ -68,7 +74,7 @@
               [min]="0"
               [showButtons]="true"
             ></p-inputNumber>
-            <div class="m-2 font-italic font-semibold">
+            <div class="m-2 font-italic text-sm">
               ≈ ${{ calculatePrice(fundingGoal, token) | number }}
             </div>
           </div>
@@ -82,14 +88,14 @@
             <p-inputNumber
               formControlName="securityStake"
               mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2"
-              suffix=" CAT"
+              [minFractionDigits]="getTokenDecimals()"
+              [maxFractionDigits]="getTokenDecimals()"
+              [suffix]="getTokenSuffix()"
               [max]="globalState.get('catBalance')"
               [min]="0"
               [showButtons]="true"
             ></p-inputNumber>
-            <div class="m-2 font-italic font-semibold">
+            <div class="m-2 font-italic text-sm">
               ≈ ${{ calculatePrice(securityStake, token) | number }}
             </div>
           </div>
@@ -103,6 +109,7 @@
             id="milestones"
             *ngFor="let ms of s.milestones; let i = index"
             [selected]="i === 0"
+            [disabled]="i !== 0 && !s.milestones[i - 1].deadline"
           >
             <ng-template pTemplate="header">
               <div
@@ -157,6 +164,7 @@
                 <label for="msDeadline">Pick a deadline </label>
                 <p-calendar
                   id="msDeadline"
+                  [inline]="true"
                   [showIcon]="true"
                   [ngModelOptions]="{ standalone: true }"
                   dateFormat="dd.mm.yy"
@@ -167,6 +175,41 @@
             </ng-container>
           </p-tabPanel>
         </p-tabView>
+        <div class="field">
+          <label for="msThreshold"
+            >Pick the milestone until supporters can get a 100% refund</label
+          >
+          <p-dropdown
+            id="msThreshold"
+            optionValue="index"
+            [options]="getValidMilestoneOptions()"
+            formControlName="thresholdIndex"
+            optionLabel="title"
+          ></p-dropdown>
+        </div>
+
+        <div class="field">
+          <label for="cooldownInterval"
+            >Milestones can be sequentially completed at any time. To restrict
+            creators from finishing them too quickly you are forced to set a
+            cooldown time which is the time you have to wait before finishing
+            the next milestone</label
+          >
+          <p-inputNumber
+            id="cooldownInterval"
+            formControlName="cooldownInterval"
+            suffix=" hours"
+            [min]="1"
+            [max]="20"
+            [showButtons]="true"
+          ></p-inputNumber>
+        </div>
+        <button
+          pButton
+          label="Submit"
+          type="submit"
+          (click)="submitProject($event)"
+        ></button>
       </div>
     </form>
   </div>

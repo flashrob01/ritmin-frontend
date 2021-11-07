@@ -25,6 +25,7 @@ import { DividerModule } from 'primeng/divider';
 import { TabViewModule } from 'primeng/tabview';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     TabViewModule,
     CalendarModule,
     CheckboxModule,
+    ConfirmPopupModule,
   ],
   exports: [
     ButtonModule,
@@ -86,6 +88,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     TabViewModule,
     CalendarModule,
     CheckboxModule,
+    ConfirmPopupModule,
   ],
 })
 export class SharedModule {}
