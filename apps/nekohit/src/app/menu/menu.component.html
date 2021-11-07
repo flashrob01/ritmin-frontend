@@ -14,17 +14,8 @@
       ></ritmin-connect-wallet>
       <div class="flex">
         <div
-          class="
-            mr-2
-            flex flex-column
-            text-sm
-            align-items-end
-            justify-content-center
-          "
+          class="mr-2 flex flex-column align-items-end justify-content-center"
         >
-          <ng-container *ngIf="catBalance$ | async as cat">
-            Your CAT balance: {{ +cat | number: '1.2-2' }}
-          </ng-container>
           <ng-container *ngIf="address$ | async as address">
             <span [pTooltip]="address" tooltipPosition="left">{{
               address | truncateAddress

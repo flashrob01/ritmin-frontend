@@ -58,6 +58,11 @@ export class MenuComponent {
           icon: 'pi pi-book',
           command: () => this.linkService.openBlog(),
         },
+        {
+          label: this.translate.instant('MENU.FAQ'),
+          icon: 'pi pi-question',
+          routerLink: 'faq',
+        },
       ];
       this.state.set({ menuItems: items });
       this.state.set({ baseMenuItems: items });
