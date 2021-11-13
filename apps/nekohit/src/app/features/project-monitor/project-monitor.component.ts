@@ -127,7 +127,8 @@ export class ProjectMonitorComponent {
           projects
             .filter(
               (project) =>
-                project.status !== 'PENDING' && project.status !== 'UNKNOWN'
+                // project.status !== 'PENDING' && project.status !== 'UNKNOWN'
+                project
             )
             .sort((a, b) => {
               return (
@@ -172,8 +173,19 @@ export class ProjectMonitorComponent {
 
   private stakeTokens(project: NekoHitProject): void {
     const from = this.globalState.get('address');
+    let multiplier = 0;
+    if (project.tokenSymbol === 'CAT') {
+      multiplier = 100;
+    }
+    if (project.tokenSymbol === 'GAS') {
+      multiplier = 100000000;
+    }
     this.projectService
-      .stakeTokens(from, (project.stakeInput || 0) * 100, project.identifier)
+      .stakeTokens(
+        from,
+        (project.stakeInput || 0) * multiplier,
+        project.identifier
+      )
       .subscribe((res) => {
         this.notification.tx(res.txid);
       });

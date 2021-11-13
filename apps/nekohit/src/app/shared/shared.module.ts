@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -26,6 +26,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { TokenNumber } from './pipes/tokenNumber.pipe';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
     SanitizedHtmlPipe,
     AvatarComponent,
     ConnectWalletComponent,
+    TokenNumber,
   ],
   imports: [
     CommonModule,
@@ -90,6 +92,8 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
     CheckboxModule,
     ConfirmPopupModule,
     TableModule,
+    TokenNumber,
   ],
+  providers: [DecimalPipe],
 })
 export class SharedModule {}

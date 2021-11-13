@@ -20,6 +20,7 @@ import { FeaturedProjectComponent } from './home/featured-project/featured-proje
 import { RxState } from '@rx-angular/state';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 import { CreateProjectComponent } from './create-project/create-project.component';
+import { DecimalPipe } from '@angular/common';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);

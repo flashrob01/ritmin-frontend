@@ -1,6 +1,6 @@
 <ng-container *ngIf="state$ | async as s">
   <div class="grid m-4">
-    <div *ngFor="let project of s.projects" class="col-3">
+    <div *ngFor="let project of s.projects" class="col-3" style="min-width: 400px;">
       <p-card styleClass="myProjectCard">
         <ng-template pTemplate="header">
           <div class="p-4">
