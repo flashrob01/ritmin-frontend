@@ -191,6 +191,7 @@ export class CreateProjectComponent {
           .filter((ms) => ms.index !== -1);
         const args: CreateProjectArgs = {
           creator: this.globalState.get('address'),
+          token: this.token.value,
           cooldownInMs: this.cooldown,
           fundingGoal: this.fundingGoal * Math.pow(10, decimals),
           isPublic: this.isPublic,

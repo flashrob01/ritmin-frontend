@@ -5,6 +5,7 @@ export interface NekoHitProject {
   identifier: string;
   description: string;
   creator: string;
+  token: string;
   creationTimestamp: Date;
   stakePer100Token: number;
   maxTokenSoldCount: number;
@@ -21,6 +22,7 @@ export interface NekoHitProject {
   isPublic: boolean;
   stakedTokensChartData?: any; // used to bind new attributes to the project
   stakeInput?: number; // used to bind new attributes to the project
+  tokenSymbol?: string;
 }
 
 export interface Milestone {

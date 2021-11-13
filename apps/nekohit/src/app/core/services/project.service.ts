@@ -14,6 +14,7 @@ import { ErrorService } from './error.service';
 
 export interface CreateProjectArgs {
   creator: string;
+  token: string;
   stakePer100Token: number;
   fundingGoal: number;
   projectDescription: string;
@@ -24,6 +25,14 @@ export interface CreateProjectArgs {
   thresholdIndex: number;
   cooldownInMs: number;
   isPublic: boolean;
+}
+
+export interface GetProjectsArgs {
+  token?: string;
+  creator?: string;
+  supporter?: string;
+  page?: number;
+  size?: number;
 }
 
 @Injectable()
@@ -40,17 +49,17 @@ export class NekohitProjectService {
   // 0.02 GAS
   createFee = 2_000_000;
 
-  public getProjects(
-    creator?: string,
-    supporter?: string,
-    page?: number,
-    size?: number
-  ): Observable<NekoHitProject[]> {
+  public getProjects(args?: GetProjectsArgs): Observable<NekoHitProject[]> {
     const params = [
-      sc.ContractParam.hash160(creator != null ? creator : HASH160_ZERO),
-      sc.ContractParam.hash160(supporter != null ? supporter : HASH160_ZERO),
-      sc.ContractParam.integer(page != null ? page : 1),
-      sc.ContractParam.integer(size != null ? size : 100),
+      sc.ContractParam.hash160(args?.token != null ? args.token : HASH160_ZERO),
+      sc.ContractParam.hash160(
+        args?.creator != null ? args.creator : HASH160_ZERO
+      ),
+      sc.ContractParam.hash160(
+        args?.supporter != null ? args.supporter : HASH160_ZERO
+      ),
+      sc.ContractParam.integer(args?.page != null ? args.page : 1),
+      sc.ContractParam.integer(args?.size != null ? args.size : 100),
     ];
     const scriptHash = this.globalState.get('mainnet')
       ? environment.mainnet.wcaContractHash
@@ -134,6 +143,7 @@ export class NekohitProjectService {
     const parameters = [
       NeolineService.address(args.creator),
       NeolineService.string(args.projectDescription),
+      NeolineService.hash160(args.token),
       NeolineService.int(args.stakePer100Token),
       NeolineService.int(args.fundingGoal),
       NeolineService.array(
@@ -206,20 +216,24 @@ export class NekohitProjectService {
       identifier: resp[0],
       description: resp[1],
       creator: wallet.getAddressFromScriptHash(processBase64Hash160(resp[2])),
-      creationTimestamp: new Date(resp[3]),
-      stakePer100Token: resp[4] / 100,
-      maxTokenSoldCount: resp[5] / 100,
-      milestonesCount: resp[6],
-      milestones: this.parseMilestones(resp[7]),
-      thresholdMilestoneIndex: resp[8],
-      coolDownInterval: resp[9],
-      lastUpdateTimestamp: resp[10] === -1 ? new Date(-1) : new Date(resp[10]),
-      nextMilestone: resp[11],
-      remainTokenCount: resp[12] / 100,
-      buyerCount: resp[13],
-      status: resp[14],
-      stage: resp[15],
+      token: wallet.getAddressFromScriptHash(processBase64Hash160(resp[3])),
+      creationTimestamp: new Date(resp[4]),
+      stakePer100Token: resp[5] / 100,
+      maxTokenSoldCount: resp[6] / 100,
+      milestonesCount: resp[7],
+      milestones: this.parseMilestones(resp[8]),
+      thresholdMilestoneIndex: resp[9],
+      coolDownInterval: resp[10],
+      lastUpdateTimestamp: resp[11] === -1 ? new Date(-1) : new Date(resp[11]),
+      nextMilestone: resp[12],
+      remainTokenCount: resp[13] / 100,
+      buyerCount: resp[14],
+      status: resp[15],
+      stage: resp[16],
       isPublic: true,
+      tokenSymbol: this.getTokenSymbolFromTokenHash(
+        processBase64Hash160(resp[3])
+      ),
     };
   }
 
@@ -232,5 +246,23 @@ export class NekohitProjectService {
         linkToResult: ms[3],
       };
     });
+  }
+
+  private getTokenSymbolFromTokenHash(hash: string): string {
+    const mainnet = this.globalState.get('mainnet');
+
+    const gasToken = mainnet
+      ? environment.mainnet.gasContractHash
+      : environment.testnet.gasContractHash;
+    const catToken = mainnet
+      ? environment.mainnet.catTokenHash
+      : environment.testnet.catTokenHash;
+    if (hash === gasToken.substring(2)) {
+      return 'GAS';
+    }
+    if (hash === catToken.substring(2)) {
+      return 'CAT';
+    }
+    return 'UNKNOWN';
   }
 }

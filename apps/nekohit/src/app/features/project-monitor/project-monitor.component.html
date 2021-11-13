@@ -67,12 +67,7 @@
                         >{{ project.identifier }}</a
                       ></b
                     >
-                    <p-tag
-                      *ngIf="project.status === 'ONGOING'"
-                      class="ml-2"
-                      value="OPEN FOR FUNDING"
-                      severity="warning"
-                    ></p-tag>
+                    <img class="ml-2" [src]="'assets/images/tokens/' + project.tokenSymbol + '.png'" width="17">
                   </div>
                   {{ project.description | truncate: [80] }}
                 </div>
@@ -111,7 +106,7 @@
         <td>
           <p>
             {{ project.maxTokenSoldCount - project.remainTokenCount | number }}
-            / {{ project.maxTokenSoldCount | number }} CAT
+            / {{ project.maxTokenSoldCount | number }} {{project.tokenSymbol}}
           </p>
           <div
             class="text-center text-md font-bold"
@@ -139,7 +134,7 @@
             (project.stakePer100Token / 100) * project.maxTokenSoldCount
               | number
           }}
-          CAT /
+          {{project.tokenSymbol}} /
           {{
             (project.thresholdMilestoneIndex / (project.milestonesCount - 1)
               | number) || 0
@@ -191,7 +186,7 @@
                 *ngIf="(address$ | async) !== null; else connectWallet"
               >
                 <div *ngIf="catBalance$ | async as cat" class="text-center">
-                  Available balance: {{ +cat | number: '1.2-2' }} CAT
+                  Available balance: {{ +cat | number: '1.2-2' }} {{project.tokenSymbol}}
                 </div>
                 <div class="flex justify-content-between m-4">
                   <a
@@ -235,18 +230,18 @@
                     id="supportInput"
                     [min]="0"
                     [max]="project.remainTokenCount"
-                    suffix=" CAT"
+                    [suffix]="' ' + project.tokenSymbol"
                   ></p-inputNumber>
                   <label for="supportInput">Choose an amount</label>
                 </span>
                 <div class="flex flex-column mt-3 text-sm">
                   <div class="flex justify-content-between mb-1">
                     <span>Funding Goal: </span>
-                    <span>{{ project.maxTokenSoldCount | number }} CAT</span>
+                    <span>{{ project.maxTokenSoldCount | number }} {{project.tokenSymbol}}</span>
                   </div>
                   <div class="flex justify-content-between mb-1">
                     <span>Remaining: </span
-                    ><span>{{ project.remainTokenCount | number }} CAT</span>
+                    ><span>{{ project.remainTokenCount | number }} {{project.tokenSymbol}}</span>
                   </div>
                   <div class="flex justify-content-between mb-1">
                     <span>Developer Fee: </span><span>0.01 GAS</span>
@@ -258,7 +253,7 @@
                   >
                     <span>Your contribution:</span
                     ><span
-                      >{{ project.stakeInput | number }} CAT ({{
+                      >{{ project.stakeInput | number }} {{project.tokenSymbol}} ({{
                         (project.stakeInput / project.maxTokenSoldCount) * 100
                           | number
                       }}%)</span
@@ -267,7 +262,7 @@
                 </div>
                 <button
                   pButton
-                  label="Stake CAT Tokens"
+                  label="Stake Tokens"
                   class="p-button-warning mt-3"
                   type="button"
                   [disabled]="!project.stakeInput"

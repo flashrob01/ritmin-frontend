@@ -95,7 +95,7 @@ export class MenuComponent {
               {
                 label: this.translate.instant('MENU.PROJECTS'),
                 icon: 'pi pi-list',
-                command: () => this.linkService.openWhitepaper(),
+                routerLink: 'profile/projects',
                 styleClass: 'loggedInMenuItem',
               },
             ],
