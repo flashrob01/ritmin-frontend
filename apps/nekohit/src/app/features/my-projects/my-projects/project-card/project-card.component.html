@@ -1,0 +1,54 @@
+<ng-container *ngIf="state$ | async as s">
+  <p-card styleClass="myProjectCard">
+    <ng-template pTemplate="header">
+      <div class="p-4">
+        <div class="flex justify-content-between">
+          <div>
+            <img
+              [src]="'assets/images/tokens/' + s.project.tokenSymbol + '.png'"
+            />
+            <span class="font-bold text-xl ml-1">{{
+              s.project.identifier
+            }}</span>
+          </div>
+          <p-tag [value]="s.project.status"></p-tag>
+        </div>
+        <small
+          >Created at:
+          {{ s.project.creationTimestamp | date: 'dd.MM.yyyy' }}</small
+        >
+      </div>
+    </ng-template>
+    <div
+      *ngIf="s.project.status === 'ONGOING'"
+      class="flex justify-content-between mb-3"
+    >
+      Next milestone ends in:
+      <countdown #cd [config]="s.countdownConfig"></countdown>
+    </div>
+    <div
+      class="flex justify-content-between align-items-center p-4"
+      style="border: 1px dashed lightgray; border-radius: 4px"
+    >
+      <div class="flex-align-items-center">
+        <i class="pi pi-users mr-2"></i>
+        {{ s.project.buyerCount }}
+      </div>
+      <div class="flex align-items-center justify-content-end">
+        <div class="mr-2">
+          {{
+            s.project.maxTokenSoldCount - s.project.remainTokenCount
+              | tokenNumber: s.project.tokenSymbol
+          }}
+          /
+          {{ s.project.maxTokenSoldCount | tokenNumber: s.project.tokenSymbol }}
+          {{ s.project.tokenSymbol }} ({{
+            ((s.project.maxTokenSoldCount - s.project.remainTokenCount) /
+              s.project.maxTokenSoldCount) *
+              100 | number
+          }}%)
+        </div>
+      </div>
+    </div>
+  </p-card>
+</ng-container>

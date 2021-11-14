@@ -1,36 +1,11 @@
 <ng-container *ngIf="state$ | async as s">
   <div class="grid m-4">
-    <div *ngFor="let project of s.projects" class="col-3" style="min-width: 400px;">
-      <p-card styleClass="myProjectCard">
-        <ng-template pTemplate="header">
-          <div class="p-4">
-            <div class="flex justify-content-between">
-              <span class="font-bold text-xl">{{project.identifier}}</span>
-              <p-tag [value]="project.status"></p-tag>
-            </div>
-            <small>Created at: {{project.creationTimestamp | date: 'dd.MM.yyyy' }}</small>
-          </div>
-      </ng-template>
-      <div class="nextMilestoneBox mb-2 flex justify-content-between" *ngIf="project.status !== 'ONGOING'">
-        <div>Next milestone:</div> <div class="font-semibold">{{project.milestones[project.nextMilestone].endTimestamp | date: 'dd.MM.yyyy'}}</div>
-      </div>
-      <div class="flex justify-content-between align-items-center p-4" style="border: 1px dashed lightgray; border-radius: 4px">
-        <div class="flex-align-items-center">
-          <i class="pi pi-users mr-2"></i>
-          {{project.buyerCount}}
-        </div>
-        <div class="flex align-items-center justify-content-end">
-          <div class="mr-2">
-            {{project.maxTokenSoldCount - project.remainTokenCount | number}} / {{project.maxTokenSoldCount | number}} {{project.tokenSymbol}}
-          </div>
-          <img [src]="'assets/images/tokens/' + project.tokenSymbol + '.png'">
-        </div>
-      </div>
-
-      <!-- <ng-template pTemplate="footer">
-          Footer content here
-      </ng-template> -->
-      </p-card>
+    <div
+      *ngFor="let project of s.projects"
+      class="col-3"
+      style="min-width: 400px"
+    >
+      <ritmin-project-card [project]="project"></ritmin-project-card>
     </div>
   </div>
 </ng-container>

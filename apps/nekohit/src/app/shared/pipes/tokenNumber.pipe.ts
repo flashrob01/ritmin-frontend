@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class TokenNumber implements PipeTransform {
   constructor(private decimalPipe: DecimalPipe) {}
-  transform(value: number, symbol: string) {
+  transform(value: number, symbol: string | undefined) {
     if (symbol === 'CAT') {
       value = value / 100;
       return this.decimalPipe.transform(value, '1.2-2');
