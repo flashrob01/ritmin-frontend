@@ -19,7 +19,7 @@ export function getStatusTag(status: string): string {
 
 export function getWcaContractAddress(): string {
   if (NeolineService.isMainNet) {
-    return environment.mainNetWcaContractHash;
+    return undefined;
   } else {
     return environment.testNetWcaContractHash;
   }
@@ -27,19 +27,26 @@ export function getWcaContractAddress(): string {
 
 export function getCatContractAddress(): string {
   if (NeolineService.isMainNet) {
-    return environment.mainNetCatTokenHash;
+    return undefined;
   } else {
     return environment.testNetCatTokenHash;
   }
 }
 
-const MAIN_NET_RPC_CLIENT = new rpc.RPCClient(environment.mainNetNodeUrl);
+export function getUsdtContractAddress(): string {
+  if (NeolineService.isMainNet) {
+    return undefined;
+  } else {
+    return environment.testNetFlamingoUsdtTokenHash;
+  }
+}
+
 const TEST_NET_RPC_CLIENT = new rpc.RPCClient(environment.testNetNodeUrl);
 
 // tslint:disable-next-line:typedef
 export function getRpcNode() {
   if (NeolineService.isMainNet) {
-    return MAIN_NET_RPC_CLIENT;
+    return undefined;
   } else {
     return TEST_NET_RPC_CLIENT;
   }

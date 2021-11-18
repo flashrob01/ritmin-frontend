@@ -52,6 +52,7 @@ import {FieldsetModule} from 'primeng/fieldset';
 import {PanelModule} from 'primeng/panel';
 import {InventoryComponent} from './components/inventory/inventory.component';
 import {DataViewModule} from 'primeng/dataview';
+import { ExchangeComponent } from './components/exchange/exchange.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import {DataViewModule} from 'primeng/dataview';
     PendingRequestComponent,
     TimeDurationPipe,
     InventoryComponent,
+    ExchangeComponent,
   ],
   imports: [
     BrowserModule,

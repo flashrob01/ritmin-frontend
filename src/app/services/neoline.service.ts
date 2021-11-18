@@ -218,7 +218,7 @@ export class NeolineService {
         msg = 'Transaction canceled';
         break;
       default:
-        msg = 'Unknown error: ' + description;
+        msg = 'Unknown error: ' + error;
         break;
     }
     return msg;

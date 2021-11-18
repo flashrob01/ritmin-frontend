@@ -9,6 +9,7 @@ import {MsInfoComponent} from './components/create-wca/ms-info/ms-info.component
 import {CompleteComponent} from './components/create-wca/complete/complete.component';
 import {AuthGuard} from './guards/auth.guard';
 import {InventoryComponent} from './components/inventory/inventory.component';
+import {ExchangeComponent} from './components/exchange/exchange.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
   {
     path: 'inventory',
     component: InventoryComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'exchange',
+    component: ExchangeComponent,
     canActivate: [AuthGuard]
   },
   {

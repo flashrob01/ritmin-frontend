@@ -21,6 +21,7 @@ export class MenuComponent implements OnInit {
           {icon: 'pi pi-search', label: 'Browse', routerLink: '/'},
           {icon: 'pi pi-plus', label: 'Create', routerLink: '/new/project'},
           {icon: 'pi pi-list', label: 'Inventory', routerLink: '/inventory'},
+          {icon: 'pi pi-wallet', label: 'Exchange', routerLink: '/exchange'},
           {icon: 'pi pi-question', label: 'How it works', routerLink: '/about'}
         ];
       } else {

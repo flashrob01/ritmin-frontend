@@ -1,0 +1,47 @@
+<div class="p-d-flex p-jc-center">
+  <div style="width: 50%; min-width: 40rem; max-width: 1000px;">
+    <p-panel header="Mint CAT from fUSDT" [toggleable]="true">
+      <form [formGroup]="mintForm" (ngSubmit)="mint()">
+        <h4>CAT amount</h4>
+        <p>
+          <small>
+            How much CAT you want to mint. <br/>
+            1 CAT = 0.5 fUSDT.
+          </small>
+        </p>
+        <div class="p-fluid p-inputgroup">
+          <p-inputNumber [min]="0.01" [minFractionDigits]="2" [maxFractionDigits]="2" formControlName="catAmount"></p-inputNumber>
+          <span class="p-inputgroup-addon">CAT</span>
+        </div>
+        <p><small>{{ mintCatAmount / 2}} fUSDT needed</small></p>
+
+        <div class="p-d-flex p-jc-end">
+          <button pButton label="Mint" icon="pi pi-check" type="submit" [disabled]="!mintForm.valid"></button>
+        </div>
+      </form>
+    </p-panel>
+    <br>
+    <p-panel header="Destroy CAT for fUSDT" [toggleable]="true">
+      <form [formGroup]="destroyForm" (ngSubmit)="destroy()">
+        <h4>CAT amount</h4>
+        <p>
+          <small>
+            How much CAT you want to destroy. <br/>
+            1 CAT = 0.5 fUSDT.
+          </small>
+        </p>
+        <div class="p-fluid p-inputgroup">
+          <p-inputNumber [min]="0.01" [minFractionDigits]="2" [maxFractionDigits]="2" formControlName="catAmount"></p-inputNumber>
+          <span class="p-inputgroup-addon">CAT</span>
+        </div>
+        <p><small>Will get {{ destroyCatAmount / 2}} fUSDT</small></p>
+
+        <div class="p-d-flex p-jc-end">
+          <button pButton label="Destroy" icon="pi pi-check" type="submit" [disabled]="!destroyForm.valid"></button>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+
+</div>
+
