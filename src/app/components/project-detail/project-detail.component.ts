@@ -21,16 +21,19 @@ export class ProjectDetailComponent implements OnInit {
   now = new Date();
   displayPurchase = false;
   displayUpdate = false;
-  purchaseAmount: number;
+  purchaseAmount = 0.0;
   displayPendingRequest = false;
   updatableMilestones: { index: number, title: string, endTime: Date }[] = [];
   selectedMilestone: { index: number, title: string, endTime: Date };
   proofLink = '';
   getStatusTag = getStatusTag;
+  tokenSymbol = '';
+  tokenFactor = 0;
+  tokenDecimals = 1;
 
   constructor(
     private route: ActivatedRoute,
-    private readonly wcaService: WcaService,
+    readonly wcaService: WcaService,
     public readonly walletService: NeolineService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
@@ -49,6 +52,13 @@ export class ProjectDetailComponent implements OnInit {
       const identifier = param.id;
       this.wcaService.queryProject(identifier).subscribe((result) => {
         this.project = result;
+        this.wcaService.queryTokenSymbol(this.project.tokenHash)
+          .subscribe((res) => this.tokenSymbol = res);
+        this.wcaService.queryTokenFactor(this.project.tokenHash)
+          .subscribe(res => {
+            this.tokenFactor = res;
+            this.tokenDecimals = Math.log10(res);
+          });
         this.updatableMilestones = this.project.milestones
           .map((ms, i) => ({
             index: i,
@@ -74,7 +84,13 @@ export class ProjectDetailComponent implements OnInit {
       this.isOwner = this.project.creator === address;
       if (address != null && !this.isOwner) {
         this.wcaService.queryPurchase(this.project.identifier, wallet.getScriptHashFromAddress(address))
-          .subscribe((amount) => this.purchasedAmount = amount / 100);
+          .subscribe((amount) => {
+            if (this.tokenFactor === 0) {
+              setTimeout(() => this.refreshAddress(address), 1000);
+            } else {
+              this.purchasedAmount = amount / this.tokenFactor;
+            }
+          });
       }
     }
   }
@@ -125,15 +141,17 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   payStake(): void {
+    const amount = this.project.stakeRate100 * this.project.maxTokenSoldCount * this.tokenFactor;
     this.confirmationService.confirm({
-      message: 'Please confirm that you want to stake ' + this.project.stakePer100Token * this.project.maxTokenSoldCount + ' tokens',
+      message: 'Please confirm that you want to stake ' + (amount / this.tokenFactor) + ' tokens',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.displayPendingRequest = true;
-        this.wcaService.transferCatToken(
+        this.wcaService.transferToken(
+          this.project.tokenHash,
           this.walletService.getAddress$().getValue(),
-          this.project.stakePer100Token * this.project.maxTokenSoldCount * 100,
+          amount,
           this.project.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;
@@ -150,15 +168,16 @@ export class ProjectDetailComponent implements OnInit {
 
   purchase(): void {
     this.confirmationService.confirm({
-      message: 'Please confirm that you want to purchase ' + this.purchaseAmount + ' CAT',
+      message: 'Please confirm that you want to purchase ' + this.purchaseAmount + ' ' + this.tokenSymbol,
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.displayPurchase = false;
         this.displayPendingRequest = true;
-        this.wcaService.transferCatToken(
+        this.wcaService.transferToken(
+          this.project.tokenHash,
           this.walletService.getAddress$().getValue(),
-          this.purchaseAmount * 100,
+          this.purchaseAmount * this.tokenFactor,
           this.project.identifier
         ).subscribe((r) => {
           this.displayPendingRequest = false;

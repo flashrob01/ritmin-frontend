@@ -37,7 +37,7 @@
             <tr *ngIf="walletService.getAddress$().getValue() != null && purchasedAmount !== 0">
               <td colspan="2" class="purchasedRow p-text-center">
                     <span class="p-text-bold p-text-center">You have purchased {{purchasedAmount}}
-                      CAT for this project</span>
+                      {{tokenSymbol}} for this project</span>
               </td>
             </tr>
             <tr>
@@ -74,6 +74,13 @@
               <td>{{project.coolDownInterval | timeDuration}}</td>
             </tr>
             <tr>
+              <td>Token contract</td>
+              <td><a [href]="'https://neo3.testnet.neotube.io/tokens/nep17/0x' + project.tokenHash" target="_blank">
+                {{ tokenSymbol }} (0x{{project.tokenHash}})
+              </a></td>
+            </tr>
+            <tr>
+            <tr>
               <td>Tokens to sell</td>
               <td>{{project.maxTokenSoldCount}}</td>
             </tr>
@@ -87,7 +94,7 @@
             </tr>
             <tr>
               <td>Stake/Token</td>
-              <td>{{project.stakePer100Token}}</td>
+              <td>{{project.stakeRate100}}</td>
             </tr>
             <tr>
               <td>Last update</td>
@@ -134,7 +141,8 @@
 <div class="p-d-flex p-flex-row p-jc-around p-flex-wrap">
   <p-dialog header="Purchase project" [(visible)]="displayPurchase">
     <h4>Set your purchase amount:</h4>
-    <p-inputNumber [(ngModel)]="purchaseAmount" [minFractionDigits]="2" [min]="0.01"></p-inputNumber>
+    <p-inputNumber [(ngModel)]="purchaseAmount" [minFractionDigits]="tokenDecimals"
+                   [maxFractionDigits]="tokenDecimals" [min]="0.0"></p-inputNumber>
     <button pButton icon="pi pi-plus" label="Purchase" (click)="purchase()"></button>
   </p-dialog>
 

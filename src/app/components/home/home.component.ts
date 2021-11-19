@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
   refreshData(): void {
     // TODO what if we have thousand of project?
     const defaultQuery: AdvanceQueryReqBody = {
+      tokenHash: null,
       creator: null,
       buyer: null,
       page: 1,

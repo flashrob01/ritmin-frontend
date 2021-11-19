@@ -10,7 +10,8 @@ import {getCatContractAddress, getRpcNode, getWcaContractAddress} from '../utils
 export interface DeclareProjectRequestBody {
   ownerAddress: string;
   projectDescription: string;
-  stakePer100Token: number;
+  tokenHash: string;
+  stakeRate100: number;
   maxTokenSoldCount: number;
   msTitles: string[];
   msDescriptions: string[];
@@ -22,6 +23,7 @@ export interface DeclareProjectRequestBody {
 }
 
 export interface AdvanceQueryReqBody {
+  tokenHash: string;
   creator: string;
   buyer: string;
   page: number;
@@ -55,19 +57,34 @@ export class WcaService {
     return Array.from(bytes).map(x => x.toString(16).padStart(2, '0')).join('');
   }
 
-  private rpcRequest(method: string, params: any[]): Observable<any> {
-    return from(getRpcNode().invokeFunction(getWcaContractAddress(), method, params))
+  private rpcRequest(contract: string, method: string, params: any[]): Observable<any> {
+    return from(getRpcNode().invokeFunction(contract, method, params))
       .pipe(map(resp => resp.stack[0]?.value as string));
+  }
+
+  public queryTokenSymbol(hash160: string): Observable<string> {
+    return this.rpcRequest(hash160, 'symbol', []).pipe(
+      map(res => window.atob(res)));
+  }
+
+  public queryTokenFactor(hash160: string): Observable<number> {
+    return this.rpcRequest(hash160, 'decimals', []).pipe(
+      map(res => Math.pow(10, parseInt(res, 10))));
+  }
+
+  private wcaRpcRequest(method: string, params: any[]): Observable<any> {
+    return this.rpcRequest(getWcaContractAddress(), method, params);
   }
 
   public filterProjects(req: AdvanceQueryReqBody): Observable<Project[]> {
     const params = [
+      sc.ContractParam.hash160(req.tokenHash ?? WcaService.HASH160_ZERO),
       sc.ContractParam.hash160(req.creator ?? WcaService.HASH160_ZERO),
       sc.ContractParam.hash160(req.buyer ?? WcaService.HASH160_ZERO),
       sc.ContractParam.integer(req.page),
       sc.ContractParam.integer(req.size)
     ];
-    return this.rpcRequest('advanceQuery', params).pipe(
+    return this.wcaRpcRequest('advanceQuery', params).pipe(
       map(res => JSON.parse(atob(res))),
       map(res => res.map(v => this.mapToProject(v))));
   }
@@ -76,7 +93,7 @@ export class WcaService {
     const params = [
       sc.ContractParam.string(identifier)
     ];
-    return this.rpcRequest('queryProject', params)
+    return this.wcaRpcRequest('queryProject', params)
       .pipe(
         map(res => JSON.parse(atob(res))),
         map(resp => this.mapToProject(resp))
@@ -88,12 +105,13 @@ export class WcaService {
       sc.ContractParam.string(identifier),
       sc.ContractParam.hash160(buyer)
     ];
-    return this.rpcRequest('queryPurchase', params);
+    return this.wcaRpcRequest('queryPurchase', params);
   }
 
   public declareProject(info: DeclareProjectRequestBody): Observable<InvokeWriteResult> {
     const owner: TypedValue = {type: 'Address', value: info.ownerAddress};
-    const stakePer100Token: TypedValue = {type: 'Integer', value: info.stakePer100Token.toString()};
+    const stakeRate100: TypedValue = {type: 'Integer', value: info.stakeRate100.toString()};
+    const token: TypedValue = {type: 'Hash160', value: info.tokenHash};
     const maxTokenSoldCount: TypedValue = {type: 'Integer', value: info.maxTokenSoldCount.toString()};
     const projectDesc: TypedValue = {type: 'String', value: info.projectDescription};
     const msDescs: TypedValue = {type: 'Array', value: info.msDescriptions.map(ms => ({type: 'String', value: ms}))};
@@ -104,7 +122,7 @@ export class WcaService {
     const identifier: TypedValue = {type: 'String', value: info.identifier};
     const isPublic: TypedValue = {type: 'Boolean', value: info.isPublic};
     const parameters = [
-      owner, projectDesc, stakePer100Token, maxTokenSoldCount, msTitles, msDescs,
+      owner, projectDesc, token, stakeRate100, maxTokenSoldCount, msTitles, msDescs,
       endTimestamps, thresholdIndex, coolDownInterval, isPublic, identifier];
 
     return from(
@@ -124,16 +142,15 @@ export class WcaService {
     );
   }
 
-  public transferCatToken(fromAccount: string, amount: number, identifier: string): Observable<InvokeWriteResult> {
+  public transferToken(tokenHash160: string, fromAccount: string, amount: number, identifier: string): Observable<InvokeWriteResult> {
     const fromParam: TypedValue = {type: 'Address', value: fromAccount};
     const toParam: TypedValue = {type: 'Hash160', value: getWcaContractAddress()};
     const amountParam: TypedValue = {type: 'Integer', value: amount.toString()};
     const identifierParam: TypedValue = {type: 'String', value: identifier};
     const parameters = [fromParam, toParam, amountParam, identifierParam];
-
     return from(
       this.neoline.invoke({
-        scriptHash: getCatContractAddress(),
+        scriptHash: tokenHash160,
         operation: 'transfer',
         args: parameters
       })
@@ -239,24 +256,35 @@ export class WcaService {
   }
 
   private mapToProject(resp: any): Project {
-    return {
+    const result = {
       identifier: resp[0],
       description: resp[1],
       creator: wallet.getAddressFromScriptHash(WcaService.processBase64Hash160(resp[2])),
-      creationTimestamp: new Date(resp[3]),
-      stakePer100Token: resp[4] / 100,
-      maxTokenSoldCount: resp[5] / 100,
-      milestonesCount: resp[6],
-      milestones: this.parseMilestones(resp[7]),
-      thresholdMilestoneIndex: resp[8],
-      coolDownInterval: resp[9],
-      lastUpdateTimestamp: resp[10] === -1 ? null : new Date(resp[10]),
-      nextMilestone: resp[11],
-      remainTokenCount: resp[12] / 100,
-      buyerCount: resp[13],
-      status: resp[14],
-      stage: resp[15],
+      tokenHash: WcaService.processBase64Hash160(resp[3]),
+      creationTimestamp: new Date(resp[4]),
+      stakeRate100: resp[5] / 100,
+      maxTokenSoldCount: resp[6],
+      milestonesCount: resp[7],
+      milestones: this.parseMilestones(resp[8]),
+      thresholdMilestoneIndex: resp[9],
+      coolDownInterval: resp[10],
+      lastUpdateTimestamp: resp[11] === -1 ? null : new Date(resp[11]),
+      nextMilestone: resp[12],
+      remainTokenCount: resp[13],
+      buyerCount: resp[14],
+      status: resp[15],
+      stage: resp[16],
     };
+
+    this.queryTokenFactor(result.tokenHash)
+      .subscribe((res) => {
+        if (res != null) {
+          result.maxTokenSoldCount /= res;
+          result.remainTokenCount /= res;
+        }
+      });
+
+    return result;
   }
 
   private parseMilestones(milestones: any[]): Milestone[] {

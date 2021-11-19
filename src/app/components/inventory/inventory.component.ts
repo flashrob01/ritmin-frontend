@@ -23,6 +23,7 @@ export class InventoryComponent implements OnInit {
 
   ngOnInit(): void {
     const createdProjectQuery: AdvanceQueryReqBody = {
+      tokenHash: null,
       creator: this.wallet.getAddress$().getValue(),
       buyer: null,
       page: 1,
@@ -34,6 +35,7 @@ export class InventoryComponent implements OnInit {
     });
 
     const boughtProjectQuery: AdvanceQueryReqBody = {
+      tokenHash: null,
       creator: null,
       buyer: this.wallet.getAddress$().getValue(),
       page: 1,

@@ -5,6 +5,7 @@ import {finalize} from 'rxjs/operators';
 import {Milestone} from 'src/app/models/project-models';
 import {WcaService} from 'src/app/services/wca.service';
 import {NeolineService} from '../../../services/neoline.service';
+import {getCatContractAddress} from '../../../utils';
 
 @Component({
   selector: 'app-complete',
@@ -43,13 +44,14 @@ export class CompleteComponent implements OnInit {
       {
         ownerAddress: this.wallet.getAddress$().getValue(),
         projectDescription: this.basicInfo.description,
+        tokenHash: getCatContractAddress(),
         coolDownInterval: this.basicInfo.cooldownInterval,
         msTitles: this.milestones.map(m => m.title),
         msDescriptions: this.milestones.map(m => m.description),
         endTimestamps: this.milestones.map(m => m.endTimestamp.getTime()),
         identifier: this.basicInfo.identifier,
         maxTokenSoldCount: this.basicInfo.maxTokenSoldCount * 100,
-        stakePer100Token: this.basicInfo.stakePerToken * 100,
+        stakeRate100: this.basicInfo.stakePerToken * 100,
         thresholdIndex: this.basicInfo.thresholdMilestoneIndex,
         isPublic: this.basicInfo.isPublic
       }).pipe(finalize(() => this.isLoading = false)).subscribe(r => {

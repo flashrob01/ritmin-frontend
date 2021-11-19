@@ -2,8 +2,9 @@ export interface Project {
   identifier: string;
   description: string;
   creator: string;
+  tokenHash: string;
   creationTimestamp: Date;
-  stakePer100Token: number;
+  stakeRate100: number;
   maxTokenSoldCount: number;
   milestonesCount: number;
   milestones: Milestone[];

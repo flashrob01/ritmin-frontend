@@ -18,8 +18,8 @@
           <th pSortableColumn="maxTokenSoldCount">Tokens
             <p-sortIcon field="maxTokenSoldCount"></p-sortIcon>
           </th>
-          <th pSortableColumn="stakePer100Token">Stake Rate
-            <p-sortIcon field="stakePer100Token"></p-sortIcon>
+          <th pSortableColumn="stakeRate100">Stake Rate
+            <p-sortIcon field="stakeRate100"></p-sortIcon>
           </th>
           <th pSortableColumn="status">Status
             <p-sortIcon field="status"></p-sortIcon>
@@ -43,7 +43,7 @@
           <td>
             {{project.maxTokenSoldCount | number}}
           <td>
-            {{project.stakePer100Token}}
+            {{project.stakeRate100}}
           </td>
           <td>
             <p-tag [value]="project.status === 'ONGOING' ? project.stage : project.status"
