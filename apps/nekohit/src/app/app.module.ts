@@ -20,7 +20,7 @@ import { FeaturedProjectComponent } from './home/featured-project/featured-proje
 import { RxState } from '@rx-angular/state';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 import { CreateProjectComponent } from './create-project/create-project.component';
-import { DecimalPipe } from '@angular/common';
+import { AccordionModule } from 'primeng/accordion';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -43,6 +43,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MenubarModule,
     ChartModule,
     CarouselModule,
+    AccordionModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {

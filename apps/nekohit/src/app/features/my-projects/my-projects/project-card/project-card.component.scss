@@ -1,8 +1,77 @@
 ::ng-deep .myProjectCard {
   cursor: pointer;
+  border-radius: 5px;
+  background: rgb(255, 131, 195);
+  background: rgb(131, 255, 182);
+  background: linear-gradient(
+    333deg,
+    rgba(131, 255, 182, 1) 36%,
+    rgba(82, 176, 255, 1) 100%
+  );
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   img {
-    width: 20px !important;
+    width: 30px !important;
   }
+}
+
+.token {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.75);
+  width: 50px;
+  height: 50px;
+}
+
+.custom-shape-divider-bottom-1638963685 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1638963685 svg {
+  position: relative;
+  display: block;
+  width: calc(111% + 1.3px);
+  height: 40px;
+}
+
+.custom-shape-divider-bottom-1638963685 .shape-fill {
+  fill: #ffffff;
+}
+
+.card-container {
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  img {
+    width: 30px !important;
+  }
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  }
+}
+
+.bg1 {
+  background: rgb(210, 131, 255);
+  background: linear-gradient(
+    333deg,
+    rgba(210, 131, 255, 1) 36%,
+    rgba(82, 176, 255, 1) 100%
+  );
+}
+
+.bg2 {
+  background: rgb(255, 131, 195);
+  background: rgb(131, 255, 182);
+  background: linear-gradient(
+    333deg,
+    rgba(131, 255, 182, 1) 36%,
+    rgba(82, 176, 255, 1) 100%
+  );
 }

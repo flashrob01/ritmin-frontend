@@ -52,12 +52,9 @@
 </div>
 
 <!-- AWARD BANNER SECTION -->
-<div class="award-section flex justify-content-left align-items-center">
-  <img
-    class="fadeinleft animation-duration-2000 award ml-3"
-    src="assets/images/award.png"
-  />
-  <div class="fadeinright animation-duration-2000 flex flex-column ml-5">
+<div class="pl-5 award-section flex justify-content-left align-items-center">
+  <img class="award ml-3" src="assets/images/award.png" />
+  <div class="flex flex-column ml-5">
     <span class="award-title text-3xl font-bold">{{
       'LANDING.AWARD.TITLE' | translate
     }}</span>
@@ -73,7 +70,9 @@
     class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
   >
     <div class="text-center text-2xl" style="width: 100%">
-      <h1 class="text-blue-600">{{ 'LANDING.FEATURED.TITLE' | translate }}</h1>
+      <h1 class="text-blue-title">
+        {{ 'LANDING.FEATURED.TITLE' | translate }}
+      </h1>
       <div class="flex justify-content-evenly flex-wrap">
         <a
           class="featuredProjectCard"
@@ -85,13 +84,13 @@
       </div>
     </div>
   </div>
-
+  <br /><br />
   <!-- ABOUT NEKOHIT SECTION -->
   <div
     class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
   >
     <div class="text-center text-2xl" style="max-width: 800px">
-      <h1 class="text-blue-600">{{ 'LANDING.ABOUT.TITLE' | translate }}</h1>
+      <h1 class="text-blue-title">{{ 'LANDING.ABOUT.TITLE' | translate }}</h1>
       <p class="text-2xl">
         {{ 'LANDING.ABOUT.TEXT' | translate }}
       </p>
@@ -101,120 +100,152 @@
   <br />
 
   <!-- HOW IT WORKS SECTION -->
-  <div
-    class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
-  >
-    <div class="text-center text-2xl">
-      <h1 class="text-blue-600">{{ 'LANDING.HOWTO.TITLE' | translate }}</h1>
-      <div>
-        <p-timeline
-          [value]="s.events"
-          align="alternate"
-          styleClass="customized-timeline"
-        >
-          <ng-template pTemplate="marker" let-event>
-            <span class="custom-marker p-shadow-2">
-              <i class="text-2xl" [ngClass]="event.icon"></i>
-            </span>
-          </ng-template>
-          <ng-template pTemplate="content" let-event>
-            <p-card [header]="event.status">
-              <p class="text-xl">{{ event.description }}</p>
-              <button
-                pButton
-                [label]="translate.instant('LANDING.HOWTO.MORE')"
-                (click)="linkService.openWhitepaper()"
-                class="p-button-text"
-              ></button>
-            </p-card>
-          </ng-template>
-        </p-timeline>
+  <section id="howitworks" position="relative">
+    <div
+      class="
+        mt-6
+        mb-6
+        flex flex-column
+        justify-content-center
+        align-items-center
+        how-it-works-container
+        pb-7
+      "
+    >
+      <div class="text-center text-2xl">
+        <h1 class="text-white">{{ 'LANDING.HOWTO.TITLE' | translate }}</h1>
+        <div>
+          <p-timeline
+            [value]="s.events"
+            align="alternate"
+            styleClass="customized-timeline"
+          >
+            <ng-template pTemplate="marker" let-event>
+              <span class="custom-marker p-shadow-2">
+                <i class="text-2xl" [ngClass]="event.icon"></i>
+              </span>
+            </ng-template>
+            <ng-template pTemplate="content" let-event>
+              <p-card [header]="event.status">
+                <p class="text-xl">{{ event.description }}</p>
+                <button
+                  pButton
+                  [label]="translate.instant('LANDING.HOWTO.MORE')"
+                  (click)="linkService.openWhitepaper()"
+                  class="p-button-text"
+                ></button>
+              </p-card>
+            </ng-template>
+          </p-timeline>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 </ng-container>
 
 <br /><br />
 <!-- OVERVIEW/FEATURES SECTION -->
-<div class="mt-6 mb-6 surface-0 text-center">
+<div class="mt-6 mb-6 surface-0 text-center overview-container">
   <div class="mb-6 font-bold text-2xl">
     <h1>{{ 'LANDING.FEATURES.TITLE' | translate }}</h1>
-    <p class="text-blue-600">{{ 'LANDING.FEATURES.SUBTITLE' | translate }}</p>
+    <p class="text-blue-title">{{ 'LANDING.FEATURES.SUBTITLE' | translate }}</p>
   </div>
   <div class="grid mt-6" style="width: 100%">
     <div class="col-12 md:col-4 mb-4 px-5">
       <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-        <i class="fa fa-handshake text-4xl text-blue-500"></i>
+        <i class="fa fa-handshake text-4xl icon"></i>
       </span>
-      <div class="text-900 mb-3 font-medium">
+      <div class="text-900 mb-3 text-lg font-semibold">
         {{ 'LANDING.FEATURES.FEAT_1_TITLE' | translate }}
       </div>
-      <span class="text-700 text-sm line-height-3">{{
+      <span class="text-700 line-height-3">{{
         'LANDING.FEATURES.FEAT_1_TEXT' | translate
       }}</span>
     </div>
     <div class="col-12 md:col-4 mb-4 px-5">
       <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-        <i class="fa fa-check text-4xl text-blue-500"></i>
+        <i class="fa fa-check text-4xl icon"></i>
       </span>
-      <div class="text-900 mb-3 font-medium">
+      <div class="text-900 mb-3 text-lg font-semibold">
         {{ 'LANDING.FEATURES.FEAT_2_TITLE' | translate }}
       </div>
-      <span class="text-700 text-sm line-height-3">{{
+      <span class="text-700 line-height-3">{{
         'LANDING.FEATURES.FEAT_2_TEXT' | translate
       }}</span>
     </div>
     <div class="col-12 md:col-4 mb-4 px-5">
       <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-        <i class="fa fa-users text-4xl text-blue-500"></i>
+        <i class="fa fa-users text-4xl icon"></i>
       </span>
-      <div class="text-900 mb-3 font-medium">
+      <div class="text-900 mb-3 text-lg font-semibold">
         {{ 'LANDING.FEATURES.FEAT_3_TITLE' | translate }}
       </div>
-      <span class="text-700 text-sm line-height-3">{{
+      <span class="text-700 line-height-3">{{
         'LANDING.FEATURES.FEAT_3_TEXT' | translate
       }}</span>
     </div>
     <div class="col-12 md:col-4 mb-4 px-5">
       <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-        <i class="fa fa-poll text-4xl text-blue-500"></i>
+        <i class="fa fa-poll text-4xl icon"></i>
       </span>
-      <div class="text-900 mb-3 font-medium">
+      <div class="text-900 mb-3 text-lg font-semibold">
         {{ 'LANDING.FEATURES.FEAT_4_TITLE' | translate }}
       </div>
-      <span class="text-700 text-sm line-height-3">{{
+      <span class="text-700 line-height-3">{{
         'LANDING.FEATURES.FEAT_4_TEXT' | translate
       }}</span>
     </div>
     <div class="col-12 md:col-4 mb-4 px-5">
       <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-        <i class="pi pi-github text-4xl text-blue-500"></i>
+        <i class="pi pi-github text-4xl icon"></i>
       </span>
-      <div class="text-900 mb-3 font-medium">
+      <div class="text-900 mb-3 text-lg font-semibold">
         {{ 'LANDING.FEATURES.FEAT_5_TITLE' | translate }}
       </div>
-      <span class="text-700 text-sm line-height-3">{{
+      <span class="text-700 line-height-3">{{
         'LANDING.FEATURES.FEAT_5_TEXT' | translate
       }}</span>
     </div>
     <div class="col-12 md:col-4 md:mb-4 mb-0 px-3">
       <span class="p-3 shadow-2 mb-3 inline-block" style="border-radius: 10px">
-        <i class="fa fa-globe text-4xl text-blue-500"></i>
+        <i class="fa fa-globe text-4xl icon"></i>
       </span>
-      <div class="text-900 mb-3 font-medium">
+      <div class="text-900 mb-3 text-lg font-semibold">
         {{ 'LANDING.FEATURES.FEAT_6_TITLE' | translate }}
       </div>
-      <span class="text-700 text-sm line-height-3">{{
+      <span class="text-700 text-lg line-height-3">{{
         'LANDING.FEATURES.FEAT_6_TEXT' | translate
       }}</span>
     </div>
   </div>
 </div>
 
+<div
+  class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
+  #faq
+>
+  <div class="text-center text-2xl">
+    <h1 class="text-blue-title">{{ 'LANDING.FAQ.TITLE' | translate }}</h1>
+    <p style="max-width: 1000px">{{ 'LANDING.FAQ.SUBTITLE' | translate }}</p>
+  </div>
+  <div style="max-width: 1000px">
+    <p-accordion>
+      <p-accordionTab>
+        <ng-template pTemplate="header">{{
+          'LANDING.FAQ.QUESTION1' | translate
+        }}</ng-template>
+        <ng-template pTemplate="content">{{
+          'LANDING.FAQ.ANSWER1' | translate
+        }}</ng-template></p-accordionTab
+      >
+    </p-accordion>
+  </div>
+</div>
+
 <br /><br />
 <!-- JOIN DISCORD SECTION -->
 <div class="mt-6 mb-6 surface-0 text-700 text-center">
-  <div class="text-blue-600 font-bold text-5xl mb-3">
+  <div class="text-blue-title font-bold text-5xl mb-3">
     {{ 'LANDING.DISCORD-ACTION.TITLE' | translate }}
   </div>
   <div class="text-700 text-2xl mb-5">

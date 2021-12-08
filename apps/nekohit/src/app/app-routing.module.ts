@@ -13,11 +13,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'faq',
-    loadChildren: () =>
-      import('./features/faq/faq.module').then((m) => m.FaqModule),
-  },
-  {
     path: 'profile/projects',
     canActivate: [AuthGuard],
     loadChildren: () =>

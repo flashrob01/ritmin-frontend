@@ -7,6 +7,7 @@ import { NeolineService } from '../core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CreateProjectComponent } from '../create-project/create-project.component';
+import { Router } from '@angular/router';
 
 interface MenuState {
   menuItems: MenuItem[];
@@ -37,7 +38,8 @@ export class MenuComponent {
     private state: RxState<MenuState>,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
     public neoline: NeolineService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private router: Router
   ) {
     this.state.hold(this.translate.onLangChange, (v) => {
       localStorage.setItem('lang', v.lang);
@@ -61,7 +63,7 @@ export class MenuComponent {
         {
           label: this.translate.instant('MENU.FAQ'),
           icon: 'pi pi-question',
-          routerLink: 'faq',
+          command: () => this.router.navigate([''], { fragment: 'faq' }),
         },
       ];
       this.state.set({ menuItems: items });

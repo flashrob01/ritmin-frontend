@@ -4,11 +4,6 @@
   clip-path: circle(80% at 70% 30%);
 }
 
-.hero-wrap {
-  // might keep it, might not
-  /* filter: drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5)); */
-}
-
 .award-section {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
     rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
@@ -37,7 +32,7 @@
   font-size: 150%;
   align-items: center;
   justify-content: center;
-  color: #2196f3;
+  color: white;
   border-radius: 50%;
   z-index: 1;
 }
@@ -50,6 +45,7 @@
 
         .p-timeline-event-content {
           text-align: left !important;
+          background-color: white !important;
         }
       }
 
@@ -67,4 +63,18 @@
 .featuredProjectCard {
   text-decoration: none;
   color: inherit;
+}
+
+.text-blue-title {
+  color: #2196f3;
+}
+
+.how-it-works-container {
+  background-color: #2196f3;
+}
+
+.overview-container {
+  .icon {
+    color: #00e599;
+  }
 }

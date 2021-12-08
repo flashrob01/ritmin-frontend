@@ -61,6 +61,13 @@
       "FEAT_6_TITLE": "Fully decentralized",
       "FEAT_6_TEXT": "NekoHit is fully decentralized. All WCA-related information are stored on the blockchain."
     },
+    "FAQ": {
+      "TITLE": "FAQ",
+      "SUBTITLE": "If you can't find an answer to a question you have, you can visit the #support channel in our discord or read the whitepaper.",
+      "QUESTION1": "Where can I buy the CAT token?",
+      "ANSWER1": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+
+    },
     "DISCORD-ACTION": {
       "TITLE": "Join Our Community",
       "SUBTITLE": "Get in touch with other creators, your sponsors or just come and have a chat with the NekoHit team",

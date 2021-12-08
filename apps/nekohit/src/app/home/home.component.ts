@@ -56,10 +56,7 @@ export class HomeComponent {
       'featuredProjects',
       projectService.getProjects().pipe(
         map((projects) => {
-          return projects
-            .filter((project) => project.status === 'ONGOING')
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4);
+          return projects.sort(() => 0.5 - Math.random()).slice(0, 4);
         })
       )
     );
