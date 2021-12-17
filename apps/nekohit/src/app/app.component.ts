@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RxState } from '@rx-angular/state';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { LinkService } from './core/services/link.service';
 import { NeolineService } from './core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
@@ -21,17 +21,17 @@ export class AppComponent {
   title = 'nekohit';
   showPromotion = true;
 
-  readonly getCatBalance$ = this.globalState.select('address').pipe(
+  readonly getBalances$ = this.globalState.select('address').pipe(
     switchMap((address) =>
       this.neoline.getBalance().pipe(
+        tap((balances) => console.log(balances)),
         map((balances) => {
-          const res = balances[address]?.filter(
-            (balance) => balance.symbol === 'CAT'
-          );
-          if (!res || !res.length) {
-            return 0;
-          }
-          return +res[0].amount;
+          const res = balances[address];
+          const result: { [symbol: string]: number } = {};
+          res?.forEach((v) => {
+            result[v.symbol] = +v.amount;
+          });
+          return result;
         })
       )
     )
@@ -42,8 +42,7 @@ export class AppComponent {
     public linkService: LinkService,
     translate: TranslateService,
     public notification: NotificationService,
-    public messageService: MessageService,
-    private binance: BinanceService
+    public messageService: MessageService
   ) {
     this.globalState.set({ mainnet: environment.mainnetDefault });
     this.globalState.connect(
@@ -58,17 +57,15 @@ export class AppComponent {
         .getNetworks()
         .pipe(map((network) => network.chainId === N3MainNet))
     );
-    this.globalState.connect('catBalance', this.getCatBalance$);
+    this.globalState.connect('balances', this.getBalances$);
 
     this.globalState.connect(
       'svgAvatar',
       this.globalState.select('address').pipe(map((adr) => multiavatar(adr)))
     );
-    this.globalState.set({ catPrice: 0.5 });
-    this.globalState.connect('gasPrice', this.binance.getGasPrice());
 
     const lang = localStorage.getItem('lang');
-    translate.langs = ['en', 'de', 'cn'];
+    translate.langs = ['en'];
     if (lang && translate.langs.includes(lang)) {
       translate.use(lang).subscribe();
     } else {

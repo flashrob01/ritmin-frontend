@@ -1,7 +1,7 @@
 <p-confirmPopup></p-confirmPopup>
 <ng-container *ngIf="state$ | async as s">
   <div class="grid">
-    <div class="col-12 md:col-12 lg:col-8">
+    <div class="col-12 md:col-12 lg:col-12">
       <div class="p-fluid">
         <form [formGroup]="s.form">
           <div class="card">
@@ -38,6 +38,7 @@
                 [options]="s.tokens"
                 formControlName="token"
                 optionLabel="label"
+                (onChange)="tokenSelected$.next($event)"
               >
                 <ng-template pTemplate="selectedItem">
                   <div *ngIf="token" class="flex align-items-center">
@@ -72,14 +73,20 @@
                 <p-inputNumber
                   formControlName="fundingGoal"
                   mode="decimal"
-                  [minFractionDigits]="getTokenDecimals()"
-                  [maxFractionDigits]="getTokenDecimals()"
-                  [suffix]="getTokenSuffix()"
+                  [minFractionDigits]="
+                    tokenService.getTokenByHash(token.value).decimals
+                  "
+                  [maxFractionDigits]="
+                    tokenService.getTokenByHash(token.value).decimals
+                  "
+                  [suffix]="
+                    ' ' + tokenService.getTokenByHash(token.value).symbol
+                  "
                   [min]="0"
                   [showButtons]="true"
                 ></p-inputNumber>
                 <div class="m-2 font-italic text-sm">
-                  ≈ ${{ calculatePrice(fundingGoal, token) | number }}
+                  ≈ ${{ s.selectedTokenPrice * fundingGoal | number }}
                 </div>
               </div>
             </div>
@@ -91,15 +98,26 @@
                 <p-inputNumber
                   formControlName="securityStake"
                   mode="decimal"
-                  [minFractionDigits]="getTokenDecimals()"
-                  [maxFractionDigits]="getTokenDecimals()"
-                  [suffix]="getTokenSuffix()"
-                  [max]="globalState.get('catBalance')"
+                  [minFractionDigits]="
+                    tokenService.getTokenByHash(token.value).decimals
+                  "
+                  [maxFractionDigits]="
+                    tokenService.getTokenByHash(token.value).decimals
+                  "
+                  [suffix]="
+                    ' ' + tokenService.getTokenByHash(token.value).symbol
+                  "
+                  [max]="
+                    getTokenBalance(
+                      tokenService.getTokenByHash(token.value).symbol
+                    )
+                  "
                   [min]="0"
                   [showButtons]="true"
                 ></p-inputNumber>
+
                 <div class="m-2 font-italic text-sm">
-                  ≈ ${{ calculatePrice(securityStake, token) | number }}
+                  ≈ ${{ s.selectedTokenPrice * securityStake | number }}
                 </div>
               </div>
             </div>
@@ -223,12 +241,12 @@
         </form>
       </div>
     </div>
-    <div class="col">
+    <!-- <div class="col">
       <div
         style="border: 1px dashed lightgray; border-radius: 10px; padding: 15px"
       >
         <h2>Need help?</h2>
       </div>
-    </div>
+    </div> -->
   </div>
 </ng-container>

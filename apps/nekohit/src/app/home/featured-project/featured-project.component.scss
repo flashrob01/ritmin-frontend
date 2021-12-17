@@ -7,11 +7,7 @@ p-card {
 ::ng-deep .featuredProjectCard {
   width: 400px;
   background: rgb(131, 202, 255);
-  background: linear-gradient(
-    333deg,
-    rgba(131, 202, 255, 1) 0%,
-    rgba(154, 82, 255, 1) 100%
-  );
+  background: rgb(58, 58, 58);
   color: white;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,

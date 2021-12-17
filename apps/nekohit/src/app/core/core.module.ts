@@ -7,6 +7,7 @@ import { NeolineService } from './services/neoline.service';
 import { NeonJSService } from './services/neonjs.service';
 import { NotificationService } from './services/notification.service';
 import { NekohitProjectService } from './services/project.service';
+import { TokenService } from './services/token.service';
 
 @NgModule({
   providers: [
@@ -19,6 +20,7 @@ import { NekohitProjectService } from './services/project.service';
     NotificationService,
     BinanceService,
     ConfirmationService,
+    TokenService,
   ],
 })
 export class CoreModule {

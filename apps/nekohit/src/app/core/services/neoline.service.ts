@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import { mergeMap, switchMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 import {
   ACCOUNT_CHANGED,
   CONNECTED,

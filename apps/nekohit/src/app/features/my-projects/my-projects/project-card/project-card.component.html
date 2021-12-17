@@ -1,68 +1,9 @@
-<!-- <ng-container *ngIf="state$ | async as s">
-  <p-card styleClass="myProjectCard">
-    <ng-template pTemplate="header">
-      <div class="p-4">
-        <div class="flex flex-column justify-content-between">
-          <p>
-            <small
-              >Created at:
-              {{ s.project.creationTimestamp | date: 'dd.MM.yyyy' }}</small
-            >
-          </p>
-          <div class="token p-2 flex justify-content-center align-items-center">
-            <img
-              [src]="'assets/images/tokens/' + s.project.tokenSymbol + '.png'"
-            />
-          </div>
-        </div>
-      </div>
-      <section style="position: relative">
-        <div class="p-4">
-          <span class="font-bold text-lg">{{ s.project.identifier }}</span>
-          <p-tag [value]="s.project.status"></p-tag>
-        </div>
-
-      </section>
-    </ng-template>
-     <div
-      *ngIf="s.project.status === 'ONGOING'"
-      class="flex justify-content-between mb-3"
-    >
-      Next milestone ends in:
-      <countdown #cd [config]="s.countdownConfig"></countdown>
-    </div>
-    <div
-      class="flex justify-content-between align-items-center p-4"
-      style="border: 1px dashed lightgray; border-radius: 4px"
-    >
-      <div class="flex-align-items-center">
-        <i class="pi pi-users mr-2"></i>
-        {{ s.project.buyerCount }}
-      </div>
-      <div class="flex align-items-center justify-content-end">
-        <div class="mr-2">
-          {{
-            s.project.maxTokenSoldCount - s.project.remainTokenCount
-              | tokenNumber: s.project.tokenSymbol
-          }}
-          /
-          {{ s.project.maxTokenSoldCount | tokenNumber: s.project.tokenSymbol }}
-          {{ s.project.tokenSymbol }} ({{
-            ((s.project.maxTokenSoldCount - s.project.remainTokenCount) /
-              s.project.maxTokenSoldCount) *
-              100 | number
-          }}%)
-        </div>
-      </div>
-    </div>
-  </p-card>
-</ng-container> -->
-
 <ng-container *ngIf="state$ | async as s">
   <section style="position: relative">
     <div
       class="card-container p-3 h-10rem"
       [ngClass]="s.project.tokenSymbol === 'GAS' ? 'bg1' : 'bg2'"
+      [routerLink]="['/projects/' + encode(s.project.identifier)]"
     >
       <div class="flex flex-column">
         <div class="flex justify-content-between">

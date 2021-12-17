@@ -30,9 +30,9 @@ interface ProjectMonitorState {
 export class ProjectMonitorComponent {
   state$ = this.state.select();
   readonly address$ = this.globalState.select('address');
-  readonly catBalance$ = this.globalState.select('catBalance');
   readonly onStakeBtnClicked$ = new Subject<NekoHitProject>();
   encode = encodeURIComponent;
+  math = Math;
 
   // TODO: should be improved (more clean etc)
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {
@@ -145,14 +145,6 @@ export class ProjectMonitorComponent {
     );
   }
 
-  public getStakeValue(project: NekoHitProject, multiplier: number): number {
-    const availableBalance = this.globalState.get('catBalance');
-    const stakeAmount = availableBalance * multiplier;
-    return stakeAmount > project.remainTokenCount
-      ? project.remainTokenCount
-      : stakeAmount;
-  }
-
   private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
     const data = {
       labels: ['Remaining', 'Funded'],
@@ -189,5 +181,11 @@ export class ProjectMonitorComponent {
       .subscribe((res) => {
         this.notification.tx(res.txid);
       });
+  }
+
+  public getTokenDigits(symbol: string): number {
+    if (symbol === 'CAT') {
+      return 2;
+    } else return 8;
   }
 }

@@ -2,16 +2,17 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { RxState } from '@rx-angular/state';
 import { ConfirmationService, SelectItem } from 'primeng/api';
-import { Subject } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Observable, Subject } from 'rxjs';
 import {
   CreateProjectArgs,
   NekohitProjectService,
 } from '../core/services/project.service';
 import { NotificationService } from '../core/services/notification.service';
-import { CAT_DECIMALS, GAS_DECIMALS } from '../core/services/utils';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CAT_SYMBOL, TokenService } from '../core/services/token.service';
+import { BinanceService } from '../core/services/binance.service';
+import { first, map, tap } from 'rxjs/operators';
 
 interface MilestoneConfig {
   label: string;
@@ -28,6 +29,7 @@ interface CreateProjectState {
   form: FormGroup;
   milestones: MilestoneConfig[];
   threshold: number;
+  selectedTokenPrice: number;
 }
 
 const initState: CreateProjectState = {
@@ -47,6 +49,7 @@ const initState: CreateProjectState = {
     },
   ],
   threshold: 0,
+  selectedTokenPrice: 0,
 };
 
 @Component({
@@ -59,6 +62,8 @@ export class CreateProjectComponent {
 
   onTabChange$ = new Subject<{ index: number }>();
 
+  tokenSelected$ = new Subject<{ value: SelectItem }>();
+
   constructor(
     private state: RxState<CreateProjectState>,
     private fb: FormBuilder,
@@ -66,30 +71,27 @@ export class CreateProjectComponent {
     private confirmationService: ConfirmationService,
     private notification: NotificationService,
     private dynamicDialog: DynamicDialogRef,
+    public tokenService: TokenService,
+    private binance: BinanceService,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {
-    const gasHash = this.globalState.get('mainnet')
-      ? environment.mainnet.gasContractHash
-      : environment.testnet.gasContractHash;
-    const catHash = this.globalState.get('mainnet')
-      ? environment.mainnet.catTokenHash
-      : environment.testnet.catTokenHash;
+    const catToken = tokenService.getTokenBySymbol(CAT_SYMBOL);
+
     initState.form = this.fb.group({
       name: '',
       description: '',
       fundingGoal: 1,
       securityStake: 1,
-      token: { value: catHash, label: 'CAT' },
+      token: { value: catToken.hash, label: CAT_SYMBOL },
       public: true,
       thresholdIndex: 0,
       cooldownInterval: 1,
     });
     this.state.set(initState);
     this.state.set({
-      tokens: [
-        { value: catHash, label: 'CAT' },
-        { value: gasHash, label: 'GAS' },
-      ],
+      tokens: tokenService
+        .getTokens()
+        .map((token) => ({ value: token.hash, label: token.symbol })),
     });
 
     this.state.hold(this.onTabChange$, (e) => {
@@ -102,6 +104,20 @@ export class CreateProjectComponent {
           title: 'Milestone ' + milestones.length,
         });
       }
+    });
+
+    this.state.hold(this.tokenSelected$, (event) => {
+      const token = this.tokenService.getTokenByHash(event.value.value);
+      const precision = Math.pow(10, token.decimals);
+      this.binance
+        .getPrice(token.symbol)
+        .pipe(
+          tap((x) => console.log('price', x)),
+          map((price) => Math.round(price * precision) / precision)
+        )
+        .subscribe((res) => {
+          this.state.set({ selectedTokenPrice: res });
+        });
     });
   }
 
@@ -137,22 +153,18 @@ export class CreateProjectComponent {
     return this.state.get('form').get('thresholdIndex')?.value;
   }
 
-  getTokenDecimals(): number {
-    return this.state.get('form')?.get('token')?.value.label === 'CAT' ? 2 : 8;
-  }
-
-  getTokenSuffix(): string {
-    return this.state.get('form')?.get('token')?.value.label === 'CAT'
-      ? ' CAT'
-      : ' GAS';
-  }
-
-  calculatePrice(amount: number, token: SelectItem): number {
-    const price =
-      token.label === 'CAT'
-        ? this.globalState.get('catPrice')
-        : this.globalState.get('gasPrice');
-    return Math.round(price * amount * 100) / 100;
+  //TODO: remove
+  calculatePrice(
+    amount: number,
+    selectedToken: SelectItem
+  ): Observable<number> {
+    const token = this.tokenService.getTokenByHash(selectedToken.value);
+    const precision = Math.pow(10, token.decimals);
+    return this.binance.getPrice(token.symbol).pipe(
+      first(),
+      tap((x) => console.log('price', x)),
+      map((price) => Math.round(price * amount * precision) / precision)
+    );
   }
 
   getMinDateForMs(index: number): Date {
@@ -169,6 +181,11 @@ export class CreateProjectComponent {
     }
   }
 
+  getTokenBalance(symbol: string): number {
+    const balance = (this.globalState.get('balances') as any)[symbol];
+    return balance != null ? balance : 0;
+  }
+
   getValidMilestoneOptions(): MilestoneConfig[] {
     return this.state.get('milestones').filter((ms) => ms.index !== -1);
   }
@@ -183,8 +200,9 @@ export class CreateProjectComponent {
       acceptLabel: 'I understand',
       rejectLabel: 'Cancel',
       accept: () => {
-        const decimals =
-          this.token.label === 'GAS' ? GAS_DECIMALS : CAT_DECIMALS;
+        const decimals = this.tokenService.getTokenBySymbol(
+          this.token.label as string
+        ).decimals;
 
         const milestones = this.state
           .get('milestones')

@@ -29,6 +29,7 @@ const CountdownTimeUnits: Array<[string, number]> = [
 export class ProjectCardComponent {
   state$ = this.state.select();
   now = new Date().getTime();
+  encode = encodeURIComponent;
 
   getTimeLeft$: Observable<CountdownConfig> = this.state.select('project').pipe(
     map((project) => ({

@@ -3,7 +3,7 @@
     [value]="s.projects"
     [autoLayout]="true"
     dataKey="identifier"
-    styleClass="project-table p-datatable-striped p-datatable-gridlines"
+    styleClass="project-table p-datatable-striped"
     [paginator]="true"
     [rows]="10"
     [showCurrentPageReport]="true"
@@ -62,12 +62,18 @@
                     <b
                       ><a
                         [routerLink]="[
-                          '/project/' + encode(project.identifier)
+                          '/projects/' + encode(project.identifier)
                         ]"
                         >{{ project.identifier }}</a
                       ></b
                     >
-                    <img class="ml-2" [src]="'assets/images/tokens/' + project.tokenSymbol + '.png'" width="17">
+                    <img
+                      class="ml-2"
+                      [src]="
+                        'assets/images/tokens/' + project.tokenSymbol + '.png'
+                      "
+                      width="17"
+                    />
                   </div>
                   {{ project.description | truncate: [80] }}
                 </div>
@@ -105,8 +111,13 @@
         </td>
         <td>
           <p>
-            {{ project.maxTokenSoldCount - project.remainTokenCount | tokenNumber: project.tokenSymbol }}
-            / {{ project.maxTokenSoldCount | tokenNumber: project.tokenSymbol }} {{project.tokenSymbol}}
+            {{
+              project.maxTokenSoldCount - project.remainTokenCount
+                | tokenNumber: project.tokenSymbol
+            }}
+            /
+            {{ project.maxTokenSoldCount | tokenNumber: project.tokenSymbol }}
+            {{ project.tokenSymbol }}
           </p>
           <div
             class="text-center text-md font-bold"
@@ -134,7 +145,7 @@
             (project.stakePer100Token / 100) * project.maxTokenSoldCount
               | tokenNumber: project.tokenSymbol
           }}
-          {{project.tokenSymbol}} /
+          {{ project.tokenSymbol }} /
           {{
             (project.thresholdMilestoneIndex / (project.milestonesCount - 1)
               | tokenNumber: project.tokenSymbol) || 0
@@ -175,56 +186,24 @@
                 <span class="font-semibold text-lg mr-2"
                   >🔥 Fund this project</span
                 >
-
-                <small
-                  ><i class="mr-1 text-xs pi pi-question-circle"></i
-                  ><a href="">How does it work?</a></small
-                >
               </div>
 
               <ng-container
                 *ngIf="(address$ | async) !== null; else connectWallet"
               >
-                <div *ngIf="catBalance$ | async as cat" class="text-center">
-                  Available balance: {{ +cat | number: '1.2-2' }} {{project.tokenSymbol}}
-                </div>
-                <div class="flex justify-content-between m-4">
-                  <a
-                    href="javascript:void(0)"
-                    (click)="
-                      project['stakeInput'] = getStakeValue(project, 0.25)
-                    "
-                    >25%</a
-                  >
-                  <span>|</span>
-                  <a
-                    href="javascript:void(0)"
-                    (click)="
-                      project['stakeInput'] = getStakeValue(project, 0.5)
-                    "
-                    >50%</a
-                  >
-                  <span>|</span>
-                  <a
-                    href="javascript:void(0)"
-                    (click)="
-                      project['stakeInput'] = getStakeValue(project, 0.75)
-                    "
-                    >75%</a
-                  >
-                  <span>|</span>
-                  <a
-                    href="javascript:void(0)"
-                    (click)="project['stakeInput'] = getStakeValue(project, 1)"
-                    >100%</a
-                  >
-                </div>
+                <!-- <div *ngIf="catBalance$ | async as cat" class="text-center">
+                  Available balance: {{ +cat | number: '1.2-2' }}
+                  {{ project.tokenSymbol }}
+                </div> -->
+                <br />
+                <br />
+
                 <span class="p-float-label">
                   <p-inputNumber
                     mode="decimal"
                     [(ngModel)]="project.stakeInput"
-                    [minFractionDigits]="2"
-                    [maxFractionDigits]="2"
+                    [minFractionDigits]="getTokenDigits(project.symbol)"
+                    [maxFractionDigits]="getTokenDigits(project.symbol)"
                     [showButtons]="true"
                     inputId="stacked"
                     id="supportInput"
@@ -237,11 +216,23 @@
                 <div class="flex flex-column mt-3 text-sm">
                   <div class="flex justify-content-between mb-1">
                     <span>Funding Goal: </span>
-                    <span>{{ project.maxTokenSoldCount | tokenNumber: project.tokenSymbol }} {{project.tokenSymbol}}</span>
+                    <span
+                      >{{
+                        project.maxTokenSoldCount
+                          | tokenNumber: project.tokenSymbol
+                      }}
+                      {{ project.tokenSymbol }}</span
+                    >
                   </div>
                   <div class="flex justify-content-between mb-1">
                     <span>Remaining: </span
-                    ><span>{{ project.remainTokenCount | tokenNumber: project.tokenSymbol }} {{project.tokenSymbol}}</span>
+                    ><span
+                      >{{
+                        project.remainTokenCount
+                          | tokenNumber: project.tokenSymbol
+                      }}
+                      {{ project.tokenSymbol }}</span
+                    >
                   </div>
                   <div class="flex justify-content-between mb-1">
                     <span>Developer Fee: </span><span>0.01 GAS</span>
@@ -253,7 +244,10 @@
                   >
                     <span>Your contribution:</span
                     ><span
-                      >{{ project.stakeInput | tokenNumber: project.tokenSymbol }} {{project.tokenSymbol}} ({{
+                      >{{
+                        project.stakeInput | tokenNumber: project.tokenSymbol
+                      }}
+                      {{ project.tokenSymbol }} ({{
                         (project.stakeInput / project.maxTokenSoldCount) * 100
                           | number
                       }}%)</span

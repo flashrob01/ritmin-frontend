@@ -11,6 +11,3 @@ export function processBase64Hash160(base64: string): string {
 }
 
 export const HASH160_ZERO = '0000000000000000000000000000000000000000';
-
-export const CAT_DECIMALS = 2;
-export const GAS_DECIMALS = 8;

@@ -30,7 +30,6 @@ export class MenuComponent {
   readonly state$ = this.state.select();
   readonly address$ = this.globalState.select('address');
   readonly svgAvatar$ = this.globalState.select('svgAvatar');
-  readonly catBalance$ = this.globalState.select('catBalance');
 
   constructor(
     public translate: TranslateService,
@@ -63,7 +62,7 @@ export class MenuComponent {
         {
           label: this.translate.instant('MENU.FAQ'),
           icon: 'pi pi-question',
-          command: () => this.router.navigate([''], { fragment: 'faq' }),
+          command: () => this.router.navigate([''], { fragment: 'faqs' }),
         },
       ];
       this.state.set({ menuItems: items });

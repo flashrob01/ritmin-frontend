@@ -9,8 +9,10 @@ import { NeonJSService } from './neonjs.service';
 import { NeoInvokeWriteResponse } from '../models/n3';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { RxState } from '@rx-angular/state';
-import { environment } from 'apps/nekohit/src/environments/environment';
 import { ErrorService } from './error.service';
+import { environment } from '../../../../src/environments/environment';
+import { CAT_SYMBOL, GAS_SYMBOL, TokenService } from './token.service';
+import { CREATE_GAS_FEE, STAKE_GAS_FEE } from '../../../../src/config';
 
 export interface CreateProjectArgs {
   creator: string;
@@ -41,13 +43,9 @@ export class NekohitProjectService {
     private neoline: NeolineService,
     private neonJS: NeonJSService,
     private errorService: ErrorService,
+    private tokenService: TokenService,
     @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>
   ) {}
-
-  // 0.01 GAS
-  stakefee = 1_000_000;
-  // 0.02 GAS
-  createFee = 2_000_000;
 
   public getProjects(args?: GetProjectsArgs): Observable<NekoHitProject[]> {
     const params = [
@@ -79,35 +77,29 @@ export class NekohitProjectService {
     amount: number,
     identifier: string
   ): Observable<NeoInvokeWriteResponse> {
-    const catContractHash = this.globalState.get('mainnet')
-      ? environment.mainnet.catTokenHash
-      : environment.testnet.catTokenHash;
-    const wcaContractHash = this.globalState.get('mainnet')
+    const wcaHash = this.globalState.get('mainnet')
       ? environment.mainnet.wcaContractHash
       : environment.testnet.wcaContractHash;
-    const gasContractHash = this.globalState.get('mainnet')
-      ? environment.mainnet.gasContractHash
-      : environment.testnet.gasContractHash;
     const devAddress = this.globalState.get('mainnet')
-      ? environment.mainnet.devAddress
-      : environment.testnet.devAddress;
+      ? environment.mainnet.devFeeAddress
+      : environment.testnet.devFeeAddress;
     const stakeTokens = {
-      scriptHash: catContractHash,
+      scriptHash: this.tokenService.getTokenBySymbol(CAT_SYMBOL).hash,
       operation: 'transfer',
       args: [
         NeolineService.address(from),
-        NeolineService.hash160(wcaContractHash),
+        NeolineService.hash160(wcaHash),
         NeolineService.int(amount),
         NeolineService.string(identifier),
       ],
     };
     const payFee = {
-      scriptHash: gasContractHash,
+      scriptHash: this.tokenService.getTokenBySymbol(GAS_SYMBOL).hash,
       operation: 'transfer',
       args: [
         NeolineService.address(from),
         NeolineService.address(devAddress),
-        NeolineService.int(this.stakefee),
+        NeolineService.int(STAKE_GAS_FEE),
         NeolineService.any(null),
       ],
     };
@@ -160,28 +152,26 @@ export class NekohitProjectService {
       NeolineService.bool(args.isPublic),
       NeolineService.string(args.projectTitle),
     ];
-    const wcaContractHash = this.globalState.get('mainnet')
+    const wcaHash = this.globalState.get('mainnet')
       ? environment.mainnet.wcaContractHash
       : environment.testnet.wcaContractHash;
-    const gasContractHash = this.globalState.get('mainnet')
-      ? environment.mainnet.gasContractHash
-      : environment.testnet.gasContractHash;
+    const gas = this.tokenService.getTokenBySymbol(GAS_SYMBOL);
     const devAddress = this.globalState.get('mainnet')
-      ? environment.mainnet.devAddress
-      : environment.testnet.devAddress;
+      ? environment.mainnet.devFeeAddress
+      : environment.testnet.devFeeAddress;
 
     const createProject = {
-      scriptHash: wcaContractHash,
+      scriptHash: wcaHash,
       operation: 'declareProject',
       args: parameters,
     };
     const payFee = {
-      scriptHash: gasContractHash,
+      scriptHash: gas.hash,
       operation: 'transfer',
       args: [
         NeolineService.address(args.creator),
         NeolineService.address(devAddress),
-        NeolineService.int(this.stakefee),
+        NeolineService.int(CREATE_GAS_FEE),
         NeolineService.any(null),
       ],
     };
@@ -231,9 +221,9 @@ export class NekohitProjectService {
       status: resp[15],
       stage: resp[16],
       isPublic: true,
-      tokenSymbol: this.getTokenSymbolFromTokenHash(
+      tokenSymbol: this.tokenService.getTokenByHash(
         processBase64Hash160(resp[3])
-      ),
+      ).symbol,
     };
   }
 
@@ -246,23 +236,5 @@ export class NekohitProjectService {
         linkToResult: ms[3],
       };
     });
-  }
-
-  private getTokenSymbolFromTokenHash(hash: string): string {
-    const mainnet = this.globalState.get('mainnet');
-
-    const gasToken = mainnet
-      ? environment.mainnet.gasContractHash
-      : environment.testnet.gasContractHash;
-    const catToken = mainnet
-      ? environment.mainnet.catTokenHash
-      : environment.testnet.catTokenHash;
-    if (hash === gasToken.substring(2)) {
-      return 'GAS';
-    }
-    if (hash === catToken.substring(2)) {
-      return 'CAT';
-    }
-    return 'UNKNOWN';
   }
 }
