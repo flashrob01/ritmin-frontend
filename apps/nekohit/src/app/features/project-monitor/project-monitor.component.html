@@ -201,10 +201,17 @@
               <ng-container
                 *ngIf="(address$ | async) !== null; else connectWallet"
               >
-                <!-- <div *ngIf="catBalance$ | async as cat" class="text-center">
-                  Available balance: {{ +cat | number: '1.2-2' }}
+                <div
+                  *ngIf="
+                    globalState.get('balances') &&
+                    globalState.get('balances')[project.tokenSymbol] as balance
+                  "
+                  class="text-center"
+                >
+                  Available balance:
+                  {{ balance }}
                   {{ project.tokenSymbol }}
-                </div> -->
+                </div>
                 <br />
                 <br />
 
@@ -212,13 +219,16 @@
                   <p-inputNumber
                     mode="decimal"
                     [(ngModel)]="project.stakeInput"
-                    [minFractionDigits]="getTokenDigits(project.symbol)"
-                    [maxFractionDigits]="getTokenDigits(project.symbol)"
+                    [minFractionDigits]="getTokenDigits(project.tokenSymbol)"
+                    [maxFractionDigits]="getTokenDigits(project.tokenSymbol)"
                     [showButtons]="true"
                     inputId="stacked"
                     id="supportInput"
                     [min]="0"
-                    [max]="project.remainTokenCount"
+                    [max]="
+                      project.remainTokenCount /
+                      math.pow(10, getTokenDigits(project.tokenSymbol))
+                    "
                     [suffix]="' ' + project.tokenSymbol"
                   ></p-inputNumber>
                   <label for="supportInput">Choose an amount</label>
@@ -246,22 +256,6 @@
                   </div>
                   <div class="flex justify-content-between mb-1">
                     <span>Developer Fee: </span><span>0.01 GAS</span>
-                  </div>
-
-                  <div
-                    class="flex justify-content-between"
-                    *ngIf="project.stakeInput"
-                  >
-                    <span>Your contribution:</span
-                    ><span
-                      >{{
-                        project.stakeInput | tokenNumber: project.tokenSymbol
-                      }}
-                      {{ project.tokenSymbol }} ({{
-                        (project.stakeInput / project.maxTokenSoldCount) * 100
-                          | number
-                      }}%)</span
-                    >
                   </div>
                 </div>
                 <button

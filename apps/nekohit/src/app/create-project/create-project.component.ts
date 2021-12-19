@@ -195,7 +195,7 @@ export class CreateProjectComponent {
         const args: CreateProjectArgs = {
           creator: this.globalState.get('address'),
           token: this.token.value,
-          cooldownInMs: this.cooldown,
+          cooldownInMs: this.cooldown * 60 * 60 * 1000,
           fundingGoal: this.fundingGoal * Math.pow(10, decimals),
           isPublic: this.isPublic,
           milestoneDeadlines: milestones.map((ms) =>

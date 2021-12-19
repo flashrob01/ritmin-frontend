@@ -127,8 +127,7 @@ export class ProjectMonitorComponent {
           projects
             .filter(
               (project) =>
-                // project.status !== 'PENDING' && project.status !== 'UNKNOWN'
-                project
+                project.status !== 'PENDING' && project.status !== 'UNKNOWN'
             )
             .sort((a, b) => {
               return (

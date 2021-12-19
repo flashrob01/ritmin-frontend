@@ -202,6 +202,21 @@ export class NekohitProjectService {
       );
   }
 
+  public getProject(identifier: string): Observable<NekoHitProject> {
+    const params = [sc.ContractParam.string(identifier)];
+    const scriptHash = this.globalState.get('mainnet')
+      ? environment.mainnet.wcaContractHash
+      : environment.testnet.wcaContractHash;
+    return this.neonJS.rpcRequest('queryProject', params, scriptHash).pipe(
+      catchError((err) => {
+        this.errorService.handleError(err);
+        return throwError(of([]));
+      }),
+      map((res) => JSON.parse(atob(res))),
+      map((res) => this.mapToProject(res))
+    );
+  }
+
   private mapToProject(resp: any): NekoHitProject {
     return {
       identifier: resp[0],

@@ -1,1 +1,91 @@
-works
+<ng-container *ngIf="state$ | async as s">
+  <div class="flex flex-column p-5">
+    <p-card>
+      <div class="p-4">
+        <img
+          height="50"
+          [src]="'assets/images/tokens/' + s.project.tokenSymbol + '.png'"
+        />
+        <h1>
+          {{ s.project.identifier }}
+        </h1>
+        <h2><i class="pi pi-book mr-2"></i>{{ s.project.description }}</h2>
+      </div>
+    </p-card>
+
+    <p-card>
+      <h2>ℹ️ Project Details</h2>
+
+      <p-table [value]="[s.project]">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Created at</th>
+            <th>Status</th>
+            <th>Security stake</th>
+            <th>Cooldown interval (hours)</th>
+            <th>Milestones</th>
+            <th>Threshold milestone</th>
+            <th>Supporters</th>
+            <th>Funding goal</th>
+            <th>Funding status</th>
+            <th>Last update</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-project>
+          <tr>
+            <td>
+              {{ project.creationTimestamp | date: 'medium' }}
+            </td>
+            <td>
+              <p-tag [value]="project.status"></p-tag>
+            </td>
+            <td>
+              {{
+                project.stakePer100Token * project.maxTokenSoldCount
+                  | tokenNumber: project.tokenSymbol
+              }}
+              {{ project.tokenSymbol }}
+            </td>
+            <td>
+              {{ project.coolDownInterval / 1000 / 60 / 60 | number }}
+            </td>
+            <td>
+              {{ project.nextMilestone + 1 }} / {{ project.milestonesCount }}
+            </td>
+            <td>{{ project.thresholdMilestoneIndex + 1 }}</td>
+            <td>{{ project.buyerCount }}</td>
+            <td>
+              {{
+                project.maxTokenSoldCount - project.remainTokenCount
+                  | tokenNumber: project.tokenSymbol
+              }}
+              /
+              {{ project.maxTokenSoldCount | tokenNumber: project.tokenSymbol }}
+              {{ project.tokenSymbol }}
+            </td>
+            <td>
+              {{
+                ((project.maxTokenSoldCount - project.remainTokenCount) /
+                  project.maxTokenSoldCount) *
+                  100 +
+                  '%'
+              }}
+            </td>
+            <td>{{ project.lastUpdateTimestamp | date: 'medium' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+
+    <p-card styleClass="statistic-card">
+      <div class="p-4">
+        <h2>🔥 Funding Overview</h2>
+        <p-chart
+          type="pie"
+          [data]="s.project.stakedTokensChartData"
+          [style]="{ width: '100%', height: '100px' }"
+        ></p-chart>
+      </div>
+    </p-card>
+  </div>
+</ng-container>
