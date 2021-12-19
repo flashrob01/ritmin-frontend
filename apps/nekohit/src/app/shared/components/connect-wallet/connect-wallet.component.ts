@@ -24,7 +24,7 @@ const WalletConnect: SelectItem = {
 };
 
 const initState = {
-  walletOptions: [WalletConnect, NeoLine],
+  walletOptions: [NeoLine],
   selectedWallet: { value: null },
 };
 

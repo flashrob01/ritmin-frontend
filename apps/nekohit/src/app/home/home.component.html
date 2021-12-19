@@ -69,27 +69,35 @@
   <div
     class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
   >
-    <div class="text-center text-2xl" style="width: 100%">
+    <div
+      class="text-center flex flex-column align-items-center text-2xl"
+      style="width: 100%"
+    >
       <h1 class="text-blue-title">
         {{ 'LANDING.FEATURED.TITLE' | translate }}
       </h1>
-      <div class="flex justify-content-evenly flex-wrap">
-        <a
-          class="featuredProjectCard"
-          *ngFor="let project of s.featuredProjects"
-          [routerLink]="['/project/' + encode(project.identifier)]"
-        >
-          <ritmin-featured-project [project]="project"></ritmin-featured-project
-        ></a>
+      <div style="max-width: 1000px">
+        <p class="text-2xl">
+          {{ 'LANDING.FEATURED.TEXT' | translate }}
+        </p>
       </div>
     </div>
+  </div>
+  <div class="flex justify-content-evenly flex-wrap">
+    <a
+      class="featuredProjectCard mb-4"
+      *ngFor="let project of s.featuredProjects"
+      [routerLink]="['/project/' + encode(project.identifier)]"
+    >
+      <ritmin-featured-project [project]="project"></ritmin-featured-project
+    ></a>
   </div>
   <br /><br />
   <!-- ABOUT NEKOHIT SECTION -->
   <div
-    class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
+    class="mt-2 mb-6 flex flex-column justify-content-center align-items-center"
   >
-    <div class="text-center text-2xl" style="max-width: 800px">
+    <div class="text-center text-2xl" style="max-width: 1000px">
       <h1 class="text-blue-title">{{ 'LANDING.ABOUT.TITLE' | translate }}</h1>
       <p class="text-2xl">
         {{ 'LANDING.ABOUT.TEXT' | translate }}
@@ -220,28 +228,28 @@
   </div>
 </div>
 
-<div
-  class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
-  #faqs
->
-  <div class="text-center text-2xl">
-    <h1 class="text-blue-title">{{ 'LANDING.FAQ.TITLE' | translate }}</h1>
-    <p style="max-width: 1000px">{{ 'LANDING.FAQ.SUBTITLE' | translate }}</p>
+<section #faq>
+  <div
+    class="mt-6 mb-6 flex flex-column justify-content-center align-items-center"
+  >
+    <div class="text-center text-2xl">
+      <h1 class="text-blue-title">{{ 'LANDING.FAQ.TITLE' | translate }}</h1>
+      <p style="max-width: 1000px">{{ 'LANDING.FAQ.SUBTITLE' | translate }}</p>
+    </div>
+    <div style="max-width: 1000px; width: 100%">
+      <p-accordion>
+        <p-accordionTab>
+          <ng-template pTemplate="header">{{
+            'LANDING.FAQ.QUESTION1' | translate
+          }}</ng-template>
+          <ng-template pTemplate="content">{{
+            'LANDING.FAQ.ANSWER1' | translate
+          }}</ng-template></p-accordionTab
+        >
+      </p-accordion>
+    </div>
   </div>
-  <div style="max-width: 1000px; width: 100%">
-    <p-accordion>
-      <p-accordionTab>
-        <ng-template pTemplate="header">{{
-          'LANDING.FAQ.QUESTION1' | translate
-        }}</ng-template>
-        <ng-template pTemplate="content">{{
-          'LANDING.FAQ.ANSWER1' | translate
-        }}</ng-template></p-accordionTab
-      >
-    </p-accordion>
-  </div>
-</div>
-
+</section>
 <br /><br />
 <!-- JOIN DISCORD SECTION -->
 <div class="mt-6 mb-6 surface-0 text-700 text-center">

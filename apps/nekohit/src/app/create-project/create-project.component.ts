@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { RxState } from '@rx-angular/state';
 import { ConfirmationService, SelectItem } from 'primeng/api';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   CreateProjectArgs,
   NekohitProjectService,
@@ -12,7 +12,7 @@ import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CAT_SYMBOL, TokenService } from '../core/services/token.service';
 import { BinanceService } from '../core/services/binance.service';
-import { first, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 interface MilestoneConfig {
   label: string;
@@ -49,7 +49,7 @@ const initState: CreateProjectState = {
     },
   ],
   threshold: 0,
-  selectedTokenPrice: 0,
+  selectedTokenPrice: 0.5,
 };
 
 @Component({
@@ -107,14 +107,13 @@ export class CreateProjectComponent {
     });
 
     this.state.hold(this.tokenSelected$, (event) => {
+      this.state.get('form').get('fundingGoal')?.setValue(0);
+      this.state.get('form').get('securityStake')?.setValue(0);
       const token = this.tokenService.getTokenByHash(event.value.value);
       const precision = Math.pow(10, token.decimals);
       this.binance
         .getPrice(token.symbol)
-        .pipe(
-          tap((x) => console.log('price', x)),
-          map((price) => Math.round(price * precision) / precision)
-        )
+        .pipe(map((price) => Math.round(price * precision) / precision))
         .subscribe((res) => {
           this.state.set({ selectedTokenPrice: res });
         });
@@ -151,20 +150,6 @@ export class CreateProjectComponent {
 
   get thresholdIndex(): number {
     return this.state.get('form').get('thresholdIndex')?.value;
-  }
-
-  //TODO: remove
-  calculatePrice(
-    amount: number,
-    selectedToken: SelectItem
-  ): Observable<number> {
-    const token = this.tokenService.getTokenByHash(selectedToken.value);
-    const precision = Math.pow(10, token.decimals);
-    return this.binance.getPrice(token.symbol).pipe(
-      first(),
-      tap((x) => console.log('price', x)),
-      map((price) => Math.round(price * amount * precision) / precision)
-    );
   }
 
   getMinDateForMs(index: number): Date {
@@ -225,6 +210,7 @@ export class CreateProjectComponent {
           stakePer100Token: (this.securityStake / this.fundingGoal) * 100,
           thresholdIndex: this.thresholdIndex,
         };
+        console.log('createProjectsArgs', args);
         this.projectService.createProject(args).subscribe((res) => {
           this.dynamicDialog.close();
           this.notification.tx(res.txid);

@@ -13,6 +13,7 @@ import { ErrorService } from './error.service';
 import { environment } from '../../../../src/environments/environment';
 import { CAT_SYMBOL, GAS_SYMBOL, TokenService } from './token.service';
 import { CREATE_GAS_FEE, STAKE_GAS_FEE } from '../../../../src/config';
+import multiavatar from '@multiavatar/multiavatar';
 
 export interface CreateProjectArgs {
   creator: string;
@@ -209,14 +210,14 @@ export class NekohitProjectService {
       token: wallet.getAddressFromScriptHash(processBase64Hash160(resp[3])),
       creationTimestamp: new Date(resp[4]),
       stakePer100Token: resp[5] / 100,
-      maxTokenSoldCount: resp[6] / 100,
+      maxTokenSoldCount: resp[6],
       milestonesCount: resp[7],
       milestones: this.parseMilestones(resp[8]),
       thresholdMilestoneIndex: resp[9],
       coolDownInterval: resp[10],
       lastUpdateTimestamp: resp[11] === -1 ? new Date(-1) : new Date(resp[11]),
       nextMilestone: resp[12],
-      remainTokenCount: resp[13] / 100,
+      remainTokenCount: resp[13],
       buyerCount: resp[14],
       status: resp[15],
       stage: resp[16],
@@ -224,6 +225,9 @@ export class NekohitProjectService {
       tokenSymbol: this.tokenService.getTokenByHash(
         processBase64Hash160(resp[3])
       ).symbol,
+      svg: multiavatar(
+        wallet.getAddressFromScriptHash(processBase64Hash160(resp[2]))
+      ),
     };
   }
 

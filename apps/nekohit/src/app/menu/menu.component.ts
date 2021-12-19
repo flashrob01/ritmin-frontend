@@ -62,7 +62,7 @@ export class MenuComponent {
         {
           label: this.translate.instant('MENU.FAQ'),
           icon: 'pi pi-question',
-          command: () => this.router.navigate([''], { fragment: 'faqs' }),
+          command: () => this.router.navigate(['/'], { fragment: 'faq' }),
         },
       ];
       this.state.set({ menuItems: items });

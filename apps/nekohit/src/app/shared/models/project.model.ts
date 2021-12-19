@@ -23,6 +23,7 @@ export interface NekoHitProject {
   stakedTokensChartData?: any; // used to bind new attributes to the project
   stakeInput?: number; // used to bind new attributes to the project
   tokenSymbol?: string;
+  svg?: string; // for the avatar
 }
 
 export interface Milestone {

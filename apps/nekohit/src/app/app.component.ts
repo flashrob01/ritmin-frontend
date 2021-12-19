@@ -10,7 +10,6 @@ import multiavatar from '@multiavatar/multiavatar';
 import { environment } from '../environments/environment';
 import { NotificationService } from './core/services/notification.service';
 import { MessageService } from 'primeng/api';
-import { BinanceService } from './core/services/binance.service';
 
 @Component({
   selector: 'ritmin-frontend-root',
@@ -19,12 +18,11 @@ import { BinanceService } from './core/services/binance.service';
 })
 export class AppComponent {
   title = 'nekohit';
-  showPromotion = true;
+  showPromotion = false;
 
   readonly getBalances$ = this.globalState.select('address').pipe(
     switchMap((address) =>
       this.neoline.getBalance().pipe(
-        tap((balances) => console.log(balances)),
         map((balances) => {
           const res = balances[address];
           const result: { [symbol: string]: number } = {};

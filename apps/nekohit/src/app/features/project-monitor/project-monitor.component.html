@@ -13,12 +13,13 @@
   >
     <ng-template pTemplate="header">
       <tr class="project-title-row">
-        <th colspan="6">
+        <th colspan="7">
           <h2>Browse Projects</h2>
         </th>
       </tr>
       <tr class="project-header-row">
         <th rowspan="2"><span class="emoji">📝</span> Description</th>
+        <th rowspan="2"><span class="emoji">📝</span> Creator</th>
         <th rowspan="2"><span class="emoji">⌛</span> Status</th>
         <th colspan="2"><span class="emoji">⏱️</span> Duration</th>
         <th colspan="2"><span class="emoji">💰</span> Staking</th>
@@ -93,6 +94,15 @@
             </div>
           </div>
         </td>
+        <td>
+          <div class="flex justify-content-center align-items-center">
+            <ritmin-avatar
+              [pTooltip]="project.creator"
+              [svg]="project.svg"
+              [pxWidth]="35"
+            ></ritmin-avatar>
+          </div>
+        </td>
         <td class="text-center">
           <p-tag
             [value]="project.status"
@@ -142,13 +152,13 @@
         </td>
         <td>
           {{
-            (project.stakePer100Token / 100) * project.maxTokenSoldCount
+            project.stakePer100Token * project.maxTokenSoldCount
               | tokenNumber: project.tokenSymbol
           }}
           {{ project.tokenSymbol }} /
           {{
             (project.thresholdMilestoneIndex / (project.milestonesCount - 1)
-              | tokenNumber: project.tokenSymbol) || 0
+              | number) || 0
           }}
         </td>
       </tr>

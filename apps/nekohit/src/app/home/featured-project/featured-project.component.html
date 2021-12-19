@@ -9,15 +9,21 @@
       >
         <div class="flex flex-row justify-content-between">
           <span class="font-semibold">{{ s.project.identifier }}</span>
-
-          <small class="white-space-nowrap featuredProjectTokenOverview"
-            >{{
-              s.project.maxTokenSoldCount - s.project.remainTokenCount | number
-            }}/{{ s.project.maxTokenSoldCount | number }} CAT</small
-          >
         </div>
       </div>
     </div>
+    <p-divider align="center" styleClass="custom-divider">
+      <p-tag severity="info">
+        <span class="white-space-nowrap"
+          >{{
+            s.project.maxTokenSoldCount - s.project.remainTokenCount | number
+          }}
+          /
+          {{ s.project.maxTokenSoldCount | tokenNumber: s.project.tokenSymbol }}
+          {{ s.project.tokenSymbol }}</span
+        >
+      </p-tag>
+    </p-divider>
     <ng-template pTemplate="footer">
       <div class="flex flex-column">
         <div class="flex justify-content-between mb-2">
