@@ -1,91 +1,145 @@
 <ng-container *ngIf="state$ | async as s">
-  <div class="flex flex-column p-5">
-    <p-card>
-      <div class="p-4">
-        <img
-          height="50"
-          [src]="'assets/images/tokens/' + s.project.tokenSymbol + '.png'"
-        />
-        <h1>
-          {{ s.project.identifier }}
-        </h1>
-        <h2><i class="pi pi-book mr-2"></i>{{ s.project.description }}</h2>
-      </div>
-    </p-card>
+  <div class="flex flex-column p-5 cards-container">
+    <div class="card-container">
+      <p-card>
+        <div class="p-4 flex flex-wrap justify-content-between">
+          <div>
+            <img
+              height="50"
+              [src]="'assets/images/tokens/' + s.project.tokenSymbol + '.png'"
+            />
+            <h1>
+              {{ s.project.identifier }}
+            </h1>
+            <h2><i class="pi pi-book mr-2"></i>{{ s.project.description }}</h2>
+          </div>
+          <div class="statistics-container">
+            <p-chart
+              type="pie"
+              [data]="s.project.stakedTokensChartData"
+              [style]="{ width: '100%', height: '100px' }"
+            ></p-chart>
+          </div>
+        </div>
+      </p-card>
+    </div>
 
-    <p-card>
-      <h2>ℹ️ Project Details</h2>
-
-      <p-table [value]="[s.project]">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Created at</th>
-            <th>Status</th>
-            <th>Security stake</th>
-            <th>Cooldown interval (hours)</th>
-            <th>Milestones</th>
-            <th>Threshold milestone</th>
-            <th>Supporters</th>
-            <th>Funding goal</th>
-            <th>Funding status</th>
-            <th>Last update</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-project>
-          <tr>
-            <td>
-              {{ project.creationTimestamp | date: 'medium' }}
-            </td>
-            <td>
-              <p-tag [value]="project.status"></p-tag>
-            </td>
-            <td>
-              {{
-                project.stakePer100Token * project.maxTokenSoldCount
-                  | tokenNumber: project.tokenSymbol
-              }}
-              {{ project.tokenSymbol }}
-            </td>
-            <td>
-              {{ project.coolDownInterval / 1000 / 60 / 60 | number }}
-            </td>
-            <td>
-              {{ project.nextMilestone + 1 }} / {{ project.milestonesCount }}
-            </td>
-            <td>{{ project.thresholdMilestoneIndex + 1 }}</td>
-            <td>{{ project.buyerCount }}</td>
-            <td>
-              {{
-                project.maxTokenSoldCount - project.remainTokenCount
-                  | tokenNumber: project.tokenSymbol
-              }}
-              /
-              {{ project.maxTokenSoldCount | tokenNumber: project.tokenSymbol }}
-              {{ project.tokenSymbol }}
-            </td>
-            <td>
-              {{
-                ((project.maxTokenSoldCount - project.remainTokenCount) /
-                  project.maxTokenSoldCount) *
-                  100 +
-                  '%'
-              }}
-            </td>
-            <td>{{ project.lastUpdateTimestamp | date: 'medium' }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
-
-    <p-card styleClass="statistic-card">
-      <div class="p-4">
+    <!--  <div class="card-container">
+      <p-card styleClass="statistic-card">
         <h2>🔥 Funding Overview</h2>
         <p-chart
           type="pie"
           [data]="s.project.stakedTokensChartData"
           [style]="{ width: '100%', height: '100px' }"
         ></p-chart>
-      </div>
-    </p-card>
+      </p-card>
+    </div>
+ -->
+    <div class="card-container">
+      <p-card>
+        <h2>ℹ️ Project Details</h2>
+
+        <p-table [value]="[s.project]">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Created at</th>
+              <th>Status</th>
+              <th>Security stake</th>
+              <th>Cooldown interval (hours)</th>
+              <th>Milestones</th>
+              <th>Threshold milestone</th>
+              <th>Supporters</th>
+              <th>Funding goal</th>
+              <th>Funding status</th>
+              <th>Last update</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-project>
+            <tr>
+              <td>
+                {{ project.creationTimestamp | date: 'medium' }}
+              </td>
+              <td>
+                <p-tag [value]="project.status"></p-tag>
+              </td>
+              <td>
+                {{
+                  project.stakePer100Token * project.maxTokenSoldCount
+                    | tokenNumber: project.tokenSymbol
+                }}
+                {{ project.tokenSymbol }}
+              </td>
+              <td>
+                {{ project.coolDownInterval / 1000 / 60 / 60 | number }}
+              </td>
+              <td>
+                {{ project.nextMilestone + 1 }} / {{ project.milestonesCount }}
+              </td>
+              <td>
+                {{ project.milestones[project.thresholdMilestoneIndex].title }}
+              </td>
+              <td>{{ project.buyerCount }}</td>
+              <td>
+                {{
+                  project.maxTokenSoldCount - project.remainTokenCount
+                    | tokenNumber: project.tokenSymbol
+                }}
+                /
+                {{
+                  project.maxTokenSoldCount | tokenNumber: project.tokenSymbol
+                }}
+                {{ project.tokenSymbol }}
+              </td>
+              <td>
+                {{
+                  ((project.maxTokenSoldCount - project.remainTokenCount) /
+                    project.maxTokenSoldCount) *
+                    100 +
+                    '%'
+                }}
+              </td>
+              <td>{{ project.lastUpdateTimestamp | date: 'medium' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <div class="card-container">
+      <p-card>
+        <h2>📋 Milestones</h2>
+
+        <p-timeline
+          [value]="getProjectTimeline(s.project)"
+          layout="horizontal"
+          styleClass="milestone-timeline"
+          align="bottom"
+        >
+          <ng-template pTemplate="marker" let-event>
+            <div
+              [ngClass]="event.class"
+              [style.backgroundColor]="event.color"
+              [style.borderColor]="event.borderColor"
+            ></div>
+          </ng-template>
+          <ng-template pTemplate="content" let-milestone>
+            <div
+              class="flex flex-column justify-content-evenly text-sm"
+              style="height: 30px"
+            >
+              <span>{{ milestone.text }}</span>
+              <small>{{ milestone.subtext }}</small>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="opposite" let-milestone>
+            <div class="flex flex-column justify-content-evenly text-sm">
+              <span [hidden]="!milestone.showDate">{{
+                milestone.date | date
+              }}</span>
+            </div>
+          </ng-template>
+        </p-timeline>
+      </p-card>
+    </div>
   </div>
 </ng-container>
