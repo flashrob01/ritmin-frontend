@@ -8,40 +8,46 @@
     p-fluid
   "
 >
-  <p-card>
-    <ng-template pTemplate="header">
-      <div class="p-4"><h2>Mint CAT from fUSDT</h2></div></ng-template
-    >
-    <p class="text-lg">How much CAT do you want to mint?</p>
-    <p-inputNumber
-      [(ngModel)]="mintAmount"
-      mode="decimal"
-      [minFractionDigits]="8"
-      [maxFractionDigits]="8"
-      [showButtons]="true"
-    ></p-inputNumber>
+  <h1 class="text-blue-title">Exchange</h1>
+  <div style="max-width: 1000px" class="text-center">
+    <p class="text-2xl">This exchange lets you swap between fUSDT and CAT.</p>
+    <p class="text-2xl font-semibold">1 CAT = 0.5 fUSDT</p>
 
-    <ng-template pTemplate="footer">
-      <button pButton label="Mint" (click)="mint()"></button>
-    </ng-template>
-  </p-card>
-  <br /><br />
-  <p-card>
-    <ng-template pTemplate="header">
-      <div class="p-4">
-        <h2>Burn CAT for fUSDT</h2>
-      </div>
-    </ng-template>
-    <p class="text-lg">How much CAT do you want to burn?</p>
-    <p-inputNumber
-      [(ngModel)]="burnAmount"
-      mode="decimal"
-      [minFractionDigits]="8"
-      [maxFractionDigits]="8"
-      [showButtons]="true"
-    ></p-inputNumber>
-    <ng-template pTemplate="footer">
-      <button pButton label="Burn" (click)="destroy()"></button>
-    </ng-template>
-  </p-card>
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="p-4"><h2>Mint CAT from fUSDT</h2></div></ng-template
+      >
+      <p class="text-lg">How much CAT do you want to mint?</p>
+      <p-inputNumber
+        [(ngModel)]="mintAmount"
+        mode="decimal"
+        [minFractionDigits]="8"
+        [maxFractionDigits]="8"
+        [showButtons]="true"
+      ></p-inputNumber>
+
+      <ng-template pTemplate="footer">
+        <button pButton label="Mint" (click)="mint()"></button>
+      </ng-template>
+    </p-card>
+    <br /><br />
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="p-4">
+          <h2>Burn CAT for fUSDT</h2>
+        </div>
+      </ng-template>
+      <p class="text-lg">How much CAT do you want to burn?</p>
+      <p-inputNumber
+        [(ngModel)]="burnAmount"
+        mode="decimal"
+        [minFractionDigits]="8"
+        [maxFractionDigits]="8"
+        [showButtons]="true"
+      ></p-inputNumber>
+      <ng-template pTemplate="footer">
+        <button pButton label="Burn" (click)="destroy()"></button>
+      </ng-template>
+    </p-card>
+  </div>
 </div>
