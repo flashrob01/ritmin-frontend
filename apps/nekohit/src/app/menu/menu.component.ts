@@ -100,6 +100,12 @@ export class MenuComponent {
                 styleClass: 'loggedInMenuItem',
               },
             ],
+          },
+          {
+            label: this.translate.instant('MENU.EXCHANGE'),
+            icon: 'pi pi-wallet',
+            routerLink: 'exchange',
+            styleClass: 'loggedInMenuItem',
           }
         );
         this.state.set({ menuItems: baseMenuItems });

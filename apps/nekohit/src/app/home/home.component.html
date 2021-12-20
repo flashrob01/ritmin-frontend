@@ -87,7 +87,7 @@
     <a
       class="featuredProjectCard mb-4"
       *ngFor="let project of s.featuredProjects"
-      [routerLink]="['/project/' + encode(project.identifier)]"
+      [routerLink]="['projects/' + encode(project.identifier)]"
     >
       <ritmin-featured-project [project]="project"></ritmin-featured-project
     ></a>

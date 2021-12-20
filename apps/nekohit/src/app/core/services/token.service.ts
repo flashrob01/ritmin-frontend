@@ -75,7 +75,10 @@ export class TokenService {
     ];
   }
 
-  public getTokenBySymbol(symbol: string): Token {
+  public getTokenBySymbol(symbol: string | undefined): Token {
+    if (symbol === undefined) {
+      throw new Error('symbol is undefined');
+    }
     const result = this.getTokens().filter((token) => token.symbol === symbol);
     if (result.length === 0) {
       throw new Error('no such token with symbol ' + symbol);

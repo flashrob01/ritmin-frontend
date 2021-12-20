@@ -2,39 +2,59 @@
   <div class="flex flex-column p-5 cards-container">
     <div class="card-container">
       <p-card>
-        <div class="p-4 flex flex-wrap justify-content-between">
-          <div>
-            <img
-              height="50"
-              [src]="'assets/images/tokens/' + s.project.tokenSymbol + '.png'"
-            />
-            <h1>
-              {{ s.project.identifier }}
-            </h1>
-            <h2><i class="pi pi-book mr-2"></i>{{ s.project.description }}</h2>
+        <div class="flex flex-column">
+          <div class="p-4 flex flex-wrap justify-content-between">
+            <div class="grid w-full">
+              <div class="col-12 md:col-8">
+                <div>
+                  <img
+                    height="50"
+                    [src]="
+                      'assets/images/tokens/' + s.project.tokenSymbol + '.png'
+                    "
+                  />
+                  <h1>
+                    {{ s.project.identifier }}
+                  </h1>
+                  <h2>{{ s.project.description }}</h2>
+                </div>
+              </div>
+              <div class="col-12 md:col-4 flex justify-content-center">
+                <div class="statistics-container">
+                  <p-chart
+                    type="pie"
+                    [data]="s.project.stakedTokensChartData"
+                    [style]="{ width: '100%', height: '100px' }"
+                  ></p-chart>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="statistics-container">
-            <p-chart
-              type="pie"
-              [data]="s.project.stakedTokensChartData"
-              [style]="{ width: '100%', height: '100px' }"
-            ></p-chart>
+          <p-divider></p-divider>
+          <div *ngIf="s.project.creator === globalState.get('address')">
+            <div *ngIf="s.project.status === 'PENDING'">
+              <p>
+                Your project is currently in the <p-tag>PENDING</p-tag> stage
+                which means that you have to stake tokens in order to make the
+                project eligible for funding. Stake
+                {{
+                  s.project.stakePer100Token * s.project.maxTokenSoldCount
+                    | tokenNumber: s.project.tokenSymbol
+                }}
+                {{ s.project.tokenSymbol }} now to open up the project for
+                funding.
+              </p>
+              <button
+                pButton
+                label="Stake"
+                (click)="stakeTokenBtnClicked$.next()"
+              ></button>
+            </div>
           </div>
         </div>
       </p-card>
     </div>
 
-    <!--  <div class="card-container">
-      <p-card styleClass="statistic-card">
-        <h2>🔥 Funding Overview</h2>
-        <p-chart
-          type="pie"
-          [data]="s.project.stakedTokensChartData"
-          [style]="{ width: '100%', height: '100px' }"
-        ></p-chart>
-      </p-card>
-    </div>
- -->
     <div class="card-container">
       <p-card>
         <h2>ℹ️ Project Details</h2>
@@ -139,6 +159,25 @@
             </div>
           </ng-template>
         </p-timeline>
+
+        <p-table [value]="s.project.milestones">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Deadline</th>
+              <th>Link</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-ms>
+            <tr>
+              <td>{{ ms.title }}</td>
+              <td>{{ ms.description }}</td>
+              <td>{{ ms.endTimestamp | date: 'long' }}</td>
+              <td>{{ ms.linkToResult }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
       </p-card>
     </div>
   </div>

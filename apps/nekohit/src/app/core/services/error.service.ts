@@ -6,9 +6,11 @@ import { throwError } from 'rxjs';
 export class ErrorService {
   constructor(private messageService: MessageService) {}
 
-  public handleError(error: Error | string) {
+  public handleError(error: any) {
     let message;
-    if (error instanceof Error) {
+    if (error.description != null) {
+      message = error.description;
+    } else if (error.message != null) {
       message = error.message;
     } else {
       message = error;

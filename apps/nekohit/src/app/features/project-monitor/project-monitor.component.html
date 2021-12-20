@@ -219,15 +219,25 @@
                   <p-inputNumber
                     mode="decimal"
                     [(ngModel)]="project.stakeInput"
-                    [minFractionDigits]="getTokenDigits(project.tokenSymbol)"
-                    [maxFractionDigits]="getTokenDigits(project.tokenSymbol)"
+                    [minFractionDigits]="
+                      tokenService.getTokenBySymbol(project.tokenSymbol)
+                        .decimals
+                    "
+                    [maxFractionDigits]="
+                      tokenService.getTokenBySymbol(project.tokenSymbol)
+                        .decimals
+                    "
                     [showButtons]="true"
                     inputId="stacked"
                     id="supportInput"
                     [min]="0"
                     [max]="
                       project.remainTokenCount /
-                      math.pow(10, getTokenDigits(project.tokenSymbol))
+                      math.pow(
+                        10,
+                        tokenService.getTokenBySymbol(project.tokenSymbol)
+                          .decimals
+                      )
                     "
                     [suffix]="' ' + project.tokenSymbol"
                   ></p-inputNumber>

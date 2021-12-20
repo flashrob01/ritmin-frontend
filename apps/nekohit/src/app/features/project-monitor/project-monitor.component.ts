@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NotificationService } from '../../core/services/notification.service';
 import { NekohitProjectService } from '../../core/services/project.service';
+import { TokenService } from '../../core/services/token.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { NekoHitProject } from '../../shared/models/project.model';
 
@@ -118,6 +119,7 @@ export class ProjectMonitorComponent {
     private state: RxState<ProjectMonitorState>,
     private projectService: NekohitProjectService,
     private notification: NotificationService,
+    public tokenService: TokenService,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {
     this.state.connect(
@@ -164,27 +166,19 @@ export class ProjectMonitorComponent {
 
   private stakeTokens(project: NekoHitProject): void {
     const from = this.globalState.get('address');
-    let multiplier = 0;
-    if (project.tokenSymbol === 'CAT') {
-      multiplier = 100;
-    }
-    if (project.tokenSymbol === 'GAS') {
-      multiplier = 100000000;
-    }
+    const decimals = this.tokenService.getTokenBySymbol(
+      project.tokenSymbol
+    ).decimals;
+    const multiplier = Math.pow(10, decimals);
     this.projectService
       .stakeTokens(
         from,
         (project.stakeInput || 0) * multiplier,
-        project.identifier
+        project.identifier,
+        project.token
       )
       .subscribe((res) => {
         this.notification.tx(res.txid);
       });
-  }
-
-  public getTokenDigits(symbol: string): number {
-    if (symbol === 'CAT') {
-      return 2;
-    } else return 8;
   }
 }

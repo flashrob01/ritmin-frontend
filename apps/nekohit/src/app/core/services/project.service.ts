@@ -11,7 +11,7 @@ import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { RxState } from '@rx-angular/state';
 import { ErrorService } from './error.service';
 import { environment } from '../../../../src/environments/environment';
-import { CAT_SYMBOL, GAS_SYMBOL, TokenService } from './token.service';
+import { GAS_SYMBOL, TokenService } from './token.service';
 import { CREATE_GAS_FEE, STAKE_GAS_FEE } from '../../../../src/config';
 import multiavatar from '@multiavatar/multiavatar';
 
@@ -76,7 +76,8 @@ export class NekohitProjectService {
   public stakeTokens(
     from: string,
     amount: number,
-    identifier: string
+    identifier: string,
+    tokenHash: string
   ): Observable<NeoInvokeWriteResponse> {
     const wcaHash = this.globalState.get('mainnet')
       ? environment.mainnet.wcaContractHash
@@ -85,7 +86,7 @@ export class NekohitProjectService {
       ? environment.mainnet.devFeeAddress
       : environment.testnet.devFeeAddress;
     const stakeTokens = {
-      scriptHash: this.tokenService.getTokenBySymbol(CAT_SYMBOL).hash,
+      scriptHash: tokenHash,
       operation: 'transfer',
       args: [
         NeolineService.address(from),

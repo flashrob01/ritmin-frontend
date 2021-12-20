@@ -1,8 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RxState } from '@rx-angular/state';
+import { Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { NotificationService } from '../../core/services/notification.service';
 import { NekohitProjectService } from '../../core/services/project.service';
+import { TokenService } from '../../core/services/token.service';
+import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { NekoHitProject } from '../../shared/models/project.model';
 
 interface ProjectDetailsState {
@@ -27,6 +31,7 @@ interface ProjectTimeline {
 })
 export class ProjectDetailsComponent {
   state$ = this.state.select();
+  stakeTokenBtnClicked$ = new Subject<void>();
 
   loadProject$ = this.route.params.pipe(
     switchMap((param) =>
@@ -39,9 +44,13 @@ export class ProjectDetailsComponent {
   constructor(
     private state: RxState<ProjectDetailsState>,
     private route: ActivatedRoute,
-    private projectService: NekohitProjectService
+    private projectService: NekohitProjectService,
+    @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
+    private notification: NotificationService,
+    private tokenService: TokenService
   ) {
     this.state.connect('project', this.loadProject$);
+    this.state.hold(this.stakeTokenBtnClicked$, () => this.stakeTokens());
   }
 
   private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
@@ -60,6 +69,21 @@ export class ProjectDetailsComponent {
     };
     project.stakedTokensChartData = data;
     return project;
+  }
+
+  private stakeTokens(): void {
+    const from = this.globalState.get('address');
+    const project = this.state.get('project');
+    this.projectService
+      .stakeTokens(
+        from,
+        project.stakePer100Token * project.maxTokenSoldCount,
+        project.identifier,
+        this.tokenService.getTokenBySymbol(project.tokenSymbol).hash
+      )
+      .subscribe((res) => {
+        this.notification.tx(res.txid);
+      });
   }
 
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {

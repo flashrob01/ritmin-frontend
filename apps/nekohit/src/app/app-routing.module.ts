@@ -27,6 +27,14 @@ const routes: Routes = [
         (m) => m.ProjectDetailsModule
       ),
   },
+  {
+    path: 'exchange',
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./features/exchange/exchange.module').then(
+        (m) => m.ExchangeModule
+      ),
+  },
 ];
 
 @NgModule({
