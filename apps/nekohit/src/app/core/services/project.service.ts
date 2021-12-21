@@ -74,7 +74,6 @@ export class NekohitProjectService {
   }
 
   public stakeTokens(
-    from: string,
     amount: number,
     identifier: string,
     tokenHash: string
@@ -85,6 +84,7 @@ export class NekohitProjectService {
     const devAddress = this.globalState.get('mainnet')
       ? environment.mainnet.devFeeAddress
       : environment.testnet.devFeeAddress;
+    const from = this.globalState.get('address');
     const stakeTokens = {
       scriptHash: tokenHash,
       operation: 'transfer',

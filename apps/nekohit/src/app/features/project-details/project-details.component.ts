@@ -122,11 +122,9 @@ export class ProjectDetailsComponent {
   }
 
   private stakeTokens(): void {
-    const from = this.globalState.get('address');
     const project = this.state.get('project');
     this.projectService
       .stakeTokens(
-        from,
         project.stakePer100Token * project.maxTokenSoldCount,
         project.identifier,
         this.tokenService.getTokenBySymbol(project.tokenSymbol).hash

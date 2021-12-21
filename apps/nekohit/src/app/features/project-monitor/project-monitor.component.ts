@@ -165,17 +165,15 @@ export class ProjectMonitorComponent {
   }
 
   private stakeTokens(project: NekoHitProject): void {
-    const from = this.globalState.get('address');
     const decimals = this.tokenService.getTokenBySymbol(
       project.tokenSymbol
     ).decimals;
     const multiplier = Math.pow(10, decimals);
     this.projectService
       .stakeTokens(
-        from,
         (project.stakeInput || 0) * multiplier,
         project.identifier,
-        project.token
+        this.tokenService.getTokenBySymbol(project.tokenSymbol).hash
       )
       .subscribe((res) => {
         this.notification.tx(res.txid);
