@@ -1,16 +1,23 @@
 import { Component, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RxState } from '@rx-angular/state';
+import { CountdownConfig } from 'ngx-countdown';
 import { Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { NotificationService } from '../../core/services/notification.service';
 import { NekohitProjectService } from '../../core/services/project.service';
 import { TokenService } from '../../core/services/token.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
-import { NekoHitProject } from '../../shared/models/project.model';
+import { Milestone, NekoHitProject } from '../../shared/models/project.model';
 
 interface ProjectDetailsState {
   project: NekoHitProject;
+  securityStake: number;
+  proofOfWork: string;
+  timeline: ProjectTimeline[];
+  openMilestones: Milestone[];
+  selectedMilestone: Milestone;
+  countdownConfig: CountdownConfig;
 }
 
 interface ProjectTimeline {
@@ -31,7 +38,10 @@ interface ProjectTimeline {
 })
 export class ProjectDetailsComponent {
   state$ = this.state.select();
-  stakeTokenBtnClicked$ = new Subject<void>();
+  stakeTokenBtnClicked$ = new Subject<{ target: any }>();
+  completeMsBtnClicked$ = new Subject<void>();
+  completeProjectBtnClicked$ = new Subject<void>();
+  securityStakeAmount = 0;
 
   loadProject$ = this.route.params.pipe(
     switchMap((param) =>
@@ -39,6 +49,37 @@ export class ProjectDetailsComponent {
         .getProject(decodeURIComponent(param.id))
         .pipe(map((project) => this.mapChartDataToProject(project)))
     )
+  );
+
+  updateTimeline$ = this.state
+    .select('project')
+    .pipe(map((project) => this.getProjectTimeline(project)));
+  updateSecurityStake$ = this.state
+    .select('project')
+    .pipe(
+      map((project) => project.stakePer100Token * project.maxTokenSoldCount)
+    );
+  updateOpenMilestones$ = this.state
+    .select('project')
+    .pipe(
+      map((project) =>
+        project.milestones.filter(
+          (ms) => ms.endTimestamp > new Date() && ms.linkToResult === null
+        )
+      )
+    );
+
+  updateCountdownConfig$ = this.state.select('project').pipe(
+    map((project) => {
+      const countdownConfig: CountdownConfig = {
+        leftTime:
+          (project.lastUpdateTimestamp.getTime() +
+            project.coolDownInterval -
+            new Date().getTime()) /
+          1000,
+      };
+      return countdownConfig;
+    })
   );
 
   constructor(
@@ -49,8 +90,17 @@ export class ProjectDetailsComponent {
     private notification: NotificationService,
     private tokenService: TokenService
   ) {
+    this.state.set({ proofOfWork: '' });
     this.state.connect('project', this.loadProject$);
+    this.state.connect('securityStake', this.updateSecurityStake$);
+    this.state.connect('openMilestones', this.updateOpenMilestones$);
+    this.state.connect('timeline', this.updateTimeline$);
+    this.state.connect('countdownConfig', this.updateCountdownConfig$);
     this.state.hold(this.stakeTokenBtnClicked$, () => this.stakeTokens());
+    this.state.hold(this.completeMsBtnClicked$, () => this.completeMilestone());
+    this.state.hold(this.completeProjectBtnClicked$, () =>
+      this.completeProject()
+    );
   }
 
   private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
@@ -80,6 +130,35 @@ export class ProjectDetailsComponent {
         project.stakePer100Token * project.maxTokenSoldCount,
         project.identifier,
         this.tokenService.getTokenBySymbol(project.tokenSymbol).hash
+      )
+      .subscribe((res) => {
+        this.notification.tx(res.txid);
+      });
+  }
+
+  private completeProject(): void {
+    const project = this.state.get('project');
+    this.projectService.finishProject(project.identifier).subscribe((res) => {
+      this.notification.tx(res.txid);
+    });
+  }
+
+  private completeMilestone(): void {
+    const project = this.state.get('project');
+    console.log('value', this.state.get('selectedMilestone'));
+    const ms = this.state.get('selectedMilestone');
+    let msIndex = project.nextMilestone;
+    project.milestones.forEach((milestone, i) => {
+      if (ms.endTimestamp === milestone.endTimestamp) {
+        msIndex = i;
+      }
+    });
+
+    this.projectService
+      .finishMilestone(
+        project.identifier,
+        msIndex,
+        this.state.get('proofOfWork')
       )
       .subscribe((res) => {
         this.notification.tx(res.txid);

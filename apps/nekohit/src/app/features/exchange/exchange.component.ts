@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { NotificationService } from '../../core/services/notification.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { ExchangeService } from './exchange.service';
@@ -9,7 +9,7 @@ import { RxState } from '@rx-angular/state';
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.css'],
 })
-export class ExchangeComponent implements OnInit {
+export class ExchangeComponent {
   mintAmount = 0;
   burnAmount = 0;
 
@@ -18,8 +18,6 @@ export class ExchangeComponent implements OnInit {
     private notification: NotificationService,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {}
-
-  ngOnInit(): void {}
 
   mint(): void {
     this.exchange.mint(this.mintAmount * 100 * 5000).subscribe((res) => {

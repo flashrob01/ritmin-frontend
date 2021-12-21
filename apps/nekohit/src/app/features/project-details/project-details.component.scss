@@ -6,6 +6,10 @@ h1 {
   max-width: 250px;
 }
 
+::ng-deep .actionCard {
+  min-height: 360px;
+}
+
 .cards-container {
   background-color: #f8f8f8;
 }

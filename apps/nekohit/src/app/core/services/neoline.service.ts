@@ -86,7 +86,9 @@ export class NeolineService {
     window.addEventListener(N3READY, () => {
       this.N3_READY_EVENT.next();
     });
-    window.addEventListener(READY, () => this.N2_READY_EVENT.next());
+    window.addEventListener(READY, () => {
+      this.N2_READY_EVENT.next();
+    });
     window.addEventListener(CONNECTED, (response) =>
       console.log('CONNECTED', response)
     );

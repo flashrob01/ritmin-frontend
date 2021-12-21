@@ -1,5 +1,5 @@
 <ng-container *ngIf="state$ | async as s">
-  <div class="flex flex-column p-5 cards-container">
+  <div class="flex flex-column p-5 cards-container" *ngIf="s.project">
     <div class="card-container">
       <p-card>
         <div class="flex flex-column">
@@ -10,20 +10,20 @@
                   <img
                     height="50"
                     [src]="
-                      'assets/images/tokens/' + s.project.tokenSymbol + '.png'
+                      'assets/images/tokens/' + s.project?.tokenSymbol + '.png'
                     "
                   />
                   <h1>
-                    {{ s.project.identifier }}
+                    {{ s.project?.identifier }}
                   </h1>
-                  <h2>{{ s.project.description }}</h2>
+                  <h2>{{ s.project?.description }}</h2>
                 </div>
               </div>
               <div class="col-12 md:col-4 flex justify-content-center">
                 <div class="statistics-container">
                   <p-chart
                     type="pie"
-                    [data]="s.project.stakedTokensChartData"
+                    [data]="s.project?.stakedTokensChartData"
                     [style]="{ width: '100%', height: '100px' }"
                   ></p-chart>
                 </div>
@@ -31,24 +31,161 @@
             </div>
           </div>
           <p-divider></p-divider>
-          <div *ngIf="s.project.creator === globalState.get('address')">
-            <div *ngIf="s.project.status === 'PENDING'">
-              <p>
-                Your project is currently in the <p-tag>PENDING</p-tag> stage
-                which means that you have to stake tokens in order to make the
-                project eligible for funding. Stake
-                {{
-                  s.project.stakePer100Token * s.project.maxTokenSoldCount
-                    | tokenNumber: s.project.tokenSymbol
-                }}
-                {{ s.project.tokenSymbol }} now to open up the project for
-                funding.
-              </p>
-              <button
-                pButton
-                label="Stake"
-                (click)="stakeTokenBtnClicked$.next()"
-              ></button>
+          <div *ngIf="s.project?.creator === globalState.get('address')">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Stake</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'PENDING' ? 'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'PENDING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p>
+                      Your project is currently in the "pending" stage which
+                      means that you have to stake tokens in order to make the
+                      project eligible for funding.
+                    </p>
+                    <div class="text-center">
+                      <h3>
+                        Stake Amount:
+                        {{
+                          s.securityStake | tokenNumber: s.project.tokenSymbol
+                        }}
+                        {{ s.project.tokenSymbol }} + 0.01 GAS fee
+                      </h3>
+                    </div>
+
+                    <button
+                      [disabled]="s.project.status !== 'PENDING'"
+                      pButton
+                      label="Stake"
+                      (click)="stakeTokenBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="h-full flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Update</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'ONGOING' ? 'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'ONGOING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+
+                    <p>
+                      Your project is currently in the "ongoing" stage which
+                      means that you can update your project and complete a
+                      milestone.
+                    </p>
+                    <input
+                      [disabled]="s.project.status !== 'ONGOING'"
+                      type="text"
+                      pInputText
+                      placeholder="Link to your proof of work"
+                      [(ngModel)]="s.proofOfWork"
+                    />
+                    <br />
+                    <p-dropdown
+                      [disabled]="s.project.status !== 'ONGOING'"
+                      [options]="s.openMilestones"
+                      [(ngModel)]="s.selectedMilestone"
+                      optionLabel="title"
+                      placeholder="Select a milestone to complete"
+                    >
+                    </p-dropdown>
+                    <button
+                      [disabled]="
+                        s.project.status !== 'ONGOING' ||
+                        s.proofOfWork === '' ||
+                        s.project.nextMilestone === s.project.milestonesCount ||
+                        (s.countdownConfig.leftTime &&
+                          s.countdownConfig.leftTime > 0)
+                      "
+                      pButton
+                      (click)="this.completeMsBtnClicked$.next()"
+                    >
+                      <div class="text-center w-full">
+                        Complete
+                        <countdown
+                          *ngIf="
+                            s.countdownConfig.leftTime &&
+                            s.countdownConfig.leftTime > 0
+                          "
+                          #cd
+                          [config]="s.countdownConfig"
+                        ></countdown>
+                      </div>
+                    </button>
+                  </div>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Complete</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        [value]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p>
+                      Your project is ready to be completed. You can either
+                      update the project and complete the last milestone or
+                      complete the project by pressing the button below. Once
+                      completed, the tokens will automatically be distributed.
+                    </p>
+
+                    <button
+                      [disabled]="s.project.stage !== 'Ready-To-Finish'"
+                      pButton
+                      label="Complete Project"
+                      (click)="completeProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
             </div>
           </div>
         </div>
@@ -77,48 +214,52 @@
           <ng-template pTemplate="body" let-project>
             <tr>
               <td>
-                {{ project.creationTimestamp | date: 'medium' }}
+                {{ project?.creationTimestamp | date: 'medium' }}
               </td>
               <td>
-                <p-tag [value]="project.status"></p-tag>
+                <p-tag [value]="project?.status"></p-tag>
               </td>
               <td>
                 {{
-                  project.stakePer100Token * project.maxTokenSoldCount
-                    | tokenNumber: project.tokenSymbol
+                  project?.stakePer100Token * project?.maxTokenSoldCount
+                    | tokenNumber: project?.tokenSymbol
                 }}
-                {{ project.tokenSymbol }}
+                {{ project?.tokenSymbol }}
               </td>
               <td>
-                {{ project.coolDownInterval / 1000 / 60 / 60 | number }}
+                {{ project?.coolDownInterval / 1000 / 60 / 60 | number }}
               </td>
               <td>
-                {{ project.nextMilestone + 1 }} / {{ project.milestonesCount }}
+                {{ project?.nextMilestone }} / {{ project?.milestonesCount }}
               </td>
               <td>
-                {{ project.milestones[project.thresholdMilestoneIndex].title }}
+                {{ project?.milestones[project.thresholdMilestoneIndex].title }}
               </td>
-              <td>{{ project.buyerCount }}</td>
+              <td>{{ project?.buyerCount }}</td>
               <td>
                 {{
-                  project.maxTokenSoldCount - project.remainTokenCount
-                    | tokenNumber: project.tokenSymbol
+                  project?.maxTokenSoldCount - project?.remainTokenCount
+                    | tokenNumber: project?.tokenSymbol
                 }}
                 /
                 {{
-                  project.maxTokenSoldCount | tokenNumber: project.tokenSymbol
+                  project?.maxTokenSoldCount | tokenNumber: project?.tokenSymbol
                 }}
-                {{ project.tokenSymbol }}
+                {{ project?.tokenSymbol }}
               </td>
               <td>
                 {{
-                  ((project.maxTokenSoldCount - project.remainTokenCount) /
-                    project.maxTokenSoldCount) *
+                  ((project?.maxTokenSoldCount - project?.remainTokenCount) /
+                    project?.maxTokenSoldCount) *
                     100 +
                     '%'
                 }}
               </td>
-              <td>{{ project.lastUpdateTimestamp | date: 'medium' }}</td>
+              <td>
+                <ng-container *ngIf="project?.lastUpdateTimestamp > 977411048">
+                  {{ project.lastUpdateTimestamp | date: 'medium' }}
+                </ng-container>
+              </td>
             </tr>
           </ng-template>
         </p-table>
@@ -128,9 +269,9 @@
     <div class="card-container">
       <p-card>
         <h2>📋 Milestones</h2>
-
         <p-timeline
-          [value]="getProjectTimeline(s.project)"
+          *ngIf="s.timeline"
+          [value]="s.timeline"
           layout="horizontal"
           styleClass="milestone-timeline"
           align="bottom"
@@ -160,7 +301,7 @@
           </ng-template>
         </p-timeline>
 
-        <p-table [value]="s.project.milestones">
+        <p-table [value]="s.project?.milestones || []">
           <ng-template pTemplate="header">
             <tr>
               <th>Title</th>
