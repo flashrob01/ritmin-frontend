@@ -10,8 +10,8 @@ export class TokenNumber implements PipeTransform {
     private decimalPipe: DecimalPipe,
     private tokenService: TokenService
   ) {}
-  transform(value: number, symbol: string | undefined) {
-    if (symbol === undefined) {
+  transform(value: number | null, symbol: string | undefined) {
+    if (symbol === undefined || value === null) {
       return;
     }
     const token = this.tokenService.getTokenBySymbol(symbol);

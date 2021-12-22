@@ -188,6 +188,173 @@
               </div>
             </div>
           </div>
+
+          <!-- SUPPORTER ACTIONS -->
+          <div
+            *ngIf="
+              globalState.get('address') &&
+              s.project?.creator !== globalState.get('address')
+            "
+          >
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 450px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>🔥 Fund this project</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'ONGOING' ? 'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'ONGOING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p class="text-lg">
+                      This project is currently in the "ongoing" stage which
+                      means that it is open for funding and that you can support
+                      it by staking tokens.
+                    </p>
+                    <div
+                      *ngIf="
+                        globalState.get('balances') &&
+                        globalState.get('balances')[
+                          s.project.tokenSymbol || ''
+                        ] as balance
+                      "
+                      class="text-center"
+                    >
+                      Available balance:
+                      {{ balance }}
+                      {{ s.project.tokenSymbol }}
+                      <p>
+                        Your current stakings:
+                        {{
+                          getStakingInfo$
+                            | async
+                            | tokenNumber: s.project.tokenSymbol
+                        }}
+                        {{ s.project.tokenSymbol }}
+                      </p>
+                    </div>
+                    <br />
+                    <br />
+
+                    <span class="p-float-label">
+                      <p-inputNumber
+                        mode="decimal"
+                        [(ngModel)]="s.project.stakeInput"
+                        [minFractionDigits]="
+                          tokenService.getTokenBySymbol(s.project.tokenSymbol)
+                            .decimals
+                        "
+                        [maxFractionDigits]="
+                          tokenService.getTokenBySymbol(s.project.tokenSymbol)
+                            .decimals
+                        "
+                        [showButtons]="true"
+                        inputId="stacked"
+                        id="supportInput"
+                        [min]="0"
+                        [max]="
+                          s.project.remainTokenCount /
+                          math.pow(
+                            10,
+                            tokenService.getTokenBySymbol(s.project.tokenSymbol)
+                              .decimals
+                          )
+                        "
+                        [suffix]="' ' + s.project.tokenSymbol"
+                      ></p-inputNumber>
+                      <label for="supportInput">Choose an amount</label>
+                    </span>
+                    <div class="flex flex-column mt-3 text-sm">
+                      <div class="flex justify-content-between mb-1">
+                        <span>Funding Goal: </span>
+                        <span
+                          >{{
+                            s.project.maxTokenSoldCount
+                              | tokenNumber: s.project.tokenSymbol
+                          }}
+                          {{ s.project.tokenSymbol }}</span
+                        >
+                      </div>
+                      <div class="flex justify-content-between mb-1">
+                        <span>Remaining: </span
+                        ><span
+                          >{{
+                            s.project.remainTokenCount
+                              | tokenNumber: s.project.tokenSymbol
+                          }}
+                          {{ s.project.tokenSymbol }}</span
+                        >
+                      </div>
+                      <div class="flex justify-content-between mb-1">
+                        <span>Developer Fee: </span><span>0.01 GAS</span>
+                      </div>
+                    </div>
+                    <br />
+                    <button
+                      [disabled]="
+                        s.project.status !== 'ONGOING' ||
+                        s.project.stakeInput === undefined ||
+                        s.project.stakeInput === 0
+                      "
+                      pButton
+                      label="Stake"
+                      (click)="fundProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 450px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Complete</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        [value]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p class="text-lg">
+                      This project is ready to be completed. Anyone can send a
+                      request to complete a project. Once completed the tokens
+                      will be distributed automatically.
+                    </p>
+
+                    <button
+                      [disabled]="s.project.stage !== 'Ready-To-Finish'"
+                      pButton
+                      label="Complete Project"
+                      (click)="completeProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+            </div>
+          </div>
         </div>
       </p-card>
     </div>

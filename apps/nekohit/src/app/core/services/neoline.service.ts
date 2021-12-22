@@ -80,6 +80,7 @@ export class NeolineService {
 
   constructor() {
     this.registerListeners();
+    this.init();
   }
 
   private registerListeners(): void {

@@ -90,7 +90,7 @@ export class MenuComponent {
               {
                 label: this.translate.instant('MENU.STAKINGS'),
                 icon: 'pi pi-wallet',
-                command: () => this.linkService.openWhitepaper(),
+                routerLink: 'profile/stakings',
                 styleClass: 'loggedInMenuItem',
               },
               {

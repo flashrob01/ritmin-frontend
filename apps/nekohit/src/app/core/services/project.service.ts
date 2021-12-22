@@ -3,7 +3,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { Milestone, NekoHitProject } from '../../shared/models/project.model';
 import { NeolineService } from './neoline.service';
 import { sc, wallet } from '@cityofzion/neon-js';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { HASH160_ZERO, processBase64Hash160 } from './utils';
 import { NeonJSService } from './neonjs.service';
 import { NeoInvokeWriteResponse } from '../models/n3';
@@ -70,6 +70,27 @@ export class NekohitProjectService {
       }),
       map((res) => JSON.parse(atob(res))),
       map((res) => res.map((v: any) => this.mapToProject(v)))
+    );
+  }
+
+  public getStakingInfos(identifier: string): Observable<number> {
+    const address = this.globalState.get('address');
+    if (!address) {
+      return of(0);
+    }
+    const params = [
+      sc.ContractParam.string(identifier),
+      sc.ContractParam.hash160(address),
+    ];
+
+    const scriptHash = this.globalState.get('mainnet')
+      ? environment.mainnet.wcaContractHash
+      : environment.testnet.wcaContractHash;
+    return this.neonJS.rpcRequest('queryPurchase', params, scriptHash).pipe(
+      catchError((err) => {
+        this.errorService.handleError(err);
+        return throwError(of([]));
+      })
     );
   }
 

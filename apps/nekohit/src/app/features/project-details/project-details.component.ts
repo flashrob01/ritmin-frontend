@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { CountdownConfig } from 'ngx-countdown';
 import { Subject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { NotificationService } from '../../core/services/notification.service';
 import { NekohitProjectService } from '../../core/services/project.service';
 import { TokenService } from '../../core/services/token.service';
@@ -18,6 +18,7 @@ interface ProjectDetailsState {
   openMilestones: Milestone[];
   selectedMilestone: Milestone;
   countdownConfig: CountdownConfig;
+  stakingAmount: number;
 }
 
 interface ProjectTimeline {
@@ -37,8 +38,10 @@ interface ProjectTimeline {
   providers: [RxState],
 })
 export class ProjectDetailsComponent {
+  math = Math;
   state$ = this.state.select();
-  stakeTokenBtnClicked$ = new Subject<{ target: any }>();
+  stakeTokenBtnClicked$ = new Subject<void>();
+  fundProjectBtnClicked$ = new Subject<void>();
   completeMsBtnClicked$ = new Subject<void>();
   completeProjectBtnClicked$ = new Subject<void>();
   securityStakeAmount = 0;
@@ -82,13 +85,20 @@ export class ProjectDetailsComponent {
     })
   );
 
+  getStakingInfo$ = this.state.select('project').pipe(
+    filter((project) => !!project),
+    switchMap((project) =>
+      this.projectService.getStakingInfos(project.identifier)
+    )
+  );
+
   constructor(
     private state: RxState<ProjectDetailsState>,
     private route: ActivatedRoute,
     private projectService: NekohitProjectService,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
     private notification: NotificationService,
-    private tokenService: TokenService
+    public tokenService: TokenService
   ) {
     this.state.set({ proofOfWork: '' });
     this.state.connect('project', this.loadProject$);
@@ -96,7 +106,22 @@ export class ProjectDetailsComponent {
     this.state.connect('openMilestones', this.updateOpenMilestones$);
     this.state.connect('timeline', this.updateTimeline$);
     this.state.connect('countdownConfig', this.updateCountdownConfig$);
-    this.state.hold(this.stakeTokenBtnClicked$, () => this.stakeTokens());
+    this.state.connect('stakingAmount', this.getStakingInfo$);
+    this.state.hold(this.stakeTokenBtnClicked$, () =>
+      this.stakeTokens(
+        this.state.get('project').stakePer100Token *
+          this.state.get('project').maxTokenSoldCount
+      )
+    );
+    this.state.hold(this.fundProjectBtnClicked$, () => {
+      const project = this.state.get('project');
+      const decimals = this.tokenService.getTokenBySymbol(
+        project.tokenSymbol
+      ).decimals;
+      const amount =
+        (this.state.get('project').stakeInput || 0) * Math.pow(10, decimals);
+      this.stakeTokens(amount);
+    });
     this.state.hold(this.completeMsBtnClicked$, () => this.completeMilestone());
     this.state.hold(this.completeProjectBtnClicked$, () =>
       this.completeProject()
@@ -121,11 +146,11 @@ export class ProjectDetailsComponent {
     return project;
   }
 
-  private stakeTokens(): void {
+  private stakeTokens(amount: number): void {
     const project = this.state.get('project');
     this.projectService
       .stakeTokens(
-        project.stakePer100Token * project.maxTokenSoldCount,
+        amount,
         project.identifier,
         this.tokenService.getTokenBySymbol(project.tokenSymbol).hash
       )

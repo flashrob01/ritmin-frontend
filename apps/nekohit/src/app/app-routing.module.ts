@@ -21,6 +21,14 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'profile/stakings',
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./features/stakings/my-stakings.module').then(
+        (m) => m.MyStakingsModule
+      ),
+  },
+  {
     path: 'projects/:id',
     loadChildren: () =>
       import('./features/project-details/project-details.module').then(

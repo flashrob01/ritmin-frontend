@@ -27,6 +27,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { TokenNumber } from './pipes/tokenNumber.pipe';
+import { ProjectCardComponent } from './components/project-card/project-card.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import { TokenNumber } from './pipes/tokenNumber.pipe';
     AvatarComponent,
     ConnectWalletComponent,
     TokenNumber,
+    ProjectCardComponent,
   ],
   imports: [
     CommonModule,
@@ -62,6 +65,7 @@ import { TokenNumber } from './pipes/tokenNumber.pipe';
     CalendarModule,
     CheckboxModule,
     ConfirmPopupModule,
+    RouterModule,
   ],
   exports: [
     ButtonModule,
@@ -82,6 +86,7 @@ import { TokenNumber } from './pipes/tokenNumber.pipe';
     SanitizedHtmlPipe,
     AvatarComponent,
     ConnectWalletComponent,
+    ProjectCardComponent,
     ChartModule,
     DynamicDialogModule,
     ToastModule,
@@ -93,6 +98,7 @@ import { TokenNumber } from './pipes/tokenNumber.pipe';
     ConfirmPopupModule,
     TableModule,
     TokenNumber,
+    RouterModule,
   ],
   providers: [DecimalPipe],
 })
