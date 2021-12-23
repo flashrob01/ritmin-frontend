@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { mergeMap, switchMap } from 'rxjs/operators';
 import {
   ACCOUNT_CHANGED,
   CONNECTED,
@@ -40,7 +40,9 @@ export class NeolineService {
   private readonly N3_NEOLINE = new ReplaySubject<N3>(1);
   private readonly N2_NEOLINE = new ReplaySubject<N2>(1);
   private readonly ACCOUNT_CHANGED_EVENT = new Subject<string>();
+  private readonly NETWORK_CHANGED_EVENT = new Subject<string>();
   public ACCOUNT_CHANGED_EVENT$ = this.ACCOUNT_CHANGED_EVENT.asObservable();
+  public NETWORK_CHANGED_EVENT$ = this.NETWORK_CHANGED_EVENT.asObservable();
 
   public static bool(value: boolean): NeoTypedValue {
     return { type: 'Boolean', value };
@@ -97,9 +99,10 @@ export class NeolineService {
       console.log('ACCOUNT_CHANGED', response.detail.address);
       this.ACCOUNT_CHANGED_EVENT.next(response.detail.address);
     });
-    window.addEventListener(NETWORK_CHANGED, (response) =>
-      console.log('NETWORK_CHANGED', response)
-    );
+    window.addEventListener(NETWORK_CHANGED, (response: any) => {
+      console.log('NETWORK_CHANGED', response);
+      this.NETWORK_CHANGED_EVENT.next(response.detail);
+    });
   }
 
   public init(): void {

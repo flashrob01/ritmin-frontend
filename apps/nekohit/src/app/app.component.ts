@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RxState } from '@rx-angular/state';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { LinkService } from './core/services/link.service';
 import { NeolineService } from './core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
@@ -48,6 +48,12 @@ export class AppComponent {
       this.neoline.getAccount().pipe(map((acc) => acc.address))
     );
     this.globalState.connect('address', this.neoline.ACCOUNT_CHANGED_EVENT$);
+    this.globalState.connect(
+      'mainnet',
+      this.neoline.NETWORK_CHANGED_EVENT$.pipe(
+        map((res: any) => res.chainId === N3MainNet)
+      )
+    );
 
     this.globalState.connect(
       'mainnet',
