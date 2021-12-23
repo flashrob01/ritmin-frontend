@@ -270,6 +270,32 @@ export class NekohitProjectService {
       );
   }
 
+  public refund(identifier: string): Observable<NeoInvokeWriteResponse> {
+    const wca = this.globalState.get('mainnet')
+      ? environment.mainnet.wcaContractHash
+      : environment.testnet.wcaContractHash;
+
+    return this.neoline
+      .addressToScriptHash(this.globalState.get('address'))
+      .pipe(
+        map((result) => result.scriptHash),
+        switchMap((address) => {
+          return this.neoline.invoke(
+            wca,
+            'refund',
+            [
+              NeolineService.string(identifier),
+              NeolineService.address(address),
+            ],
+            [{ account: address, scopes: 1 }]
+          );
+        }),
+        catchError((err) => {
+          return this.errorService.handleError(err);
+        })
+      );
+  }
+
   public finishProject(identifier: string): Observable<NeoInvokeWriteResponse> {
     const wca = this.globalState.get('mainnet')
       ? environment.mainnet.wcaContractHash

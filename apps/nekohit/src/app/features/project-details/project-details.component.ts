@@ -44,6 +44,7 @@ export class ProjectDetailsComponent {
   fundProjectBtnClicked$ = new Subject<void>();
   completeMsBtnClicked$ = new Subject<void>();
   completeProjectBtnClicked$ = new Subject<void>();
+  refundBtnClicked$ = new Subject<void>();
   securityStakeAmount = 0;
 
   loadProject$ = this.route.params.pipe(
@@ -126,6 +127,7 @@ export class ProjectDetailsComponent {
     this.state.hold(this.completeProjectBtnClicked$, () =>
       this.completeProject()
     );
+    this.state.hold(this.refundBtnClicked$, () => this.refund());
   }
 
   private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
@@ -186,6 +188,13 @@ export class ProjectDetailsComponent {
       .subscribe((res) => {
         this.notification.tx(res.txid);
       });
+  }
+
+  private refund(): void {
+    const project = this.state.get('project');
+    this.projectService.refund(project.identifier).subscribe((res) => {
+      this.notification.tx(res.txid);
+    });
   }
 
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {

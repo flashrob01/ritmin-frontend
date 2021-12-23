@@ -315,6 +315,46 @@
                   </div>
                 </p-card>
               </div>
+              <div
+                class="col-12 md:col-6 lg:col-4 p-fluid"
+                *ngIf="getStakingInfo$ | async as sa"
+              >
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 450px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Refund</h2>
+                      <p-tag
+                        [severity]="
+                          sa > 0 && s.project.status === 'ONGOING'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        [value]="
+                          sa > 0 && s.project.status === 'ONGOING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p class="text-lg">
+                      You can issue a refund at any time but keep in mind that
+                      once the threshold milestone is reached you can only
+                      partially refund your stakings.
+                    </p>
+                    <button
+                      [disabled]="s.project.status !== 'ONGOING' || sa <= 0"
+                      pButton
+                      label="Issue refund"
+                      (click)="refundBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
               <div class="col-12 md:col-6 lg:col-4 p-fluid">
                 <p-card styleClass="actionCard">
                   <div
