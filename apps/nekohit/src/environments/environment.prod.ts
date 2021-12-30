@@ -11,7 +11,7 @@ export const environment = {
     },
     wcaContractHash: '0x1312460889ef976db3561e7688b077f09d5e98e0',
     nodeUrl: 'https://neo3-mainnet.neoline.vip:443',
-    devFeeAddress: '',
+    devFeeAddress: 'NWWpkYtqeUwgHfbFMZurmKei6T85JtA1HQ',
     neotube: 'https://neo3.neotube.io/transaction/',
   },
   testnet: {
