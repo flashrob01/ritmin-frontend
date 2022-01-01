@@ -69,12 +69,12 @@ export class AppComponent {
         map((network) => network.chainId === N3MainNet)
       )
     );
-    this.globalState.connect('balances', this.getBalances$);
 
     this.globalState.connect(
       'svgAvatar',
       this.globalState.select('address').pipe(map((adr) => multiavatar(adr)))
     );
+    this.globalState.connect('balances', this.getBalances$);
 
     const lang = localStorage.getItem('lang');
     translate.langs = ['en'];
