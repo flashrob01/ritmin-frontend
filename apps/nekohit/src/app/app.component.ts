@@ -43,9 +43,8 @@ export class AppComponent {
     public notification: NotificationService,
     public messageService: MessageService
   ) {
-    const mainnet =
-      !window.location.href.includes('develop') &&
-      !window.location.href.includes('localhost');
+    console.log('host:', window.location.host);
+    const mainnet = window.location.host.includes('nekohit.com');
     this.globalState.set({ mainnet: mainnet });
     this.globalState.connect(
       'address',
