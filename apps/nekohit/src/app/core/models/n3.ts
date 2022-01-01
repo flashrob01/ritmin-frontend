@@ -6,7 +6,8 @@ type NeoType =
   | 'String'
   | 'Address'
   | 'Hash160'
-  | 'Hash256';
+  | 'Hash256'
+  | 'Any';
 
 export type NONE = 0;
 export type CALLED_BY_ENTRY = 1;
@@ -77,6 +78,7 @@ export interface NeoInvokeWriteResponse {
   txid: string;
   nodeURL: string;
   signedTx?: string;
+  exception?: string;
 }
 
 export interface NeoInvokeArgument {
@@ -100,9 +102,12 @@ export interface NeoInvokeReadArgs {
 }
 
 export interface NeoInvokeReadMultiArgs {
-  scriptHash: string;
-  operation: string;
-  args: NeoTypedValue[];
+  invokeReadArgs: {
+    scriptHash: string;
+    operation: string;
+    args: NeoTypedValue[];
+  }[];
+  signers: NeoSigner[];
 }
 
 export interface NeoGetStorageArgs {
@@ -156,8 +161,8 @@ export interface NeoInvokeArgs {
 }
 
 export interface NeoInvokeMultipleArgs {
-  fee: string;
-  extraSystemFee: string;
+  fee?: string;
+  extraSystemFee?: string;
   signers: NeoSigner[];
   invokeArgs?: NeoInvokeArgument[];
   broadcastOverride?: boolean;
@@ -167,19 +172,33 @@ export interface NeoSignMessageArgs {
   message: string;
 }
 
+export interface NeoAddressToScriptHashResponse {
+  scriptHash: string;
+}
+
+export interface NeoScriptHashToAddressResponse {
+  address: string;
+}
+
 export interface N3 {
   getProvider(): Promise<NeoProvider>;
   getBalance(): Promise<NeoGetBalanceResponse>;
   getStorage(args: NeoGetStorageArgs): Promise<string>;
   invokeRead(args: NeoInvokeReadArgs): Promise<NeoInvokeReadResponse>;
-  invokeReadMulti(args: NeoInvokeReadMultiArgs): Promise<NeoInvokeReadResponse>;
+  invokeReadMulti(
+    args: NeoInvokeReadMultiArgs
+  ): Promise<NeoInvokeReadResponse[]>;
   verifyMessage(args: NeoVerifyMessageArgs): Promise<boolean>;
   getBlock(args: NeoGetBlockArgs): Promise<any>;
   getTransaction(args: NeoGetTransactionArgs): Promise<any>;
   getApplicationLog(args: NeoGetApplicationLogArgs): Promise<any>;
   pickAddress(): Promise<NeoPickAddressResponse>;
-  addressToScriptHash(args: NeoAddressToScriptHashArgs): Promise<string>;
-  scriptHashToAddress(args: NeoScriptHashToAddressArgs): Promise<string>;
+  AddressToScriptHash(
+    args: NeoAddressToScriptHashArgs
+  ): Promise<NeoAddressToScriptHashResponse>;
+  ScriptHashToAddress(
+    args: NeoScriptHashToAddressArgs
+  ): Promise<NeoScriptHashToAddressResponse>;
   // write
   send(args: NeoSendArgs): Promise<NeoSendResponse>;
   invoke(args: NeoInvokeArgs): Promise<NeoInvokeWriteResponse>;

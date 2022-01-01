@@ -1,0 +1,49 @@
+<ng-container *ngIf="state$ | async as s">
+  <div
+    class="card-container"
+    [ngClass]="s.project.tokenSymbol === 'GAS' ? 'bg1' : 'bg2'"
+    [routerLink]="['/projects/' + encode(s.project.identifier)]"
+  >
+    <p-table [value]="[1]" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th colspan="2">
+            <span class="font-semibold text-lg title">{{
+              s.project.identifier | truncate: [30]
+            }}</span>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-data>
+        <tr>
+          <td>Token</td>
+          <td>
+            <img
+              [alt]="s.project.tokenSymbol"
+              [src]="'/assets/images/tokens/' + s.project.tokenSymbol + '.png'"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>Status</td>
+          <td>
+            <p-tag
+              [severity]="s.project.status === 'FINISHED' ? 'success' : 'info'"
+              >{{ s.project.status }}</p-tag
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>Funding</td>
+          <td>
+            {{
+              ((s.project.maxTokenSoldCount - s.project.remainTokenCount) /
+                s.project.maxTokenSoldCount) *
+                100 | number
+            }}%
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</ng-container>

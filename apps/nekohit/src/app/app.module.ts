@@ -16,11 +16,11 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { FooterComponent } from './footer/footer.component';
 import { CarouselModule } from 'primeng/carousel';
 import { SharedModule } from './shared/shared.module';
-import { FeaturedProjectService } from './home/featured-project/featured-project.service';
 import { FeaturedProjectComponent } from './home/featured-project/featured-project.component';
 import { RxState } from '@rx-angular/state';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
 import { CreateProjectComponent } from './create-project/create-project.component';
+import { AccordionModule } from 'primeng/accordion';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -43,6 +43,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MenubarModule,
     ChartModule,
     CarouselModule,
+    AccordionModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -55,7 +56,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
   ],
   providers: [
-    FeaturedProjectService,
     RxState,
     {
       provide: GLOBAL_RX_STATE,

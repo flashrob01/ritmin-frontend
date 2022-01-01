@@ -1,11 +1,7 @@
 .hero {
   min-height: 600px;
   background-color: #2196f3;
-  clip-path: circle(80% at 70% 40%);
-}
-
-.hero-wrap {
-  filter: drop-shadow(-1px 6px 3px rgba(50, 50, 0, 0.5));
+  clip-path: circle(80% at 70% 30%);
 }
 
 .award-section {
@@ -36,7 +32,7 @@
   font-size: 150%;
   align-items: center;
   justify-content: center;
-  color: #2196f3;
+  color: white;
   border-radius: 50%;
   z-index: 1;
 }
@@ -49,6 +45,7 @@
 
         .p-timeline-event-content {
           text-align: left !important;
+          background-color: white !important;
         }
       }
 
@@ -60,5 +57,25 @@
         margin-top: 1rem;
       }
     }
+  }
+}
+
+.featuredProjectCard {
+  text-decoration: none;
+  color: inherit;
+}
+
+.text-blue-title {
+  color: #2196f3;
+}
+
+.how-it-works-container {
+  background: rgb(0, 0, 0);
+  background: linear-gradient(129deg, #2196f3 0%, rgba(141, 101, 252, 1) 100%);
+}
+
+.overview-container {
+  .icon {
+    color: rgb(46, 46, 46);
   }
 }

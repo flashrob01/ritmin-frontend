@@ -1,5 +1,52 @@
 <ritmin-menu></ritmin-menu>
-<div class="content">
+<p-toast [baseZIndex]="100" key="success" styleClass="success-toast">
+  <ng-template let-message pTemplate="message">
+    <div
+      style="width: 100%; height: 150px"
+      class="flex justify-content-center align-items-center"
+    >
+      <div
+        class="p-4 flex flex-column justify-content-center align-items-center"
+      >
+        <i class="pi pi-check-circle text-3xl mr-2"></i>
+        <p>{{ message.summary }}</p>
+      </div>
+      <div
+        style="border-left: 1px solid lightgray; height: 100%"
+        class="
+          flex flex-column flex-grow-1
+          justify-content-center
+          align-items-center
+          p-fluid
+        "
+      >
+        <div class="flex align-items-center" style="height: 100%">
+          <button
+            class="p-button-text"
+            pButton
+            label="View Transaction"
+            (click)="onViewTransaction(message.detail)"
+            icon="pi pi-search"
+          ></button>
+        </div>
+        <div
+          class="flex align-items-center"
+          style="border-top: 1px solid lightgray; width: 100%; height: 100%"
+        >
+          <button
+            class="p-button-text"
+            pButton
+            label="Close"
+            (click)="messageService.clear('success')"
+            icon="pi pi-times"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<p-toast key="error"></p-toast>
+<div>
   <router-outlet></router-outlet>
   <div
     *ngIf="showPromotion"
@@ -9,7 +56,6 @@
       text-gray-100
       p-3
       flex
-      justify-content-between
       lg:justify-content-center
       align-items-center
       flex-wrap
@@ -50,3 +96,14 @@
 <div class="mt-5">
   <ritmin-footer></ritmin-footer>
 </div>
+
+<p-dialog
+  header="Wrong network"
+  [modal]="true"
+  [(visible)]="displayWrongNetwork"
+  [closeOnEscape]="false"
+  [closable]="false"
+>
+  It seems that you are connected to the wrong network. Please switch to the
+  {{ globalState.get('mainnet') ? 'testnet' : 'mainnet' }}.
+</p-dialog>

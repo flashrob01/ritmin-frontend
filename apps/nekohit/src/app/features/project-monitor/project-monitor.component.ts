@@ -2,7 +2,9 @@ import { Component, Inject } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { NotificationService } from '../../core/services/notification.service';
 import { NekohitProjectService } from '../../core/services/project.service';
+import { TokenService } from '../../core/services/token.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../../global.state';
 import { NekoHitProject } from '../../shared/models/project.model';
 
@@ -29,8 +31,9 @@ interface ProjectMonitorState {
 export class ProjectMonitorComponent {
   state$ = this.state.select();
   readonly address$ = this.globalState.select('address');
-  readonly catBalance$ = this.globalState.select('catBalance');
   readonly onStakeBtnClicked$ = new Subject<NekoHitProject>();
+  encode = encodeURIComponent;
+  math = Math;
 
   // TODO: should be improved (more clean etc)
   public getProjectTimeline(project: NekoHitProject): ProjectTimeline[] {
@@ -115,31 +118,32 @@ export class ProjectMonitorComponent {
   constructor(
     private state: RxState<ProjectMonitorState>,
     private projectService: NekohitProjectService,
+    private notification: NotificationService,
+    public tokenService: TokenService,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>
   ) {
     this.state.connect(
       'projects',
-      this.projectService
-        .getProjects()
-        .pipe(
-          map((p) =>
-            p
-              .filter((p) => p.status !== 'PENDING' && p.status !== 'UNKNOWN')
-              .map((p) => this.mapChartDataToProject(p))
-          )
+      this.projectService.getProjects().pipe(
+        map((projects) =>
+          projects
+            .filter(
+              (project) =>
+                project.status !== 'PENDING' && project.status !== 'UNKNOWN'
+            )
+            .sort((a, b) => {
+              return (
+                new Date(b.creationTimestamp).getTime() -
+                new Date(a.creationTimestamp).getTime()
+              );
+            })
+            .map((project) => this.mapChartDataToProject(project))
         )
+      )
     );
     this.state.hold(this.onStakeBtnClicked$, (project) =>
       this.stakeTokens(project)
     );
-  }
-
-  public getStakeValue(project: NekoHitProject, multiplier: number): number {
-    const availableBalance = this.globalState.get('catBalance');
-    const stakeAmount = availableBalance * multiplier;
-    return stakeAmount > project.remainTokenCount
-      ? project.remainTokenCount
-      : stakeAmount;
   }
 
   private mapChartDataToProject(project: NekoHitProject): NekoHitProject {
@@ -161,9 +165,18 @@ export class ProjectMonitorComponent {
   }
 
   private stakeTokens(project: NekoHitProject): void {
-    const from = this.globalState.get('address');
+    const decimals = this.tokenService.getTokenBySymbol(
+      project.tokenSymbol
+    ).decimals;
+    const multiplier = Math.pow(10, decimals);
     this.projectService
-      .stakeTokens(from, project.stakeInput || 0, project.identifier)
-      .subscribe((res) => console.log('res', res));
+      .stakeTokens(
+        (project.stakeInput || 0) * multiplier,
+        project.identifier,
+        this.tokenService.getTokenBySymbol(project.tokenSymbol).hash
+      )
+      .subscribe((res) => {
+        this.notification.tx(res.txid);
+      });
   }
 }

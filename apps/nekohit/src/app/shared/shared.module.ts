@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -19,6 +19,17 @@ import { AvatarComponent } from './components/avatar/avatar.component';
 import { ConnectWalletComponent } from './components/connect-wallet/connect-wallet.component';
 import { ChartModule } from 'primeng/chart';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ToastModule } from 'primeng/toast';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DividerModule } from 'primeng/divider';
+import { TabViewModule } from 'primeng/tabview';
+import { CalendarModule } from 'primeng/calendar';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { TokenNumber } from './pipes/tokenNumber.pipe';
+import { ProjectCardComponent } from './components/project-card/project-card.component';
+import { RouterModule } from '@angular/router';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -27,6 +38,8 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     SanitizedHtmlPipe,
     AvatarComponent,
     ConnectWalletComponent,
+    TokenNumber,
+    ProjectCardComponent,
   ],
   imports: [
     CommonModule,
@@ -46,6 +59,15 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     SkeletonModule,
     ChartModule,
     DynamicDialogModule,
+    ToastModule,
+    InputTextareaModule,
+    DividerModule,
+    TabViewModule,
+    CalendarModule,
+    CheckboxModule,
+    ConfirmPopupModule,
+    RouterModule,
+    DialogModule,
   ],
   exports: [
     ButtonModule,
@@ -66,8 +88,21 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     SanitizedHtmlPipe,
     AvatarComponent,
     ConnectWalletComponent,
+    ProjectCardComponent,
     ChartModule,
     DynamicDialogModule,
+    ToastModule,
+    InputTextareaModule,
+    DividerModule,
+    TabViewModule,
+    CalendarModule,
+    CheckboxModule,
+    ConfirmPopupModule,
+    TableModule,
+    TokenNumber,
+    RouterModule,
+    DialogModule,
   ],
+  providers: [DecimalPipe],
 })
 export class SharedModule {}

@@ -1,11 +1,14 @@
 ::ng-deep .project-row-content {
   height: 75px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 15px;
+  a {
+    color: #2196f3;
+  }
 }
 
 ::ng-deep .project-header-row {
-  font-size: 14px;
+  font-size: 15px;
   th {
     background-color: rgb(0, 0, 0, 0) !important;
     padding: 10px !important;

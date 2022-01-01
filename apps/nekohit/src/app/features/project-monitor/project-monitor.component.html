@@ -3,16 +3,23 @@
     [value]="s.projects"
     [autoLayout]="true"
     dataKey="identifier"
-    styleClass="project-table p-datatable-striped p-datatable-gridlines"
+    styleClass="project-table p-datatable-striped"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    responsiveLayout="scroll"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [rowsPerPageOptions]="[10, 25, 50]"
   >
     <ng-template pTemplate="header">
       <tr class="project-title-row">
-        <th colspan="6">
+        <th colspan="7">
           <h2>Browse Projects</h2>
         </th>
       </tr>
       <tr class="project-header-row">
         <th rowspan="2"><span class="emoji">📝</span> Description</th>
+        <th rowspan="2"><span class="emoji">📝</span> Creator</th>
         <th rowspan="2"><span class="emoji">⌛</span> Status</th>
         <th colspan="2"><span class="emoji">⏱️</span> Duration</th>
         <th colspan="2"><span class="emoji">💰</span> Staking</th>
@@ -54,16 +61,20 @@
                 <div class="flex flex-column ml-5">
                   <div>
                     <b
-                      ><a [routerLink]="['/project/' + project.identifier]">{{
-                        project.identifier
-                      }}</a></b
+                      ><a
+                        [routerLink]="[
+                          '/projects/' + encode(project.identifier)
+                        ]"
+                        >{{ project.identifier }}</a
+                      ></b
                     >
-                    <p-tag
-                      *ngIf="project.stage === 'Open'"
+                    <img
                       class="ml-2"
-                      value="OPEN FOR FUNDING"
-                      severity="warning"
-                    ></p-tag>
+                      [src]="
+                        'assets/images/tokens/' + project.tokenSymbol + '.png'
+                      "
+                      width="17"
+                    />
                   </div>
                   {{ project.description | truncate: [80] }}
                 </div>
@@ -81,6 +92,15 @@
               <i class="pi pi-users"></i>
               {{ project.buyerCount | number }}
             </div>
+          </div>
+        </td>
+        <td>
+          <div class="flex justify-content-center align-items-center">
+            <ritmin-avatar
+              [pTooltip]="project.creator"
+              [svg]="project.svg"
+              [pxWidth]="35"
+            ></ritmin-avatar>
           </div>
         </td>
         <td class="text-center">
@@ -101,8 +121,13 @@
         </td>
         <td>
           <p>
-            {{ project.maxTokenSoldCount - project.remainTokenCount | number }}
-            / {{ project.maxTokenSoldCount | number }} CAT
+            {{
+              project.maxTokenSoldCount - project.remainTokenCount
+                | tokenNumber: project.tokenSymbol
+            }}
+            /
+            {{ project.maxTokenSoldCount | tokenNumber: project.tokenSymbol }}
+            {{ project.tokenSymbol }}
           </p>
           <div
             class="text-center text-md font-bold"
@@ -127,10 +152,10 @@
         </td>
         <td>
           {{
-            (project.stakePer100Token / 100) * project.maxTokenSoldCount
-              | number
+            project.stakePer100Token * project.maxTokenSoldCount
+              | tokenNumber: project.tokenSymbol
           }}
-          CAT /
+          {{ project.tokenSymbol }} /
           {{
             (project.thresholdMilestoneIndex / (project.milestonesCount - 1)
               | number) || 0
@@ -144,7 +169,10 @@
           <div class="flex">
             <!-- PROJECT CLOSED FOR FUNDING STATISTICS -->
             <div
-              *ngIf="project.stage !== 'Open'"
+              *ngIf="
+                project.status !== 'ONGOING' ||
+                project.creator === globalState.get('address')
+              "
               class="flex flex-column support-project-panel p-fluid"
             >
               <div class="mb-4">
@@ -158,98 +186,91 @@
             </div>
             <!-- SUPPORT PROJECT ACTION -->
             <div
-              *ngIf="project.stage === 'Open'"
+              *ngIf="
+                project.status === 'ONGOING' &&
+                project.creator !== globalState.get('address')
+              "
               class="flex flex-column support-project-panel p-fluid"
             >
               <div class="mb-4">
                 <span class="font-semibold text-lg mr-2"
                   >🔥 Fund this project</span
                 >
-
-                <small
-                  ><i class="mr-1 text-xs pi pi-question-circle"></i
-                  ><a href="">How does it work?</a></small
-                >
               </div>
 
               <ng-container
                 *ngIf="(address$ | async) !== null; else connectWallet"
               >
-                <div *ngIf="catBalance$ | async as cat" class="text-center">
-                  Available balance: {{ +cat | number: '1.2-2' }} CAT
+                <div
+                  *ngIf="
+                    globalState.get('balances') &&
+                    globalState.get('balances')[project.tokenSymbol] as balance
+                  "
+                  class="text-center"
+                >
+                  Available balance:
+                  {{ balance }}
+                  {{ project.tokenSymbol }}
                 </div>
-                <div class="flex justify-content-between m-4">
-                  <a
-                    href="javascript:void(0)"
-                    (click)="
-                      project['stakeInput'] = getStakeValue(project, 0.25)
-                    "
-                    >25%</a
-                  >
-                  <span>|</span>
-                  <a
-                    href="javascript:void(0)"
-                    (click)="
-                      project['stakeInput'] = getStakeValue(project, 0.5)
-                    "
-                    >50%</a
-                  >
-                  <span>|</span>
-                  <a
-                    href="javascript:void(0)"
-                    (click)="
-                      project['stakeInput'] = getStakeValue(project, 0.75)
-                    "
-                    >75%</a
-                  >
-                  <span>|</span>
-                  <a
-                    href="javascript:void(0)"
-                    (click)="project['stakeInput'] = getStakeValue(project, 1)"
-                    >100%</a
-                  >
-                </div>
+                <br />
+                <br />
+
                 <span class="p-float-label">
                   <p-inputNumber
                     mode="decimal"
                     [(ngModel)]="project.stakeInput"
-                    [minFractionDigits]="2"
-                    [maxFractionDigits]="2"
+                    [minFractionDigits]="
+                      tokenService.getTokenBySymbol(project.tokenSymbol)
+                        .decimals
+                    "
+                    [maxFractionDigits]="
+                      tokenService.getTokenBySymbol(project.tokenSymbol)
+                        .decimals
+                    "
                     [showButtons]="true"
                     inputId="stacked"
                     id="supportInput"
                     [min]="0"
-                    [max]="project.remainTokenCount"
-                    suffix=" CAT"
+                    [max]="
+                      project.remainTokenCount /
+                      math.pow(
+                        10,
+                        tokenService.getTokenBySymbol(project.tokenSymbol)
+                          .decimals
+                      )
+                    "
+                    [suffix]="' ' + project.tokenSymbol"
                   ></p-inputNumber>
                   <label for="supportInput">Choose an amount</label>
                 </span>
                 <div class="flex flex-column mt-3 text-sm">
                   <div class="flex justify-content-between mb-1">
                     <span>Funding Goal: </span>
-                    <span>{{ project.maxTokenSoldCount | number }} CAT</span>
+                    <span
+                      >{{
+                        project.maxTokenSoldCount
+                          | tokenNumber: project.tokenSymbol
+                      }}
+                      {{ project.tokenSymbol }}</span
+                    >
                   </div>
                   <div class="flex justify-content-between mb-1">
                     <span>Remaining: </span
-                    ><span>{{ project.remainTokenCount | number }} CAT</span>
-                  </div>
-
-                  <div
-                    class="flex justify-content-between"
-                    *ngIf="project.stakeInput"
-                  >
-                    <span>Your contribution:</span
                     ><span
-                      >{{ project.stakeInput | number }} CAT ({{
-                        (project.stakeInput / project.maxTokenSoldCount) * 100
-                          | number
-                      }}%)</span
+                      >{{
+                        project.remainTokenCount
+                          | tokenNumber: project.tokenSymbol
+                      }}
+                      {{ project.tokenSymbol }}</span
                     >
+                  </div>
+                  <div class="flex justify-content-between mb-1">
+                    <span>Developer Fee: </span><span>0.01 GAS</span>
                   </div>
                 </div>
                 <button
                   pButton
-                  label="Stake CAT Tokens"
+                  label="Stake Tokens"
                   class="p-button-warning mt-3"
                   type="button"
                   [disabled]="!project.stakeInput"

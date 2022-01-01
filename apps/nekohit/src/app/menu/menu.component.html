@@ -7,24 +7,15 @@
         </a>
       </div>
     </ng-template>
-    <!--  <ng-template pTemplate="end">
+    <ng-template pTemplate="end">
       <ritmin-connect-wallet
         *ngIf="(address$ | async) === null"
         placeholder="Connect Wallet"
       ></ritmin-connect-wallet>
       <div class="flex">
         <div
-          class="
-            mr-2
-            flex flex-column
-            text-sm
-            align-items-end
-            justify-content-center
-          "
+          class="mr-2 flex flex-column align-items-end justify-content-center"
         >
-          <ng-container *ngIf="catBalance$ | async as cat">
-            Your CAT balance: {{ +cat | number: '1.2-2' }}
-          </ng-container>
           <ng-container *ngIf="address$ | async as address">
             <span [pTooltip]="address" tooltipPosition="left">{{
               address | truncateAddress
@@ -32,9 +23,9 @@
           </ng-container>
         </div>
         <ng-container *ngIf="svgAvatar$ | async as svg">
-          <ritmin-avatar [svg]="svg" [pxWidth]="55"></ritmin-avatar>
+          <ritmin-avatar [svg]="svg" [pxWidth]="45"></ritmin-avatar>
         </ng-container>
       </div>
-    </ng-template> -->
+    </ng-template>
   </p-menubar>
 </ng-container>

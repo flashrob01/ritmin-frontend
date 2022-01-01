@@ -1,0 +1,532 @@
+<ng-container *ngIf="state$ | async as s">
+  <div class="flex flex-column p-5 cards-container" *ngIf="s.project">
+    <div class="card-container">
+      <p-card>
+        <div class="flex flex-column">
+          <div class="p-4 flex flex-wrap justify-content-between">
+            <div class="grid w-full">
+              <div class="col-12 md:col-8">
+                <div>
+                  <img
+                    height="50"
+                    [src]="
+                      'assets/images/tokens/' + s.project?.tokenSymbol + '.png'
+                    "
+                  />
+                  <h1>
+                    {{ s.project?.identifier }}
+                  </h1>
+                  <h2>{{ s.project?.description }}</h2>
+                </div>
+              </div>
+              <div class="col-12 md:col-4 flex justify-content-center">
+                <div class="statistics-container">
+                  <p-chart
+                    type="pie"
+                    [data]="s.project?.stakedTokensChartData"
+                    [style]="{ width: '100%', height: '100px' }"
+                  ></p-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p-divider></p-divider>
+          <div *ngIf="s.project?.creator === globalState.get('address')">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Stake</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'PENDING' ? 'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'PENDING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p>
+                      Your project is currently in the "pending" stage which
+                      means that you have to stake tokens in order to make the
+                      project eligible for funding.
+                    </p>
+                    <div class="text-center">
+                      <h3>
+                        Stake Amount:
+                        {{
+                          s.securityStake | tokenNumber: s.project.tokenSymbol
+                        }}
+                        {{ s.project.tokenSymbol }} + 0.01 GAS fee
+                      </h3>
+                    </div>
+
+                    <button
+                      [disabled]="s.project.status !== 'PENDING'"
+                      pButton
+                      label="Stake"
+                      (click)="stakeTokenBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="h-full flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Update</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'ONGOING' ? 'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'ONGOING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+
+                    <p>
+                      Your project is currently in the "ongoing" stage which
+                      means that you can update your project and complete a
+                      milestone.
+                    </p>
+                    <input
+                      [disabled]="s.project.status !== 'ONGOING'"
+                      type="text"
+                      pInputText
+                      placeholder="Link to your proof of work"
+                      [(ngModel)]="s.proofOfWork"
+                    />
+                    <br />
+                    <p-dropdown
+                      [disabled]="s.project.status !== 'ONGOING'"
+                      [options]="s.openMilestones"
+                      [(ngModel)]="s.selectedMilestone"
+                      optionLabel="title"
+                      placeholder="Select a milestone to complete"
+                    >
+                    </p-dropdown>
+                    <button
+                      [disabled]="
+                        s.project.status !== 'ONGOING' ||
+                        s.proofOfWork === '' ||
+                        s.project.nextMilestone === s.project.milestonesCount ||
+                        (s.countdownConfig.leftTime &&
+                          s.countdownConfig.leftTime > 0)
+                      "
+                      pButton
+                      (click)="this.completeMsBtnClicked$.next()"
+                    >
+                      <div class="text-center w-full">
+                        Complete
+                        <countdown
+                          *ngIf="
+                            s.countdownConfig.leftTime &&
+                            s.countdownConfig.leftTime > 0
+                          "
+                          #cd
+                          [config]="s.countdownConfig"
+                        ></countdown>
+                      </div>
+                    </button>
+                  </div>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Complete</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        [value]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p>
+                      Your project is ready to be completed. You can either
+                      update the project and complete the last milestone or
+                      complete the project by pressing the button below. Once
+                      completed, the tokens will automatically be distributed.
+                    </p>
+
+                    <button
+                      [disabled]="s.project.stage !== 'Ready-To-Finish'"
+                      pButton
+                      label="Complete Project"
+                      (click)="completeProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUPPORTER ACTIONS -->
+          <div
+            *ngIf="
+              globalState.get('address') &&
+              s.project?.creator !== globalState.get('address')
+            "
+          >
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 450px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>🔥 Fund this project</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'ONGOING' ? 'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'ONGOING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p class="text-lg">
+                      This project is currently in the "ongoing" stage which
+                      means that it is open for funding and that you can support
+                      it by staking tokens.
+                    </p>
+                    <div
+                      *ngIf="
+                        globalState.get('balances') &&
+                        globalState.get('balances')[
+                          s.project.tokenSymbol || ''
+                        ] as balance
+                      "
+                      class="text-center"
+                    >
+                      Available balance:
+                      {{ balance }}
+                      {{ s.project.tokenSymbol }}
+                      <p>
+                        Your current stakings:
+                        {{
+                          getStakingInfo$
+                            | async
+                            | tokenNumber: s.project.tokenSymbol
+                        }}
+                        {{ s.project.tokenSymbol }}
+                      </p>
+                    </div>
+                    <br />
+                    <br />
+
+                    <span class="p-float-label">
+                      <p-inputNumber
+                        mode="decimal"
+                        [(ngModel)]="s.project.stakeInput"
+                        [minFractionDigits]="
+                          tokenService.getTokenBySymbol(s.project.tokenSymbol)
+                            .decimals
+                        "
+                        [maxFractionDigits]="
+                          tokenService.getTokenBySymbol(s.project.tokenSymbol)
+                            .decimals
+                        "
+                        [showButtons]="true"
+                        inputId="stacked"
+                        id="supportInput"
+                        [min]="0"
+                        [max]="
+                          s.project.remainTokenCount /
+                          math.pow(
+                            10,
+                            tokenService.getTokenBySymbol(s.project.tokenSymbol)
+                              .decimals
+                          )
+                        "
+                        [suffix]="' ' + s.project.tokenSymbol"
+                      ></p-inputNumber>
+                      <label for="supportInput">Choose an amount</label>
+                    </span>
+                    <div class="flex flex-column mt-3 text-sm">
+                      <div class="flex justify-content-between mb-1">
+                        <span>Funding Goal: </span>
+                        <span
+                          >{{
+                            s.project.maxTokenSoldCount
+                              | tokenNumber: s.project.tokenSymbol
+                          }}
+                          {{ s.project.tokenSymbol }}</span
+                        >
+                      </div>
+                      <div class="flex justify-content-between mb-1">
+                        <span>Remaining: </span
+                        ><span
+                          >{{
+                            s.project.remainTokenCount
+                              | tokenNumber: s.project.tokenSymbol
+                          }}
+                          {{ s.project.tokenSymbol }}</span
+                        >
+                      </div>
+                      <div class="flex justify-content-between mb-1">
+                        <span>Developer Fee: </span><span>0.01 GAS</span>
+                      </div>
+                    </div>
+                    <br />
+                    <button
+                      [disabled]="
+                        s.project.status !== 'ONGOING' ||
+                        s.project.stakeInput === undefined ||
+                        s.project.stakeInput === 0
+                      "
+                      pButton
+                      label="Stake"
+                      (click)="fundProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+              <div
+                class="col-12 md:col-6 lg:col-4 p-fluid"
+                *ngIf="getStakingInfo$ | async as sa"
+              >
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 450px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Refund</h2>
+                      <p-tag
+                        [severity]="
+                          sa > 0 && s.project.status === 'ONGOING'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        [value]="
+                          sa > 0 && s.project.status === 'ONGOING'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p class="text-lg">
+                      You can issue a refund at any time but keep in mind that
+                      once the threshold milestone is reached you can only
+                      partially refund your stakings.
+                    </p>
+                    <button
+                      [disabled]="s.project.status !== 'ONGOING' || sa <= 0"
+                      pButton
+                      label="Issue refund"
+                      (click)="refundBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 p-fluid">
+                <p-card styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 450px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Complete</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'success'
+                            : 'danger'
+                        "
+                        [value]="
+                          s.project.stage === 'Ready-To-Finish'
+                            ? 'ACTIVE'
+                            : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p class="text-lg">
+                      This project is ready to be completed. Anyone can send a
+                      request to complete a project. Once completed the tokens
+                      will be distributed automatically.
+                    </p>
+
+                    <button
+                      [disabled]="s.project.stage !== 'Ready-To-Finish'"
+                      pButton
+                      label="Complete Project"
+                      (click)="completeProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="card-container">
+      <p-card>
+        <h2>ℹ️ Project Details</h2>
+
+        <p-table [value]="[s.project]">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Created at</th>
+              <th>Status</th>
+              <th>Security stake</th>
+              <th>Cooldown interval (hours)</th>
+              <th>Milestones</th>
+              <th>Threshold milestone</th>
+              <th>Supporters</th>
+              <th>Funding goal</th>
+              <th>Funding status</th>
+              <th>Last update</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-project>
+            <tr>
+              <td>
+                {{ project?.creationTimestamp | date: 'medium' }}
+              </td>
+              <td>
+                <p-tag [value]="project?.status"></p-tag>
+              </td>
+              <td>
+                {{
+                  project?.stakePer100Token * project?.maxTokenSoldCount
+                    | tokenNumber: project?.tokenSymbol
+                }}
+                {{ project?.tokenSymbol }}
+              </td>
+              <td>
+                {{ project?.coolDownInterval / 1000 / 60 / 60 | number }}
+              </td>
+              <td>
+                {{ project?.nextMilestone }} / {{ project?.milestonesCount }}
+              </td>
+              <td>
+                {{ project?.milestones[project.thresholdMilestoneIndex].title }}
+              </td>
+              <td>{{ project?.buyerCount }}</td>
+              <td>
+                {{
+                  project?.maxTokenSoldCount - project?.remainTokenCount
+                    | tokenNumber: project?.tokenSymbol
+                }}
+                /
+                {{
+                  project?.maxTokenSoldCount | tokenNumber: project?.tokenSymbol
+                }}
+                {{ project?.tokenSymbol }}
+              </td>
+              <td>
+                {{
+                  ((project?.maxTokenSoldCount - project?.remainTokenCount) /
+                    project?.maxTokenSoldCount) *
+                    100 +
+                    '%'
+                }}
+              </td>
+              <td>
+                <ng-container *ngIf="project?.lastUpdateTimestamp > 977411048">
+                  {{ project.lastUpdateTimestamp | date: 'medium' }}
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <div class="card-container">
+      <p-card>
+        <h2>📋 Milestones</h2>
+        <p-timeline
+          *ngIf="s.timeline"
+          [value]="s.timeline"
+          layout="horizontal"
+          styleClass="milestone-timeline"
+          align="bottom"
+        >
+          <ng-template pTemplate="marker" let-event>
+            <div
+              [ngClass]="event.class"
+              [style.backgroundColor]="event.color"
+              [style.borderColor]="event.borderColor"
+            ></div>
+          </ng-template>
+          <ng-template pTemplate="content" let-milestone>
+            <div
+              class="flex flex-column justify-content-evenly text-sm"
+              style="height: 30px"
+            >
+              <span>{{ milestone.text }}</span>
+              <small>{{ milestone.subtext }}</small>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="opposite" let-milestone>
+            <div class="flex flex-column justify-content-evenly text-sm">
+              <span [hidden]="!milestone.showDate">{{
+                milestone.date | date
+              }}</span>
+            </div>
+          </ng-template>
+        </p-timeline>
+
+        <p-table [value]="s.project?.milestones || []">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Deadline</th>
+              <th>Link</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-ms>
+            <tr>
+              <td>{{ ms.title }}</td>
+              <td>{{ ms.description }}</td>
+              <td>{{ ms.endTimestamp | date: 'long' }}</td>
+              <td>{{ ms.linkToResult }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+</ng-container>

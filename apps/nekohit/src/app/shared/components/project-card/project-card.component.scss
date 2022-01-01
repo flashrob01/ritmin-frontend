@@ -1,0 +1,18 @@
+.card-container {
+  cursor: pointer;
+  border-radius: 5px;
+  color: black;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  img {
+    width: 20px !important;
+  }
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  }
+}
+
+.title {
+  color: #2196f3;
+}

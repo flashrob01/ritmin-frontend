@@ -7,13 +7,16 @@ import { NeolineService } from '../core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from '../global.state';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CreateProjectComponent } from '../create-project/create-project.component';
+import { Router } from '@angular/router';
 
 interface MenuState {
   menuItems: MenuItem[];
+  baseMenuItems: MenuItem[];
 }
 
 const initState: MenuState = {
   menuItems: [],
+  baseMenuItems: [],
 };
 
 @Component({
@@ -27,7 +30,6 @@ export class MenuComponent {
   readonly state$ = this.state.select();
   readonly address$ = this.globalState.select('address');
   readonly svgAvatar$ = this.globalState.select('svgAvatar');
-  readonly catBalance$ = this.globalState.select('catBalance');
 
   constructor(
     public translate: TranslateService,
@@ -35,21 +37,17 @@ export class MenuComponent {
     private state: RxState<MenuState>,
     @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
     public neoline: NeolineService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private router: Router
   ) {
     this.state.hold(this.translate.onLangChange, (v) => {
       localStorage.setItem('lang', v.lang);
       this.state.set(initState);
       const items = [
-        /* {
+        {
           label: this.translate.instant('MENU.BROWSE'),
           icon: 'pi pi-search',
           routerLink: 'browse',
-        }, */
-        {
-          label: this.translate.instant('MENU.PROTOTYPE'),
-          icon: 'pi pi-search',
-          command: () => this.linkService.openPrototype(),
         },
         {
           label: this.translate.instant('MENU.WHITEPAPER'),
@@ -61,11 +59,19 @@ export class MenuComponent {
           icon: 'pi pi-book',
           command: () => this.linkService.openBlog(),
         },
+        {
+          label: this.translate.instant('MENU.FAQ'),
+          icon: 'pi pi-question',
+          command: () => this.router.navigate(['/'], { fragment: 'faq' }),
+        },
       ];
       this.state.set({ menuItems: items });
+      this.state.set({ baseMenuItems: items });
       this.state.hold(this.address$, () => {
-        const menuItems = this.state.get('menuItems');
-        menuItems.push(
+        const baseMenuItems = JSON.parse(
+          JSON.stringify(this.state.get('baseMenuItems'))
+        );
+        baseMenuItems.push(
           {
             label: this.translate.instant('MENU.CREATE'),
             icon: 'pi pi-plus',
@@ -84,19 +90,25 @@ export class MenuComponent {
               {
                 label: this.translate.instant('MENU.STAKINGS'),
                 icon: 'pi pi-wallet',
-                command: () => this.linkService.openWhitepaper(),
+                routerLink: 'profile/stakings',
                 styleClass: 'loggedInMenuItem',
               },
               {
                 label: this.translate.instant('MENU.PROJECTS'),
                 icon: 'pi pi-list',
-                command: () => this.linkService.openWhitepaper(),
+                routerLink: 'profile/projects',
                 styleClass: 'loggedInMenuItem',
               },
             ],
+          },
+          {
+            label: this.translate.instant('MENU.EXCHANGE'),
+            icon: 'pi pi-wallet',
+            routerLink: 'exchange',
+            styleClass: 'loggedInMenuItem',
           }
         );
-        this.state.set({ menuItems });
+        this.state.set({ menuItems: baseMenuItems });
       });
     });
   }
