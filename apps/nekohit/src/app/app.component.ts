@@ -43,7 +43,7 @@ export class AppComponent {
     public notification: NotificationService,
     public messageService: MessageService
   ) {
-    console.log('host:', window.location.host);
+    console.log('host', window.location.host);
     const mainnet = window.location.host.includes('nekohit.com');
     this.globalState.set({ mainnet: mainnet });
     this.globalState.connect(
@@ -55,9 +55,7 @@ export class AppComponent {
       'mainnet',
       this.neoline.NETWORK_CHANGED_EVENT$.pipe(
         tap((res: any) => {
-          const isMainnet =
-            !window.location.href.includes('develop') &&
-            !window.location.href.includes('localhost');
+          const isMainnet = window.location.host.includes('nekohit.com');
           this.toggleWrongNetworkDialog(res, isMainnet);
         }),
         map((res: any) => res.chainId === N3MainNet)
@@ -88,7 +86,6 @@ export class AppComponent {
   }
 
   private toggleWrongNetworkDialog(res: any, mainnet: boolean): void {
-    console.log('connected network', res.chainId);
     if (
       (res.chainId === N3MainNet && !mainnet) ||
       (res.chainId === N3TestNet && mainnet) ||
