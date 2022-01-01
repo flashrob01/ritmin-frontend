@@ -96,3 +96,14 @@
 <div class="mt-5">
   <ritmin-footer></ritmin-footer>
 </div>
+
+<p-dialog
+  header="Wrong network"
+  [modal]="true"
+  [(visible)]="displayWrongNetwork"
+  [closeOnEscape]="false"
+  [closable]="false"
+>
+  It seems that you are connected to the wrong network. Please switch to the
+  {{ globalState.get('mainnet') ? 'testnet' : 'mainnet' }}.
+</p-dialog>

@@ -5,7 +5,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { LinkService } from './core/services/link.service';
 import { NeolineService } from './core/services/neoline.service';
 import { GlobalState, GLOBAL_RX_STATE } from './global.state';
-import { N3MainNet } from '../app/core/models/n2';
+import { N3MainNet, N3TestNet } from '../app/core/models/n2';
 import multiavatar from '@multiavatar/multiavatar';
 import { environment } from '../environments/environment';
 import { NotificationService } from './core/services/notification.service';
@@ -19,6 +19,7 @@ import { MessageService } from 'primeng/api';
 export class AppComponent {
   title = 'nekohit';
   showPromotion = false;
+  displayWrongNetwork = false;
 
   readonly getBalances$ = this.globalState.select('address').pipe(
     switchMap((address) =>
@@ -35,14 +36,17 @@ export class AppComponent {
     )
   );
   constructor(
-    @Inject(GLOBAL_RX_STATE) private globalState: RxState<GlobalState>,
+    @Inject(GLOBAL_RX_STATE) public globalState: RxState<GlobalState>,
     private neoline: NeolineService,
     public linkService: LinkService,
     translate: TranslateService,
     public notification: NotificationService,
     public messageService: MessageService
   ) {
-    this.globalState.set({ mainnet: environment.mainnetDefault });
+    const mainnet =
+      !window.location.href.includes('develop') &&
+      !window.location.href.includes('localhost');
+    this.globalState.set({ mainnet: mainnet });
     this.globalState.connect(
       'address',
       this.neoline.getAccount().pipe(map((acc) => acc.address))
@@ -51,15 +55,22 @@ export class AppComponent {
     this.globalState.connect(
       'mainnet',
       this.neoline.NETWORK_CHANGED_EVENT$.pipe(
+        tap((res: any) => {
+          const isMainnet =
+            !window.location.href.includes('develop') &&
+            !window.location.href.includes('localhost');
+          this.toggleWrongNetworkDialog(res, isMainnet);
+        }),
         map((res: any) => res.chainId === N3MainNet)
       )
     );
 
     this.globalState.connect(
       'mainnet',
-      this.neoline
-        .getNetworks()
-        .pipe(map((network) => network.chainId === N3MainNet))
+      this.neoline.getNetworks().pipe(
+        tap((network) => this.toggleWrongNetworkDialog(network, mainnet)),
+        map((network) => network.chainId === N3MainNet)
+      )
     );
     this.globalState.connect('balances', this.getBalances$);
 
@@ -74,6 +85,19 @@ export class AppComponent {
       translate.use(lang).subscribe();
     } else {
       translate.use(translate.getBrowserLang()).subscribe();
+    }
+  }
+
+  private toggleWrongNetworkDialog(res: any, mainnet: boolean): void {
+    console.log('connected network', res.chainId);
+    if (
+      (res.chainId === N3MainNet && !mainnet) ||
+      (res.chainId === N3TestNet && mainnet) ||
+      (res.chainId !== N3MainNet && res.chainId !== N3TestNet)
+    ) {
+      this.displayWrongNetwork = true;
+    } else {
+      this.displayWrongNetwork = false;
     }
   }
 

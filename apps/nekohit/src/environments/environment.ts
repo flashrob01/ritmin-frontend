@@ -1,6 +1,5 @@
 export const environment = {
   production: false,
-  mainnetDefault: false,
   mainnet: {
     tokens: {
       cat: '0xcdc17669ce3b7cfa65a29c4941aba14dbff9b12b',

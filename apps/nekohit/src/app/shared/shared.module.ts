@@ -29,6 +29,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { TokenNumber } from './pipes/tokenNumber.pipe';
 import { ProjectCardComponent } from './components/project-card/project-card.component';
 import { RouterModule } from '@angular/router';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { RouterModule } from '@angular/router';
     CheckboxModule,
     ConfirmPopupModule,
     RouterModule,
+    DialogModule,
   ],
   exports: [
     ButtonModule,
@@ -99,6 +101,7 @@ import { RouterModule } from '@angular/router';
     TableModule,
     TokenNumber,
     RouterModule,
+    DialogModule,
   ],
   providers: [DecimalPipe],
 })
