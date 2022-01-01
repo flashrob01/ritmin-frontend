@@ -81,7 +81,8 @@ export class AppComponent {
     if (lang && translate.langs.includes(lang)) {
       translate.use(lang).subscribe();
     } else {
-      translate.use(translate.getBrowserLang()).subscribe();
+      //translate.use(translate.getBrowserLang()).subscribe();
+      translate.use('en').subscribe();
     }
   }
 

@@ -53,7 +53,7 @@
       "FEAT_1_TITLE": "Work Completion Agreement",
       "FEAT_1_TEXT": "We developed a unique Work Completion Agreement (WCA) protocol, which is the core of the NekoHit project.",
       "FEAT_2_TITLE": "CAT Token",
-      "FEAT_2_TEXT": "The Completion Agreement Token is a governence NEP-17 token and required to interact with the WCA.",
+      "FEAT_2_TEXT": "The Completion Agreement Token is a NEP-17 token and required to interact with the WCA smart contract.",
       "FEAT_3_TITLE": "Community Driven",
       "FEAT_3_TEXT": "We want NekoHit to be a community project, inviting everyone to contribute to the project in any shape or form. For any contribution, you will receive CAT tokens.",
       "FEAT_4_TITLE": "DAO",
