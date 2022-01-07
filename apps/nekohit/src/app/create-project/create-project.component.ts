@@ -81,7 +81,7 @@ export class CreateProjectComponent {
       name: '',
       description: '',
       fundingGoal: 1,
-      securityStake: 1,
+      securityStakePercent: 1,
       token: { value: catToken.hash, label: CAT_SYMBOL },
       public: true,
       thresholdIndex: 0,
@@ -108,7 +108,7 @@ export class CreateProjectComponent {
 
     this.state.hold(this.tokenSelected$, (event) => {
       this.state.get('form').get('fundingGoal')?.setValue(0);
-      this.state.get('form').get('securityStake')?.setValue(0);
+      this.state.get('form').get('securityStakePercent')?.setValue(0);
       const token = this.tokenService.getTokenByHash(event.value.value);
       const precision = Math.pow(10, token.decimals);
       this.binance
@@ -132,8 +132,8 @@ export class CreateProjectComponent {
     return this.state.get('form').get('fundingGoal')?.value;
   }
 
-  get securityStake(): number {
-    return this.state.get('form').get('securityStake')?.value;
+  get securityStakePercent(): number {
+    return this.state.get('form').get('securityStakePercent')?.value;
   }
 
   get token(): SelectItem {
@@ -207,7 +207,7 @@ export class CreateProjectComponent {
           milestoneTitles: milestones.map((ms) => ms.title as string),
           projectDescription: this.projectDescription,
           projectTitle: this.projectName,
-          stakePer100Token: (this.securityStake / this.fundingGoal) * 100,
+          stakePer100Token: this.securityStakePercent,
           thresholdIndex: this.thresholdIndex,
         };
         console.log('createProjectsArgs', args);
