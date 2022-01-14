@@ -59,7 +59,7 @@ const initState: CreateProjectState = {
 })
 export class CreateProjectComponent {
   state$ = this.state.select();
-
+  math = Math;
   onTabChange$ = new Subject<{ index: number }>();
 
   tokenSelected$ = new Subject<{ value: SelectItem }>();

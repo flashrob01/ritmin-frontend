@@ -79,9 +79,7 @@
                   [maxFractionDigits]="
                     tokenService.getTokenByHash(token.value).decimals
                   "
-                  [suffix]="
-                    ' ' + tokenService.getTokenByHash(token.value).symbol
-                  "
+                  [suffix]="' ' + token.label"
                   [min]="0"
                   [showButtons]="true"
                 ></p-inputNumber>
@@ -107,8 +105,14 @@
 
                 <div class="m-2 font-italic text-sm">
                   =
-                  {{ (fundingGoal * securityStakePercent) / 100 }}
-                  {{ tokenService.getTokenByHash(token.value).symbol }}
+                  {{
+                    ((fundingGoal * securityStakePercent) / 100) *
+                      math.pow(
+                        10,
+                        tokenService.getTokenByHash(token.value).decimals
+                      ) | tokenNumber: token.label
+                  }}
+                  {{ token.label }}
                   ≈ ${{
                     s.selectedTokenPrice *
                       ((fundingGoal * securityStakePercent) / 100) | number
