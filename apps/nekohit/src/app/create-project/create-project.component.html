@@ -79,9 +79,7 @@
                   [maxFractionDigits]="
                     tokenService.getTokenByHash(token.value).decimals
                   "
-                  [suffix]="
-                    ' ' + tokenService.getTokenByHash(token.value).symbol
-                  "
+                  [suffix]="' ' + token.label"
                   [min]="0"
                   [showButtons]="true"
                 ></p-inputNumber>
@@ -96,28 +94,29 @@
               </label>
               <div class="">
                 <p-inputNumber
-                  formControlName="securityStake"
+                  formControlName="securityStakePercent"
                   mode="decimal"
-                  [minFractionDigits]="
-                    tokenService.getTokenByHash(token.value).decimals
-                  "
-                  [maxFractionDigits]="
-                    tokenService.getTokenByHash(token.value).decimals
-                  "
-                  [suffix]="
-                    ' ' + tokenService.getTokenByHash(token.value).symbol
-                  "
-                  [max]="
-                    getTokenBalance(
-                      tokenService.getTokenByHash(token.value).symbol
-                    )
-                  "
-                  [min]="0"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  suffix="%"
+                  [min]="1"
                   [showButtons]="true"
                 ></p-inputNumber>
 
                 <div class="m-2 font-italic text-sm">
-                  ≈ ${{ s.selectedTokenPrice * securityStake | number }}
+                  =
+                  {{
+                    ((fundingGoal * securityStakePercent) / 100) *
+                      math.pow(
+                        10,
+                        tokenService.getTokenByHash(token.value).decimals
+                      ) | tokenNumber: token.label
+                  }}
+                  {{ token.label }}
+                  ≈ ${{
+                    s.selectedTokenPrice *
+                      ((fundingGoal * securityStakePercent) / 100) | number
+                  }}
                 </div>
               </div>
             </div>
