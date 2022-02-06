@@ -96,8 +96,8 @@
                 <p-inputNumber
                   formControlName="securityStakePercent"
                   mode="decimal"
-                  [minFractionDigits]="2"
-                  [maxFractionDigits]="2"
+                  [minFractionDigits]="0"
+                  [maxFractionDigits]="0"
                   suffix="%"
                   [min]="1"
                   [showButtons]="true"
@@ -226,7 +226,6 @@
                 formControlName="cooldownInterval"
                 suffix=" hours"
                 [min]="1"
-                [max]="20"
                 [showButtons]="true"
               ></p-inputNumber>
             </div>
