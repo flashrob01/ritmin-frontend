@@ -44,6 +44,7 @@ export class ProjectDetailsComponent {
   fundProjectBtnClicked$ = new Subject<void>();
   completeMsBtnClicked$ = new Subject<void>();
   completeProjectBtnClicked$ = new Subject<void>();
+  cancelProjectBtnClicked$ = new Subject<void>();
   refundBtnClicked$ = new Subject<void>();
   securityStakeAmount = 0;
 
@@ -127,6 +128,9 @@ export class ProjectDetailsComponent {
     this.state.hold(this.completeProjectBtnClicked$, () =>
       this.completeProject()
     );
+    this.state.hold(this.cancelProjectBtnClicked$, () =>
+      this.cancelProject()
+    );
     this.state.hold(this.refundBtnClicked$, () => this.refund());
   }
 
@@ -193,6 +197,13 @@ export class ProjectDetailsComponent {
   private refund(): void {
     const project = this.state.get('project');
     this.projectService.refund(project.identifier).subscribe((res) => {
+      this.notification.tx(res.txid);
+    });
+  }
+
+  private cancelProject(): void {
+    const project = this.state.get('project');
+    this.projectService.cancelProject(project.identifier).subscribe((res) => {
       this.notification.tx(res.txid);
     });
   }
