@@ -34,7 +34,42 @@
           <div *ngIf="s.project?.creator === globalState.get('address')">
             <div class="grid">
               <div class="col-12 md:col-6 lg:col-4 p-fluid">
-                <p-card styleClass="actionCard">
+                <!-- If not pending, then replace the stake card to cancel card -->
+                <p-card *ngIf="s.project.status !== 'PENDING'" styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Cancel</h2>
+                      <p-tag
+                        [severity]="
+                          s.project.status === 'ONGOING' && s.project.stage === 'Open' ?
+                           'success' : 'danger'
+                        "
+                        [value]="
+                          s.project.status === 'ONGOING' && s.project.stage === 'Open' ?
+                            'ACTIVE' : 'NOT ACTIVE'
+                        "
+                      ></p-tag>
+                    </div>
+                    <p>
+                      You can cancel your project before it passes the threshold
+                      milestone by pressing the button below. Once canceled, the
+                      tokens will be returned and the project will be deleted.
+                    </p>
+
+                    <button
+                      pButton
+                      [disabled]="s.project.status !== 'ONGOING' || s.project.stage !== 'Open'"
+                      label="Cancel Project"
+                      (click)="cancelProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+                <p-card *ngIf="s.project.status === 'PENDING'" styleClass="actionCard">
                   <div
                     class="flex flex-column justify-content-between"
                     style="min-height: 300px"
@@ -148,7 +183,32 @@
                 </p-card>
               </div>
               <div class="col-12 md:col-6 lg:col-4 p-fluid">
-                <p-card styleClass="actionCard">
+                <!-- If pending, then replace the complete card to cancel card -->
+                <p-card *ngIf="s.project.status === 'PENDING'" styleClass="actionCard">
+                  <div
+                    class="flex flex-column justify-content-between"
+                    style="min-height: 300px"
+                  >
+                    <div
+                      class="flex justify-content-between align-items-center"
+                    >
+                      <h2>Cancel</h2>
+                      <p-tag [severity]="'success'" [value]="'ACTIVE'"></p-tag>
+                    </div>
+                    <p>
+                      You can cancel your project before it passes the threshold
+                      milestone by pressing the button below. Once canceled, the
+                      tokens will be returned and the project will be deleted.
+                    </p>
+
+                    <button
+                      pButton
+                      label="Cancel Project"
+                      (click)="cancelProjectBtnClicked$.next()"
+                    ></button>
+                  </div>
+                </p-card>
+                <p-card *ngIf="s.project.status !== 'PENDING'" styleClass="actionCard">
                   <div
                     class="flex flex-column justify-content-between"
                     style="min-height: 300px"
