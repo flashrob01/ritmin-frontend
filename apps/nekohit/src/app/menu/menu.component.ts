@@ -49,11 +49,11 @@ export class MenuComponent {
           icon: 'pi pi-search',
           routerLink: 'browse',
         },
-        {
+       /*  {
           label: this.translate.instant('MENU.WHITEPAPER'),
           icon: 'pi pi-file-o',
           command: () => this.linkService.openWhitepaper(),
-        },
+        }, */
         {
           label: this.translate.instant('MENU.BLOG'),
           icon: 'pi pi-book',

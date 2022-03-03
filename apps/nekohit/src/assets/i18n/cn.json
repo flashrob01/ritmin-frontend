@@ -12,8 +12,8 @@
   },
   "LANDING": {
     "HERO": {
-      "TITLE-ONE": "Join the first and fully decentralized",
-      "TITLE-TWO": "crowdfunding platform for content creators on the blockchain",
+      "TITLE-ONE": "DDRC",
+      "TITLE-TWO": "Escrow platform ",
       "SUBTEXT": "Get started now, create your own Project on NekoHit and receive funding",
       "BUTTON-WHITEPAPER": "White Paper",
       "BUTTON-DOCUMENTATION": "Documentation"
@@ -47,7 +47,7 @@
     },
     "FEATURES": {
       "TITLE": "NekoHit powered by NEO",
-      "SUBTITLE": "a transparent and fair crowdfunding solution",
+      "SUBTITLE": "a transparent escrow solution",
       "FEAT_1_TITLE": "Work Completion Agreement",
       "FEAT_1_TEXT": "We developed a unique Work Completion Agreement (WCA) protocol, which is the core of the NekoHit project.",
       "FEAT_2_TITLE": "CAT Token",

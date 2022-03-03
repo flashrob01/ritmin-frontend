@@ -27,6 +27,13 @@
     ]
   },
   "projects": {
+    "neko-front": {
+      "tags": []
+    },
+    "neko-front-e2e": {
+      "tags": [],
+      "implicitDependencies": ["neko-front"]
+    },
     "nekohit": {
       "tags": []
     },
